@@ -1,0 +1,58 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/python
+{
+	"name": "Ansible Dev/Test Container",
+	"hostRequirements": {
+		"cpus": 2,
+		"memory": "8gb",
+		"storage": "32gb"
+	},
+	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+	"image": "cloudkrafter/ansible-devcontainer:latest",
+	// Features to add to the dev container. More info: https://containers.dev/features.
+	"features": {
+		"ghcr.io/devcontainers/features/python:1": {
+			"installTools": true,
+			"version": "latest"
+		},
+		"ghcr.io/devcontainers/features/docker-in-docker:2": {
+			"moby": true,
+			"azureDnsAutoDetection": true,
+			"installDockerBuildx": true,
+			"installDockerComposeSwitch": true,
+			"version": "latest",
+			"dockerDashComposeVersion": "latest"
+		}
+	},
+	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	// "forwardPorts": [],
+	// Use 'postCreateCommand' to run commands after the container is created.
+	"postCreateCommand": ".devcontainer/post-create.sh",
+	// Configure tool-specific properties.
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-azuretools.vscode-docker",
+				"redhat.ansible",
+				"ms-python.python"
+			]
+		}
+	},
+	"portsAttributes": {
+		"8091": {
+			"label": "Nexus OSS",
+			"protocol": "https",
+			"onAutoForward": "notify"
+		},
+		"5432": {
+			"label": "Postgres",
+			"onAutoForward": "ignore"
+		}
+	},
+	"mounts": [
+		"source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"
+	],
+	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+	"remoteUser": "root"
+}
