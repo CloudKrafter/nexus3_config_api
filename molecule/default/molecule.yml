@@ -1,0 +1,59 @@
+---
+driver:
+  name: docker
+
+platforms:
+  - name: nexus3-oss
+    hostname: nexus3-oss
+    image: sonatype/nexus3:latest
+    pull: true
+    pre_build_image: true
+    privileged: true
+    published_ports:
+      - 8091:443
+    groups:
+      - nexus
+    networks: &nexus_networks
+      - name: nexus-default
+
+  - name: postgresql-server
+    hostname: postgresql-server
+    image: postgres:14-bullseye
+    pull: true
+    pre_build_image: true
+    published_ports:
+      - 5432:5432
+    env:
+      POSTGRES_DB: nexus
+      POSTGRES_USER: nexus
+      POSTGRES_PASSWORD: nexus
+    groups:
+      - postgresql
+    networks: *nexus_networks
+
+provisioner:
+  name: ansible
+  # config_options:
+scenario:
+  check_sequence:
+    - destroy
+    - create
+    - converge
+    - check
+    - destroy
+  converge_sequence:
+    - create
+    - converge
+  test_sequence:
+    - destroy
+    - create
+    - converge
+    - idempotence
+    - check
+    - verify
+    - destroy #   defaults:
+  #     interpreter_python: "{{ lookup('env', 'VIRTUAL_ENV') }}/bin/python"
+verifier:
+  name: ansible
+
+role_name_check: 2
