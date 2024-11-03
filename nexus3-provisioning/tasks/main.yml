@@ -1,0 +1,5 @@
+---
+# simpolemtask to return the hostname
+- name: Return the hostname
+  ansible.builtin.debug:
+    msg: "The hostname is {{ ansible_hostname }}"
