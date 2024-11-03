@@ -6,4 +6,4 @@
   # vars:
   #   ansible_python_interpreter: "{{ playbook_dir }}/../../.venv-3.13.0/bin/python"
   roles:
-    - role: nexus3-provisioning
+    - role: nexus3-config-as-code
