@@ -1,4 +1,4 @@
-Ansible-Nexus3-Provisioning
+Ansible-Nexus3-Config-as-Code
 =========
 
 Ansible role to configure Nexus3 with Config as Code.
