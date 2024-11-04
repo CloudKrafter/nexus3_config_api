@@ -16,7 +16,7 @@ $ docker build -t cloudkrafter/ansible-devcontainer:latest -f .devcontainer/Dock
 
 1. Clone the repository to your local machine:
 ```bash
-$ git clone git@github.com:CloudKrafter/Ansible-Nexus3-Config-as-Code.git
+git clone git@github.com:CloudKrafter/Ansible-Nexus3-Config-as-Code.git
 cd Ansible-Nexus3-Config-as-Code
 ```
 2. Make proposed changes

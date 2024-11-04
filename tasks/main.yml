@@ -1,5 +1,46 @@
 ---
-# simpolemtask to return the hostname
-- name: Return the hostname
+- name: Gather facts about the nexus3-oss container
+  community.docker.docker_container_info:
+    name: nexus3-oss
+  register: nexus3_info
+
+- name: Set nexus3_ip variable
+  ansible.builtin.set_fact:
+    nexus3_ip: "{{ nexus3_info.container.NetworkSettings.Networks.bridge.IPAddress }}"
+
+# Poll the nexus.log file inside the container to see if Nexus is up
+# Nexus is up if the log file contains the string "Started Sonatype Nexus OSS"
+- name: Poll the nexus.log file until Nexus is up
+  community.docker.docker_container_exec:
+    container: nexus3-oss
+    command: "grep -q 'Started Sonatype Nexus' /nexus-data/log/nexus.log"
+  register: nexus_log
+  until: nexus_log.rc == 0
+  retries: 30
+  delay: 10
+
+- name: Get Nexus status
+  ansible.builtin.uri:
+    url: "http://{{ nexus3_ip }}:8081/service/rest/v1/status"
+    method: GET
+    return_content: yes
+    status_code: 200
+  register: nexus_status
+
+- name: Get Nexus writable status
+  ansible.builtin.uri:
+    url: "http://{{ nexus3_ip }}:8081/service/rest/v1/status/writable"
+    method: GET
+    return_content: yes
+    status_code: 200
+  register: nexus_writable
+
+- name: Fetch the admin.password from the nexus3-oss container
+  community.docker.docker_container_exec:
+    container: nexus3-oss
+    command: "cat /nexus-data/admin.password"
+  register: admin_password
+
+- name: Show admin password
   ansible.builtin.debug:
-    msg: "The hostname is {{ ansible_hostname }}"
+    var: admin_password.stdout

@@ -1,0 +1,45 @@
+---
+- name: Prepare the environment
+  hosts: localhost
+  tasks:
+    - name: Gather facts about the nexus3-oss container
+      community.docker.docker_container_info:
+        name: nexus3-oss
+      register: nexus3_info
+
+    - name: show nexus3_info
+      ansible.builtin.debug:
+        var: nexus3_info
+
+    - name: Set nexus3_ip variable
+      set_fact:
+        nexus3_ip: "{{ nexus3_info.container.NetworkSettings.Networks.bridge.IPAddress }}"
+
+    - name: show nexus3_ip
+      ansible.builtin.debug:
+        var: nexus3_ip
+    # use curl to see if nexus3-oss:8081 is up
+    - name: "Check if Nexus3 is up"
+      ansible.builtin.uri:
+        url: "http://{{ nexus3_ip }}:8081"
+        validate_certs: no
+      register: nexus3_up
+      until: nexus3_up.status == 200
+      retries: 3
+      delay: 3
+
+    - name: show status
+      ansible.builtin.debug:
+        var: nexus3_up
+
+    - name: Get Nexus status
+      uri:
+        url: "http://{{ nexus3_ip }}:8081/service/rest/v1/status"
+        method: GET
+        return_content: yes
+        status_code: 200
+      register: nexus_status
+
+    - name: Show Nexus status
+      debug:
+        var: nexus_status
