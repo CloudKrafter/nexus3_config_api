@@ -16,7 +16,7 @@
     command: "grep -q 'Started Sonatype Nexus' /nexus-data/log/nexus.log"
   register: nexus_log
   until: nexus_log.rc == 0
-  retries: 30
+  retries: 60
   delay: 10
 
 - name: Get Nexus status
