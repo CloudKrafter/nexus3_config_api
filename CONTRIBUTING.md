@@ -1,4 +1,4 @@
-# Ansible-Nexus3-Config-as-Code
+# Ansible-Nexus3-Pro
 
 ## Setting up local development and test environment
 There are a few ways to get this project up & running locally.

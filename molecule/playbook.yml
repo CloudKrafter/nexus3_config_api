@@ -1,9 +1,6 @@
 ---
 - name: Converge
-  hosts: nexus
+  hosts: localhost
   gather_facts: false
-  # set ansible_python_interpreter to python3
-  # vars:
-  #   ansible_python_interpreter: "{{ playbook_dir }}/../../.venv-3.13.0/bin/python"
   roles:
     - role: nexus3-config-as-code
