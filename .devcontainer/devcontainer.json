@@ -15,6 +15,12 @@
 			"installTools": true,
 			"version": "latest"
 		},
+		"ghcr.io/hspaans/devcontainer-features/ansible-lint:1": {
+			"version": "latest"
+		},
+		// "ghcr.io/devcontainers-contrib/features/ansible:2": {
+		// 	"version": "latest"
+		// },
 		"ghcr.io/devcontainers/features/docker-in-docker:2": {
 			"moby": true,
 			"azureDnsAutoDetection": true,
@@ -26,7 +32,7 @@
 	},
 	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	// "forwardPorts": [],
+	// "forwardPorts": [	],
 	// Use 'postCreateCommand' to run commands after the container is created.
 	"postCreateCommand": ".devcontainer/post-create.sh",
 	// Configure tool-specific properties.
@@ -40,9 +46,14 @@
 		}
 	},
 	"portsAttributes": {
-		"8091": {
+		"8081": {
 			"label": "Nexus OSS",
-			"protocol": "https",
+			"protocol": "http",
+			"onAutoForward": "notify"
+		},
+		"9081": {
+			"label": "Nexus Pro (Postgres)",
+			"protocol": "http",
 			"onAutoForward": "notify"
 		},
 		"5432": {
