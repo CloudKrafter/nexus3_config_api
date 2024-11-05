@@ -1,4 +1,10 @@
 ---
+dependency:
+  name: galaxy
+  enabled: true
+  options:
+    collections-file: ../ansible-requirements.yml
+
 driver:
   name: docker
 
@@ -22,20 +28,27 @@ platforms:
 
 provisioner:
   name: ansible
-  # config_options:
+  collections:
+    - community.general
+    - community.docker
+
 scenario:
+  create_sequence:
+    - create
+    - prepare
   check_sequence:
     - destroy
     - create
+    - prepare
     - converge
     - check
     - destroy
   converge_sequence:
-    - create
     - converge
   test_sequence:
     - destroy
     - create
+    - prepare
     - converge
     - idempotence
     - check

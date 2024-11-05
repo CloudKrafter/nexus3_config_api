@@ -16,6 +16,3 @@ pip install --upgrade pip setuptools
 
 # Install Python dependencies
 pip install -r requirements.txt
-
-# Install Ansible Galaxy roles and collections
-ansible-galaxy install -r ansible-requirements.yml
