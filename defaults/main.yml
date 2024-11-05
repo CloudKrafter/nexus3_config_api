@@ -1,1 +1,6 @@
 # defaults file for nexus3-config-as-code
+nexus_protocol: http
+nexus_hostname: 172.17.0.3
+nexus_port: 8081
+nexus_admin_username: admin
+nexus_admin_password: changeme
