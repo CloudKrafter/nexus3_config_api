@@ -1,7 +1,7 @@
 ---
 - name: Get all repositories
   uri:
-    url: "{{ nexus_protocol }}://{{ nexus_hostname }}:{{ nexus_port }}/service/rest/v1/repositories"
+    url: "{{ nexus_protocol }}://{{ nexus_hostname }}:{{ nexus_port }}/service/rest/v1/repositorySettings"
     method: GET
     validate_certs: false
     status_code: 200
@@ -13,6 +13,17 @@
   retries: 30
   delay: 10
 
-- name: Debug all repositories
+- name: Filter existing Maven hosted repositories
+  set_fact:
+    existing_maven_hosted_repos: "{{ __nexus_repositories__.json | selectattr('format', 'equalto', 'maven2') | selectattr('type', 'equalto', 'hosted') | list }}"
+
+- name: Filter existing Maven proxy repositories
+  set_fact:
+    existing_maven_proxy_repos: "{{ __nexus_repositories__.json | selectattr('format', 'equalto', 'maven2') | selectattr('type', 'equalto', 'proxy') | list }}"
+
+- name: Filter existing Maven group repositories
+  set_fact:
+    existing_maven_group_repos: "{{ __nexus_repositories__.json | selectattr('format', 'equalto', 'maven2') | selectattr('type', 'equalto', 'group') | list }}"
+
   debug:
     var: __nexus_repositories__.json
