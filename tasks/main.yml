@@ -25,5 +25,40 @@
   set_fact:
     existing_maven_group_repos: "{{ __nexus_repositories__.json | selectattr('format', 'equalto', 'maven2') | selectattr('type', 'equalto', 'group') | list }}"
 
+- name: Determine Maven hosted repositories to create
+  set_fact:
+    maven_hosted_repos_to_create: "{{ nexus_repos_maven_hosted | rejectattr('name', 'in', existing_maven_hosted_repos | map(attribute='name') | list) | list }}"
+
+- name: Determine Maven hosted repositories to delete
+  set_fact:
+    maven_hosted_repos_to_delete: "{{ existing_maven_hosted_repos | rejectattr('name', 'in', nexus_repos_maven_hosted | map(attribute='name') | list) | list }}"
+
+- name: show maven_hosted_repos_to_create
   debug:
-    var: __nexus_repositories__.json
+    var: maven_hosted_repos_to_create
+
+- name: Create configured Maven Hosted repositories using Nexus API
+  ansible.builtin.include_tasks: repositories-api.yml
+  vars:
+    repos: "{{ item | default([]) }}"
+    format: maven
+    type: hosted
+    method: POST
+  with_items:
+    - "{{ maven_hosted_repos_to_create | default([]) }}"
+  when: maven_hosted_repos_to_create | length > 0
+
+- name: Show maven_hosted_repos_to_delete
+  debug:
+    var: maven_hosted_repos_to_delete
+
+- name: Delete Maven Hosted repositories using Nexus API
+  ansible.builtin.include_tasks: repositories-api.yml
+  vars:
+    repos: "{{ maven_hosted_repos_to_delete | default([]) }}"
+    format: maven
+    type: hosted
+    method: DELETE
+  with_items:
+    - "{{ maven_hosted_repos_to_delete | default([]) }}"
+  when: maven_hosted_repos_to_delete | length > 0
