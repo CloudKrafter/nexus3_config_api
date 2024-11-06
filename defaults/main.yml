@@ -4,3 +4,48 @@ nexus_hostname: 172.17.0.3
 nexus_port: 8081
 nexus_admin_username: admin
 nexus_admin_password: changeme
+
+nexus_repos_maven_hosted:
+  - name: repo-1
+    format: maven2
+    type: hosted
+    online: true
+    storage:
+      blobStoreName: default
+      strictContentTypeValidation: true
+      writePolicy: ALLOW_ONCE
+    maven:
+      versionPolicy: RELEASE
+      layoutPolicy: PERMISSIVE
+  # - name: maven-snapshots
+  #   format: maven2
+  #   type: hosted
+  #   online: true
+  #   storage:
+  #     blobStoreName: default
+  #     strictContentTypeValidation: false
+  #     writePolicy: ALLOW_ONCE
+  #   component:
+  #     proprietaryComponents: false
+  #   maven:
+  #     contentDisposition: INLINE
+  #     layoutPolicy: STRICT
+  #     versionPolicy: SNAPSHOT
+
+  - name: maven-releases
+    format: maven2
+    type: hosted
+    online: true
+    storage:
+      blobStoreName: default
+      strictContentTypeValidation: false
+      writePolicy: ALLOW_ONCE
+    component:
+      proprietaryComponents: false
+    maven:
+      contentDisposition: INLINE
+      layoutPolicy: STRICT
+      versionPolicy: RELEASE
+
+nexus_repos_maven_proxy: []
+nexus_repos_maven_group: []
