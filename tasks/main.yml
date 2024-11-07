@@ -1,4 +1,18 @@
 ---
+- name: Get all Cleanup policies
+  uri:
+    url: "{{ nexus_protocol }}://{{ nexus_hostname }}:{{ nexus_port }}/service/rest/v1/cleanup/policies"
+    method: GET
+    validate_certs: false
+    status_code: 200
+    user: "{{ nexus_admin_username }}"
+    password: "{{ nexus_admin_password }}"
+    force_basic_auth: true
+  register: __nexus_cleanup_policies__
+  until: __nexus_cleanup_policies__.status == 200
+  retries: 30
+  delay: 10
+
 - name: Get all repositories
   uri:
     url: "{{ nexus_protocol }}://{{ nexus_hostname }}:{{ nexus_port }}/service/rest/v1/repositorySettings"
@@ -16,16 +30,19 @@
 - name: Process definitions for maven
   when: nexus_config_maven | bool
   block:
-    # - name: Apply defaults to maven proxy repos
-    #   ansible.builtin.set_fact:
-    #     nexus_repos_maven_proxy: >-
-    #       {%- set result = [] -%}
-    #       {%- for repo in nexus_repos_maven_proxy -%}
-    #         {%- set combined_repo = __nexus_repos_maven_proxy_defaults | combine(repo) -%}
-    #           {{ result.append(combined_repo) }}
-    #         {%- endif -%}
-    #       {%- endfor -%}
-    #       {{ result | to_json | from_json }}
+    - name: Apply defaults to maven proxy repos
+      ansible.builtin.set_fact:
+        final_nexus_repos_maven_proxy: >-
+          {%- set result = [] -%}
+          {%- for repo in nexus_repos_maven_proxy -%}
+            {%- set combined_repo = __nexus_repos_maven_proxy_defaults | combine(repo, recursive=True) -%}
+              {{ result.append(combined_repo) }}
+          {%- endfor -%}
+          {{ result | to_json | from_json }}
+
+    - name: Show final_nexus_repos_maven_proxy
+      debug:
+        var: final_nexus_repos_maven_proxy
 
     - name: Apply defaults to maven hosted repos
       ansible.builtin.set_fact:
@@ -107,13 +124,13 @@
 - name: Determine repositories to create
   set_fact:
     maven_hosted_repos_to_create: "{{ final_nexus_repos_maven_hosted | rejectattr('name', 'in', existing_maven_hosted_repos | map(attribute='name') | list) | list }}"
-    maven_proxy_repos_to_create: "{{ nexus_repos_maven_proxy | rejectattr('name', 'in', existing_maven_proxy_repos | map(attribute='name') | list) | list }}"
+    maven_proxy_repos_to_create: "{{ final_nexus_repos_maven_proxy | rejectattr('name', 'in', existing_maven_proxy_repos | map(attribute='name') | list) | list }}"
     maven_group_repos_to_create: "{{ nexus_repos_maven_group | rejectattr('name', 'in', existing_maven_group_repos | map(attribute='name') | list) | list }}"
 
 - name: Determine repositories to delete
   set_fact:
     maven_hosted_repos_to_delete: "{{ existing_maven_hosted_repos | rejectattr('name', 'in', final_nexus_repos_maven_hosted | map(attribute='name') | list) | list }}"
-    maven_proxy_repos_to_delete: "{{ existing_maven_proxy_repos | rejectattr('name', 'in', nexus_repos_maven_proxy | map(attribute='name') | list) | list }}"
+    maven_proxy_repos_to_delete: "{{ existing_maven_proxy_repos | rejectattr('name', 'in', final_nexus_repos_maven_proxy | map(attribute='name') | list) | list }}"
     maven_group_repos_to_delete: "{{ existing_maven_group_repos | rejectattr('name', 'in', nexus_repos_maven_group | map(attribute='name') | list) | list }}"
 
 - name: Initialize empty array for repositories to be updated
@@ -126,6 +143,7 @@
   set_fact:
     maven_hosted_repos_to_update: "{{ maven_hosted_repos_to_update + [ item ] }}"
   loop: "{{ final_nexus_repos_maven_hosted | list }}"
+  # TODO: implement cleanup policy
   when: >
     (existing_maven_hosted_repos | selectattr('name', 'equalto', item.name) | first) is not defined or
     (existing_maven_hosted_repos | selectattr('name', 'equalto', item.name) | first).format != item.format or
@@ -137,6 +155,35 @@
     (existing_maven_hosted_repos | selectattr('name', 'equalto', item.name) | first).maven.versionPolicy != item.maven.versionPolicy or
     (existing_maven_hosted_repos | selectattr('name', 'equalto', item.name) | first).maven.layoutPolicy != item.maven.layoutPolicy or
     (existing_maven_hosted_repos | selectattr('name', 'equalto', item.name) | first).maven.contentDisposition != item.maven.contentDisposition
+
+- name: Compare maven proxy repositories for changes
+  set_fact:
+    maven_proxy_repos_to_update: "{{ maven_proxy_repos_to_update + [ item ] }}"
+  loop: "{{ final_nexus_repos_maven_proxy | list }}"
+  # TODO: implement cleanup policy, routingrule, replication and authentication
+  when: >
+    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first) is not defined or
+    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).format != item.format or
+    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).type != item.type or
+    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).online != item.online or
+    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).storage.blobStoreName != item.storage.blobStoreName or
+    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).storage.strictContentTypeValidation != item.storage.strictContentTypeValidation or
+    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).proxy.remoteUrl != item.proxy.remoteUrl or
+    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).proxy.contentMaxAge != item.proxy.contentMaxAge or
+    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).proxy.metadataMaxAge != item.proxy.metadataMaxAge or
+    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).negativeCache.enabled != item.negativeCache.enabled or
+    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).negativeCache.timeToLive != item.negativeCache.timeToLive or
+    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).httpClient.blocked != item.httpClient.blocked or
+    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).httpClient.autoBlock != item.httpClient.autoBlock or
+    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).httpClient.connection.retries != item.httpClient.connection.retries or
+    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).httpClient.connection.userAgentSuffix != item.httpClient.connection.userAgentSuffix or
+    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).httpClient.connection.timeout != item.httpClient.connection.timeout or
+    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).httpClient.connection.enableCircularRedirects != item.httpClient.connection.enableCircularRedirects or
+    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).httpClient.connection.enableCookies != item.httpClient.connection.enableCookies or
+    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).httpClient.connection.useTrustStore != item.httpClient.connection.useTrustStore or
+    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).maven.versionPolicy != item.maven.versionPolicy or
+    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).maven.layoutPolicy != item.maven.layoutPolicy or
+    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).maven.contentDisposition != item.maven.contentDisposition
 
 - name: Show maven_hosted_repos_to_update
   debug:
@@ -161,6 +208,17 @@
     - "{{ maven_hosted_repos_to_create | default([]) }}"
   when: maven_hosted_repos_to_create | length > 0
 
+- name: Create configured Maven Proxy repositories using Nexus API
+  ansible.builtin.include_tasks: repositories-api.yml
+  vars:
+    repos: "{{ item | default([]) }}"
+    format: maven
+    type: proxy
+    method: POST
+  with_items:
+    - "{{ maven_proxy_repos_to_create | default([]) }}"
+  when: maven_proxy_repos_to_create | length > 0
+
 - name: Update configured Maven Hosted repositories using Nexus API
   ansible.builtin.include_tasks: repositories-api.yml
   vars:
@@ -172,6 +230,17 @@
     - "{{ maven_hosted_repos_to_update | default([]) }}"
   when: maven_hosted_repos_to_update | length > 0
 
+- name: Update configured Maven Proxy repositories using Nexus API
+  ansible.builtin.include_tasks: repositories-api.yml
+  vars:
+    repos: "{{ item | default([]) }}"
+    format: maven
+    type: proxy
+    method: PUT
+  with_items:
+    - "{{ maven_proxy_repos_to_update | default([]) }}"
+  when: maven_proxy_repos_to_update | length > 0
+
 - name: Delete Maven Hosted repositories using Nexus API
   ansible.builtin.include_tasks: repositories-api.yml
   vars:
@@ -182,3 +251,14 @@
   with_items:
     - "{{ maven_hosted_repos_to_delete | default([]) }}"
   when: maven_hosted_repos_to_delete | length > 0
+
+- name: Delete Maven Proxy repositories using Nexus API
+  ansible.builtin.include_tasks: repositories-api.yml
+  vars:
+    repos: "{{ maven_proxy_repos_to_delete | default([]) }}"
+    format: maven
+    type: proxy
+    method: DELETE
+  with_items:
+    - "{{ maven_proxy_repos_to_delete | default([]) }}"
+  when: maven_proxy_repos_to_delete | length > 0

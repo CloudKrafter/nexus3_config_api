@@ -23,40 +23,81 @@ __nexus_repos_maven_hosted_defaults:
     layoutPolicy: STRICT
     contentDisposition: INLINE
 
+__nexus_repos_maven_proxy_defaults:
+  format: maven2
+  type: proxy
+  online: true
+  storage:
+    blobStoreName: default
+    strictContentTypeValidation: true
+  cleanup:
+  proxy:
+    remoteUrl: https://remote.repository.com
+    contentMaxAge: 1440
+    metadataMaxAge: 1440
+  negativeCache:
+    enabled: true
+    timeToLive: 1440
+  httpClient:
+    blocked: false
+    autoBlock: true
+    connection:
+      retries: 0
+      userAgentSuffix: string
+      timeout: 60
+      enableCircularRedirects: false
+      enableCookies: false
+      useTrustStore: false
+    authentication:
+  routingRule:
+  replication:
+  maven:
+    versionPolicy: MIXED
+    layoutPolicy: STRICT
+    contentDisposition: ATTACHMENT
+
 nexus_repos_maven_hosted:
   - name: repo-1
-    storage:
-      blobStoreName: default
-      strictContentTypeValidation: false
-      writePolicy: ALLOW_ONCE
     maven:
       versionPolicy: RELEASE
       layoutPolicy: STRICT
       contentDisposition: INLINE
   - name: maven-snapshots
     storage:
-      blobStoreName: default
-      strictContentTypeValidation: false
+      strictContentTypeValidation: true
       writePolicy: ALLOW_ONCE
-    component:
-      proprietaryComponents: false
     maven:
       contentDisposition: INLINE
       layoutPolicy: STRICT
       versionPolicy: SNAPSHOT
 
   - name: maven-releases
-    online: false
+    online: true
     storage:
-      blobStoreName: default
-      strictContentTypeValidation: false
-      writePolicy: ALLOW_ONCE
-    component:
-      proprietaryComponents: false
+      strictContentTypeValidation: true
     maven:
       contentDisposition: INLINE
       layoutPolicy: STRICT
       versionPolicy: RELEASE
 
-nexus_repos_maven_proxy: []
+  - name: repo-2
+
+nexus_repos_maven_proxy:
+  - name: maven-central
+    proxy:
+      remoteUrl: https://repo1.maven.org/maven2/
+      contentMaxAge: -1
+      metadataMaxAge: 1440
+    negativeCache:
+      enabled: true
+      timeToLive: 1440
+    httpClient:
+      blocked: false
+      autoBlock: true
+  - name: maven-proxy-2
+    proxy:
+      remoteUrl: https://repo1.maven.org/maven2/
+      contentMaxAge: -1
+      metadataMaxAge: 1440
+
 nexus_repos_maven_group: []
