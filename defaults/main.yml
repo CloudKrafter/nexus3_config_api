@@ -12,25 +12,26 @@ nexus_repos_maven_hosted:
     online: true
     storage:
       blobStoreName: default
-      strictContentTypeValidation: true
+      strictContentTypeValidation: false
       writePolicy: ALLOW_ONCE
     maven:
       versionPolicy: RELEASE
       layoutPolicy: PERMISSIVE
-  # - name: maven-snapshots
-  #   format: maven2
-  #   type: hosted
-  #   online: true
-  #   storage:
-  #     blobStoreName: default
-  #     strictContentTypeValidation: false
-  #     writePolicy: ALLOW_ONCE
-  #   component:
-  #     proprietaryComponents: false
-  #   maven:
-  #     contentDisposition: INLINE
-  #     layoutPolicy: STRICT
-  #     versionPolicy: SNAPSHOT
+      contentDisposition: INLINE
+  - name: maven-snapshots
+    format: maven2
+    type: hosted
+    online: true
+    storage:
+      blobStoreName: default
+      strictContentTypeValidation: false
+      writePolicy: ALLOW_ONCE
+    component:
+      proprietaryComponents: false
+    maven:
+      contentDisposition: INLINE
+      layoutPolicy: STRICT
+      versionPolicy: SNAPSHOT
 
   - name: maven-releases
     format: maven2
