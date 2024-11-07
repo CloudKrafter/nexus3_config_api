@@ -44,6 +44,8 @@ scenario:
     - check
     - destroy
   converge_sequence:
+    - create
+    - prepare
     - converge
   test_sequence:
     - destroy
