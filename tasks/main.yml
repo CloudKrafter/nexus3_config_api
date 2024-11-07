@@ -13,42 +13,35 @@
   retries: 30
   delay: 10
 
-- name: Filter existing Maven hosted repositories
+# Need filtered facts for existing repositories because the API has different endpoints for each type and format
+- name: Filter existing repositories
   set_fact:
     existing_maven_hosted_repos: "{{ __nexus_repositories__.json | selectattr('format', 'equalto', 'maven2') | selectattr('type', 'equalto', 'hosted') | list }}"
-
-- name: Filter existing Maven proxy repositories
-  set_fact:
     existing_maven_proxy_repos: "{{ __nexus_repositories__.json | selectattr('format', 'equalto', 'maven2') | selectattr('type', 'equalto', 'proxy') | list }}"
-
-- name: Filter existing Maven group repositories
-  set_fact:
     existing_maven_group_repos: "{{ __nexus_repositories__.json | selectattr('format', 'equalto', 'maven2') | selectattr('type', 'equalto', 'group') | list }}"
 
-- name: Determine Maven hosted repositories to create
+- name: Determine repositories to create
   set_fact:
     maven_hosted_repos_to_create: "{{ nexus_repos_maven_hosted | rejectattr('name', 'in', existing_maven_hosted_repos | map(attribute='name') | list) | list }}"
-
-- name: Determine Maven proxy repositories to create
-  set_fact:
     maven_proxy_repos_to_create: "{{ nexus_repos_maven_proxy | rejectattr('name', 'in', existing_maven_proxy_repos | map(attribute='name') | list) | list }}"
-
-- name: Determine Maven group repositories to create
-  set_fact:
     maven_group_repos_to_create: "{{ nexus_repos_maven_group | rejectattr('name', 'in', existing_maven_group_repos | map(attribute='name') | list) | list }}"
 
-- name: Initialize empty array for items to be processed
+- name: Determine repositories to delete
   set_fact:
-    items_to_process: []
+    maven_hosted_repos_to_delete: "{{ existing_maven_hosted_repos | rejectattr('name', 'in', nexus_repos_maven_hosted | map(attribute='name') | list) | list }}"
+    maven_proxy_repos_to_delete: "{{ existing_maven_proxy_repos | rejectattr('name', 'in', nexus_repos_maven_proxy | map(attribute='name') | list) | list }}"
+    maven_group_repos_to_delete: "{{ existing_maven_group_repos | rejectattr('name', 'in', nexus_repos_maven_group | map(attribute='name') | list) | list }}"
 
-- name: Initialize empty array for items to be processed
+- name: Initialize empty array for repositories to be updated
   set_fact:
-    desired_json: "{{ nexus_repos_maven_hosted }}"
+    maven_hosted_repos_to_update: []
+    maven_proxy_repos_to_update: []
+    maven_group_repos_to_update: []
 
-- name: Compare items and add to items_to_process if mismatched
+- name: Compare maven hosted repositories for changes
   set_fact:
-    items_to_process: "{{ items_to_process + [ item ] }}"
-  loop: "{{ desired_json | list }}"
+    maven_hosted_repos_to_update: "{{ maven_hosted_repos_to_update + [ item ] }}"
+  loop: "{{ nexus_repos_maven_hosted | list }}"
   when: >
     (existing_maven_hosted_repos | selectattr('name', 'equalto', item.name) | first) is not defined or
     (existing_maven_hosted_repos | selectattr('name', 'equalto', item.name) | first).format != item.format or
@@ -61,25 +54,17 @@
     (existing_maven_hosted_repos | selectattr('name', 'equalto', item.name) | first).maven.layoutPolicy != item.maven.layoutPolicy or
     (existing_maven_hosted_repos | selectattr('name', 'equalto', item.name) | first).maven.contentDisposition != item.maven.contentDisposition
 
-- name: Show items that need processing
+- name: Show maven_hosted_repos_to_update
   debug:
-    msg: "{{ items_to_process }}"
-
-- name: Determine Maven hosted repositories to delete
-  set_fact:
-    maven_hosted_repos_to_delete: "{{ existing_maven_hosted_repos | rejectattr('name', 'in', nexus_repos_maven_hosted | map(attribute='name') | list) | list }}"
-
-- name: Determine Maven proxy repositories to delete
-  set_fact:
-    maven_proxy_repos_to_delete: "{{ existing_maven_proxy_repos | rejectattr('name', 'in', nexus_repos_maven_proxy | map(attribute='name') | list) | list }}"
-
-- name: Determine Maven group repositories to delete
-  set_fact:
-    maven_group_repos_to_delete: "{{ existing_maven_group_repos | rejectattr('name', 'in', nexus_repos_maven_group | map(attribute='name') | list) | list }}"
+    var: maven_hosted_repos_to_update | length
 
 - name: show maven_hosted_repos_to_create
   debug:
-    var: maven_hosted_repos_to_create
+    var: maven_hosted_repos_to_create | length
+
+- name: Show maven_hosted_repos_to_delete
+  debug:
+    var: maven_hosted_repos_to_delete | length
 
 - name: Create configured Maven Hosted repositories using Nexus API
   ansible.builtin.include_tasks: repositories-api.yml
@@ -102,10 +87,6 @@
   with_items:
     - "{{ items_to_process | default([]) }}"
   when: items_to_process | length > 0
-
-- name: Show maven_hosted_repos_to_delete
-  debug:
-    var: maven_hosted_repos_to_delete
 
 - name: Delete Maven Hosted repositories using Nexus API
   ansible.builtin.include_tasks: repositories-api.yml
