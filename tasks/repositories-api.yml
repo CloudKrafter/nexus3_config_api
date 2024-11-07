@@ -2,8 +2,10 @@
 - name: "{{ method }} {{ item.name }} {{ format }} {{ type }} repository"
   uri:
     url: >
-      {% if method in ['POST', 'PUT'] %}
+      {% if method in ['POST'] %}
         {{ nexus_protocol }}://{{ nexus_hostname }}:{{ nexus_port }}/service/rest/v1/repositories/{{ format }}/{{ type }}
+      {% elif method in ['PUT'] %}
+        {{ nexus_protocol }}://{{ nexus_hostname }}:{{ nexus_port }}/service/rest/v1/repositories/{{ format }}/{{ type }}/{{ item.name }}
       {% else %}
         {{ nexus_protocol }}://{{ nexus_hostname }}:{{ nexus_port }}/service/rest/v1/repositories/{{ item.name }}
       {% endif %}
