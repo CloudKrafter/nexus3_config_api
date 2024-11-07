@@ -85,8 +85,8 @@
     type: hosted
     method: PUT
   with_items:
-    - "{{ items_to_process | default([]) }}"
-  when: items_to_process | length > 0
+    - "{{ maven_hosted_repos_to_update | default([]) }}"
+  when: maven_hosted_repos_to_update | length > 0
 
 - name: Delete Maven Hosted repositories using Nexus API
   ansible.builtin.include_tasks: repositories-api.yml
