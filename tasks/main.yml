@@ -29,9 +29,53 @@
   set_fact:
     maven_hosted_repos_to_create: "{{ nexus_repos_maven_hosted | rejectattr('name', 'in', existing_maven_hosted_repos | map(attribute='name') | list) | list }}"
 
+- name: Determine Maven proxy repositories to create
+  set_fact:
+    maven_proxy_repos_to_create: "{{ nexus_repos_maven_proxy | rejectattr('name', 'in', existing_maven_proxy_repos | map(attribute='name') | list) | list }}"
+
+- name: Determine Maven group repositories to create
+  set_fact:
+    maven_group_repos_to_create: "{{ nexus_repos_maven_group | rejectattr('name', 'in', existing_maven_group_repos | map(attribute='name') | list) | list }}"
+
+- name: Initialize empty array for items to be processed
+  set_fact:
+    items_to_process: []
+
+- name: Initialize empty array for items to be processed
+  set_fact:
+    desired_json: "{{ nexus_repos_maven_hosted }}"
+
+- name: Compare items and add to items_to_process if mismatched
+  set_fact:
+    items_to_process: "{{ items_to_process + [ item ] }}"
+  loop: "{{ desired_json | list }}"
+  when: >
+    (existing_maven_hosted_repos | selectattr('name', 'equalto', item.name) | first) is not defined or
+    (existing_maven_hosted_repos | selectattr('name', 'equalto', item.name) | first).format != item.format or
+    (existing_maven_hosted_repos | selectattr('name', 'equalto', item.name) | first).type != item.type or
+    (existing_maven_hosted_repos | selectattr('name', 'equalto', item.name) | first).online != item.online or
+    (existing_maven_hosted_repos | selectattr('name', 'equalto', item.name) | first).storage.blobStoreName != item.storage.blobStoreName or
+    (existing_maven_hosted_repos | selectattr('name', 'equalto', item.name) | first).storage.strictContentTypeValidation != item.storage.strictContentTypeValidation or
+    (existing_maven_hosted_repos | selectattr('name', 'equalto', item.name) | first).storage.writePolicy != item.storage.writePolicy or
+    (existing_maven_hosted_repos | selectattr('name', 'equalto', item.name) | first).maven.versionPolicy != item.maven.versionPolicy or
+    (existing_maven_hosted_repos | selectattr('name', 'equalto', item.name) | first).maven.layoutPolicy != item.maven.layoutPolicy or
+    (existing_maven_hosted_repos | selectattr('name', 'equalto', item.name) | first).maven.contentDisposition != item.maven.contentDisposition
+
+- name: Show items that need processing
+  debug:
+    msg: "{{ items_to_process }}"
+
 - name: Determine Maven hosted repositories to delete
   set_fact:
     maven_hosted_repos_to_delete: "{{ existing_maven_hosted_repos | rejectattr('name', 'in', nexus_repos_maven_hosted | map(attribute='name') | list) | list }}"
+
+- name: Determine Maven proxy repositories to delete
+  set_fact:
+    maven_proxy_repos_to_delete: "{{ existing_maven_proxy_repos | rejectattr('name', 'in', nexus_repos_maven_proxy | map(attribute='name') | list) | list }}"
+
+- name: Determine Maven group repositories to delete
+  set_fact:
+    maven_group_repos_to_delete: "{{ existing_maven_group_repos | rejectattr('name', 'in', nexus_repos_maven_group | map(attribute='name') | list) | list }}"
 
 - name: show maven_hosted_repos_to_create
   debug:
@@ -47,6 +91,17 @@
   with_items:
     - "{{ maven_hosted_repos_to_create | default([]) }}"
   when: maven_hosted_repos_to_create | length > 0
+
+- name: Update configured Maven Hosted repositories using Nexus API
+  ansible.builtin.include_tasks: repositories-api.yml
+  vars:
+    repos: "{{ item | default([]) }}"
+    format: maven
+    type: hosted
+    method: PUT
+  with_items:
+    - "{{ items_to_process | default([]) }}"
+  when: items_to_process | length > 0
 
 - name: Show maven_hosted_repos_to_delete
   debug:
