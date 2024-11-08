@@ -1,4 +1,7 @@
 ---
+# include tasks from license-api.yml
+- include_tasks: license-api.yml
+
 - name: Get all repositories
   uri:
     url: "{{ nexus_protocol }}://{{ nexus_hostname }}:{{ nexus_port }}/service/rest/v1/repositories"
