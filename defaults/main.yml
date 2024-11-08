@@ -6,6 +6,14 @@ nexus_admin_username: admin
 nexus_admin_password: changeme
 nexus_enable_pro: false
 
+nexus_repos_cleanup_policies:
+  - name: mvn_cleanup
+    format: maven2
+    notes: "mvn"
+    criteria:
+      lastBlobUpdated: 60
+      lastDownloaded: 120
+
 nexus_config_maven: true
 
 __nexus_repos_maven_hosted_defaults:
