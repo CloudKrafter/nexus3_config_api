@@ -147,3 +147,58 @@ nexus_repos_cleanup_policies:
     criteriaLastBlobUpdated: 60
     criteriaLastDownloaded: 120
     criteriaAssetRegex: "your-regex*"
+
+nexus_repos_maven_hosted:
+  - name: repo-1
+    cleanup:
+      policyNames:
+        - maven_cleanup
+        - maven_prereleases_cleanup
+    maven:
+      versionPolicy: RELEASE
+      layoutPolicy: STRICT
+      contentDisposition: INLINE
+  - name: maven-snapshots
+    storage:
+      strictContentTypeValidation: true
+      writePolicy: ALLOW_ONCE
+    maven:
+      contentDisposition: INLINE
+      layoutPolicy: STRICT
+      versionPolicy: SNAPSHOT
+
+  - name: maven-releases
+    online: true
+    storage:
+      strictContentTypeValidation: true
+    maven:
+      contentDisposition: INLINE
+      layoutPolicy: STRICT
+      versionPolicy: RELEASE
+
+  - name: repo-2
+
+nexus_repos_maven_proxy:
+  - name: maven-central
+    cleanup:
+      policyNames:
+        - maven_cleanup
+        - maven_releases_cleanup
+    proxy:
+      remoteUrl: https://repo1.maven.org/maven2/
+      contentMaxAge: -1
+      metadataMaxAge: 1440
+    negativeCache:
+      enabled: true
+      timeToLive: 1440
+    httpClient:
+      blocked: false
+      autoBlock: true
+  - name: maven-proxy-2
+    proxy:
+      remoteUrl: https://repo1.maven.org/maven2/
+      contentMaxAge: -1
+      metadataMaxAge: 1440
+    cleanup:
+      policyNames:
+        - maven_cleanup
