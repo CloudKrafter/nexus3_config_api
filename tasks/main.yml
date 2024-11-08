@@ -191,18 +191,18 @@
   set_fact:
     maven_hosted_repos_to_update: "{{ maven_hosted_repos_to_update + [ item ] }}"
   loop: "{{ final_nexus_repos_maven_hosted | list }}"
-  # TODO: implement cleanup policy
+  # TODO: implement cleanup policies, proprietaryComponents component
   when: >
     (existing_maven_hosted_repos | selectattr('name', 'equalto', item.name) | first) is not defined or
-    (existing_maven_hosted_repos | selectattr('name', 'equalto', item.name) | first).format != item.format or
-    (existing_maven_hosted_repos | selectattr('name', 'equalto', item.name) | first).type != item.type or
-    (existing_maven_hosted_repos | selectattr('name', 'equalto', item.name) | first).online != item.online or
-    (existing_maven_hosted_repos | selectattr('name', 'equalto', item.name) | first).storage.blobStoreName != item.storage.blobStoreName or
-    (existing_maven_hosted_repos | selectattr('name', 'equalto', item.name) | first).storage.strictContentTypeValidation != item.storage.strictContentTypeValidation or
-    (existing_maven_hosted_repos | selectattr('name', 'equalto', item.name) | first).storage.writePolicy != item.storage.writePolicy or
-    (existing_maven_hosted_repos | selectattr('name', 'equalto', item.name) | first).maven.versionPolicy != item.maven.versionPolicy or
-    (existing_maven_hosted_repos | selectattr('name', 'equalto', item.name) | first).maven.layoutPolicy != item.maven.layoutPolicy or
-    (existing_maven_hosted_repos | selectattr('name', 'equalto', item.name) | first).maven.contentDisposition != item.maven.contentDisposition
+    (existing_maven_hosted_repos | selectattr('name', 'equalto', item.name) | first).format | default(omit) != item.format | default(None) or
+    (existing_maven_hosted_repos | selectattr('name', 'equalto', item.name) | first).type | default(omit) != item.type | default(None) or
+    (existing_maven_hosted_repos | selectattr('name', 'equalto', item.name) | first).online | default(omit) != item.online | default(None) or
+    (existing_maven_hosted_repos | selectattr('name', 'equalto', item.name) | first).storage.blobStoreName | default(omit) != item.storage.blobStoreName | default(None) or
+    (existing_maven_hosted_repos | selectattr('name', 'equalto', item.name) | first).storage.strictContentTypeValidation | default(omit) != item.storage.strictContentTypeValidation | default(None) or
+    (existing_maven_hosted_repos | selectattr('name', 'equalto', item.name) | first).storage.writePolicy | default(omit) != item.storage.writePolicy | default(None) or
+    (existing_maven_hosted_repos | selectattr('name', 'equalto', item.name) | first).maven.versionPolicy | default(omit) != item.maven.versionPolicy | default(None) or
+    (existing_maven_hosted_repos | selectattr('name', 'equalto', item.name) | first).maven.layoutPolicy | default(omit) != item.maven.layoutPolicy | default(None) or
+    (existing_maven_hosted_repos | selectattr('name', 'equalto', item.name) | first).maven.contentDisposition | default(omit) != item.maven.contentDisposition | default(None)
 
 - name: Compare maven proxy repositories for changes
   set_fact:
@@ -211,26 +211,26 @@
   # TODO: implement routingRule, replication and authentication
   when: >
     (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first) is not defined or
-    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).format != item.format or
-    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).type != item.type or
-    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).online != item.online or
-    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).storage.blobStoreName != item.storage.blobStoreName or
-    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).storage.strictContentTypeValidation != item.storage.strictContentTypeValidation or
-    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).proxy.remoteUrl != item.proxy.remoteUrl or
-    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).proxy.contentMaxAge != item.proxy.contentMaxAge or
-    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).proxy.metadataMaxAge != item.proxy.metadataMaxAge or
-    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).negativeCache.enabled != item.negativeCache.enabled or
-    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).negativeCache.timeToLive != item.negativeCache.timeToLive or
-    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).httpClient.blocked != item.httpClient.blocked or
-    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).httpClient.autoBlock != item.httpClient.autoBlock or
-    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).httpClient.connection.retries != item.httpClient.connection.retries or
-    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).httpClient.connection.userAgentSuffix != item.httpClient.connection.userAgentSuffix or
-    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).httpClient.connection.timeout != item.httpClient.connection.timeout or
-    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).httpClient.connection.enableCircularRedirects != item.httpClient.connection.enableCircularRedirects or
-    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).httpClient.connection.enableCookies != item.httpClient.connection.enableCookies or
-    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).httpClient.connection.useTrustStore != item.httpClient.connection.useTrustStore or
-    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).maven.versionPolicy != item.maven.versionPolicy or
-    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).maven.layoutPolicy != item.maven.layoutPolicy or
+    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).format | default(omit) != item.format | default(None) or
+    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).type | default(omit) != item.type | default(None) or
+    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).online | default(omit) != item.online | default(None) or
+    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).storage.blobStoreName | default(omit) != item.storage.blobStoreName | default(None) or
+    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).storage.strictContentTypeValidation | default(omit) != item.storage.strictContentTypeValidation | default(None) or
+    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).proxy.remoteUrl | default(omit) != item.proxy.remoteUrl | default(None) or
+    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).proxy.contentMaxAge | default(omit) != item.proxy.contentMaxAge | default(None) or
+    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).proxy.metadataMaxAge | default(omit) != item.proxy.metadataMaxAge | default(None) or
+    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).negativeCache.enabled | default(omit) != item.negativeCache.enabled | default(None) or
+    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).negativeCache.timeToLive | default(omit) != item.negativeCache.timeToLive | default(None) or
+    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).httpClient.blocked | default(omit) != item.httpClient.blocked | default(None) or
+    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).httpClient.autoBlock | default(omit) != item.httpClient.autoBlock | default(None) or
+    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).httpClient.connection.retries | default(omit) != item.httpClient.connection.retries | default(None) or
+    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).httpClient.connection.userAgentSuffix | default(omit) != item.httpClient.connection.userAgentSuffix | default(None) or
+    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).httpClient.connection.timeout | default(omit) != item.httpClient.connection.timeout | default(None) or
+    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).httpClient.connection.enableCircularRedirects | default(omit) != item.httpClient.connection.enableCircularRedirects | default(None) or
+    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).httpClient.connection.enableCookies | default(omit) != item.httpClient.connection.enableCookies | default(None) or
+    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).httpClient.connection.useTrustStore | default(omit) != item.httpClient.connection.useTrustStore | default(None) or
+    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).maven.versionPolicy | default(omit) != item.maven.versionPolicy | default(None) or
+    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).maven.layoutPolicy | default(omit) != item.maven.layoutPolicy | default(None) or
     (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).maven.contentDisposition | default(omit) != item.maven.contentDisposition | default(None) or
     (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).cleanup.policyNames | default(omit) != item.cleanup.policyNames | default(None)
 
