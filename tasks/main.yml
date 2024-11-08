@@ -208,7 +208,7 @@
   set_fact:
     maven_proxy_repos_to_update: "{{ maven_proxy_repos_to_update + [ item ] }}"
   loop: "{{ final_nexus_repos_maven_proxy | list }}"
-  # TODO: implement cleanup policy, routingrule, replication and authentication
+  # TODO: implement routingRule, replication and authentication
   when: >
     (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first) is not defined or
     (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).format != item.format or
@@ -231,7 +231,8 @@
     (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).httpClient.connection.useTrustStore != item.httpClient.connection.useTrustStore or
     (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).maven.versionPolicy != item.maven.versionPolicy or
     (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).maven.layoutPolicy != item.maven.layoutPolicy or
-    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).maven.contentDisposition != item.maven.contentDisposition
+    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).maven.contentDisposition | default(omit) != item.maven.contentDisposition | default(None) or
+    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).cleanup.policyNames | default(omit) != item.cleanup.policyNames | default(None)
 
 - name: Show maven_hosted_repos_to_update
   debug:
