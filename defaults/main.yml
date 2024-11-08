@@ -61,49 +61,9 @@ __nexus_repos_maven_proxy_defaults:
     layoutPolicy: STRICT
     contentDisposition: ATTACHMENT
 
-nexus_repos_maven_hosted:
-  - name: repo-1
-    maven:
-      versionPolicy: RELEASE
-      layoutPolicy: STRICT
-      contentDisposition: INLINE
-  - name: maven-snapshots
-    storage:
-      strictContentTypeValidation: true
-      writePolicy: ALLOW_ONCE
-    maven:
-      contentDisposition: INLINE
-      layoutPolicy: STRICT
-      versionPolicy: SNAPSHOT
+nexus_repos_maven_hosted: []
 
-  - name: maven-releases
-    online: true
-    storage:
-      strictContentTypeValidation: true
-    maven:
-      contentDisposition: INLINE
-      layoutPolicy: STRICT
-      versionPolicy: RELEASE
-
-  - name: repo-2
-
-nexus_repos_maven_proxy:
-  - name: maven-central
-    proxy:
-      remoteUrl: https://repo1.maven.org/maven2/
-      contentMaxAge: -1
-      metadataMaxAge: 1440
-    negativeCache:
-      enabled: true
-      timeToLive: 1440
-    httpClient:
-      blocked: false
-      autoBlock: true
-  - name: maven-proxy-2
-    proxy:
-      remoteUrl: https://repo1.maven.org/maven2/
-      contentMaxAge: -1
-      metadataMaxAge: 1440
+nexus_repos_maven_proxy: []
 
 nexus_repos_maven_group: []
 
