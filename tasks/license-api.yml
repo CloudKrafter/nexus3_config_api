@@ -24,7 +24,7 @@
   ansible.builtin.copy:
     content: "{{ nexus_license_b64 | b64decode }}"
     dest: "{{ nexus_license_path }}"
-  when: __license_file_path__.stat.exists == False and nexus_enable_pro == true
+  when: __license_file_path__.stat.exists == False and nexus_enable_pro == true and __nexus_license_info__.status != 200
 
 - name: Upload license file through API
   ansible.builtin.uri:
@@ -40,7 +40,7 @@
     src: "{{ nexus_license_path }}"
     status_code: 200
   register: __uploaded_license__
-  when: __license_file_path__.stat.exists == True and nexus_enable_pro == true
+  when: __license_file_path__.stat.exists == True and nexus_enable_pro == true and __nexus_license_info__.status != 200
 
 - name: Remove license
   ansible.builtin.uri:
