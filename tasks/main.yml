@@ -1,4 +1,7 @@
 ---
+# include tasks from license-api.yml
+- include_tasks: license-api.yml
+
 - name: Get all Cleanup policies
   uri:
     url: "{{ nexus_protocol }}://{{ nexus_hostname }}:{{ nexus_port }}/service/rest/v1/cleanup/policies"
@@ -9,9 +12,12 @@
     password: "{{ nexus_admin_password }}"
     force_basic_auth: true
   register: __nexus_cleanup_policies__
-  until: __nexus_cleanup_policies__.status == 200
-  retries: 30
-  delay: 10
+  when: nexus_enable_pro | bool
+
+# Show all cleanup policies
+- name: Show all cleanup policies
+  debug:
+    var: __nexus_cleanup_policies__
 
 - name: Get all repositories
   uri:

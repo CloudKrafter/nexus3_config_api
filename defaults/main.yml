@@ -1,9 +1,10 @@
 # defaults file for nexus3-config-as-code
 nexus_protocol: http
-nexus_hostname: 172.17.0.3
+nexus_hostname: localhost
 nexus_port: 8081
 nexus_admin_username: admin
 nexus_admin_password: changeme
+nexus_enable_pro: false
 
 nexus_config_maven: true
 
@@ -101,3 +102,10 @@ nexus_repos_maven_proxy:
       metadataMaxAge: 1440
 
 nexus_repos_maven_group: []
+
+# If you set nexus_enable_pro to true, you must provide a base64 encoded license file
+# Either by setting the NEXUS_LICENSE_B64 environment variable or by providing the base64 encoded license file directly below.
+nexus_license_b64: # <your Nexus .lic license file encoded into a base64 string>
+
+# where to obtain the license file from or where to store it during an playbook run
+nexus_license_path: files/license.lic

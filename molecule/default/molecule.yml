@@ -28,9 +28,17 @@ platforms:
 
 provisioner:
   name: ansible
+  options:
+    vvv: True
   collections:
     - community.general
     - community.docker
+  playbooks:
+    prepare: prepare.yml
+    converge: converge.yml
+  inventory:
+    links:
+      group_vars: group_vars/
 
 scenario:
   create_sequence:
