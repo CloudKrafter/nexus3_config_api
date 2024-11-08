@@ -6,13 +6,7 @@ nexus_admin_username: admin
 nexus_admin_password: changeme
 nexus_enable_pro: false
 
-nexus_repos_cleanup_policies:
-  - name: mvn_cleanup
-    format: maven2
-    notes: "mvn"
-    criteria:
-      lastBlobUpdated: 60
-      lastDownloaded: 120
+nexus_repos_cleanup_policies: []
 
 nexus_config_maven: true
 
@@ -25,6 +19,7 @@ __nexus_repos_maven_hosted_defaults:
     strictContentTypeValidation: false
     writePolicy: allow_once
   cleanup:
+    policyNames: []
   component:
     proprietaryComponents: false
   maven:
@@ -40,6 +35,7 @@ __nexus_repos_maven_proxy_defaults:
     blobStoreName: default
     strictContentTypeValidation: true
   cleanup:
+    policyNames: []
   proxy:
     remoteUrl: https://remote.repository.com
     contentMaxAge: 1440
