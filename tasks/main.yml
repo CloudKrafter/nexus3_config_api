@@ -4,7 +4,7 @@
 
 - name: Get all Cleanup policies
   uri:
-    url: "{{ nexus_protocol }}://{{ nexus_hostname }}:{{ nexus_port }}/service/rest/v1/cleanup/policies"
+    url: "{{ nexus_protocol }}://{{ nexus_hostname }}:{{ nexus_port }}/service/rest/v1/cleanup-policies"
     method: GET
     validate_certs: false
     status_code: 200
@@ -13,6 +13,15 @@
     force_basic_auth: true
   register: __nexus_cleanup_policies__
   when: nexus_enable_pro | bool
+
+- name: Create configured Cleanup Policies using Nexus API
+  ansible.builtin.include_tasks: cleanup-policies.yml
+  vars:
+    policies: "{{ item | default([]) }}"
+    method: POST
+  with_items:
+    - "{{ nexus_repos_cleanup_policies | default([]) }}"
+  when: nexus_repos_cleanup_policies | length > 0
 
 # Show all cleanup policies
 - name: Show all cleanup policies
