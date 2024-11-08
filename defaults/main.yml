@@ -6,6 +6,8 @@ nexus_admin_username: admin
 nexus_admin_password: changeme
 nexus_enable_pro: false
 
+# If you set nexus_enable_pro to true, you must provide a base64 encoded license file
+# Either by setting the NEXUS_LICENSE_B64 environment variable or by providing the base64 encoded license file directly below.
 nexus_license_b64: # <your Nexus .lic license file encoded into a base64 string>
 
 # where to obtain the license file from or where to store it during an playbook run
