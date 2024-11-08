@@ -14,14 +14,33 @@
   register: __nexus_cleanup_policies__
   when: nexus_enable_pro | bool
 
+- name: Determine cleanup policies to create
+  set_fact:
+    nexus_repos_cleanup_policies_to_create: "{{ nexus_repos_cleanup_policies | rejectattr('name', 'in', __nexus_cleanup_policies__.json | map(attribute='name') | list) | list }}"
+  when: nexus_enable_pro | bool
+
+- name: Determine cleanup policies to delete
+  set_fact:
+    nexus_repos_cleanup_policies_to_delete: "{{ __nexus_cleanup_policies__.json | rejectattr('name', 'in', nexus_repos_cleanup_policies | map(attribute='name') | list) | list }}"
+  when: nexus_enable_pro | bool
+
 - name: Create configured Cleanup Policies using Nexus API
   ansible.builtin.include_tasks: cleanup-policies.yml
   vars:
     policies: "{{ item | default([]) }}"
     method: POST
   with_items:
-    - "{{ nexus_repos_cleanup_policies | default([]) }}"
-  when: nexus_repos_cleanup_policies | length > 0
+    - "{{ nexus_repos_cleanup_policies_to_create | default([]) }}"
+  when: nexus_repos_cleanup_policies_to_create | length > 0
+
+- name: Delete Cleanup Policies using Nexus API
+  ansible.builtin.include_tasks: cleanup-policies.yml
+  vars:
+    policies: "{{ item | default([]) }}"
+    method: DELETE
+  with_items:
+    - "{{ nexus_repos_cleanup_policies_to_delete | default([]) }}"
+  when: nexus_repos_cleanup_policies_to_delete | length > 0
 
 # Show all cleanup policies
 - name: Show all cleanup policies
@@ -148,11 +167,25 @@
     maven_proxy_repos_to_delete: "{{ existing_maven_proxy_repos | rejectattr('name', 'in', final_nexus_repos_maven_proxy | map(attribute='name') | list) | list }}"
     maven_group_repos_to_delete: "{{ existing_maven_group_repos | rejectattr('name', 'in', nexus_repos_maven_group | map(attribute='name') | list) | list }}"
 
-- name: Initialize empty array for repositories to be updated
+- name: Initialize empty array for assets to be updated
   set_fact:
     maven_hosted_repos_to_update: []
     maven_proxy_repos_to_update: []
     maven_group_repos_to_update: []
+    nexus_repos_cleanup_policies_to_update: []
+
+- name: Compare cleanup policies for changes
+  set_fact:
+    nexus_repos_cleanup_policies_to_update: "{{ nexus_repos_cleanup_policies_to_update + [ item ] }}"
+  loop: "{{ nexus_repos_cleanup_policies | list }}"
+  when: >
+    ( __nexus_cleanup_policies__.json | selectattr('name', 'equalto', item.name) | first) is not defined or
+    ( __nexus_cleanup_policies__.json | selectattr('name', 'equalto', item.name) | first).criteriaLastBlobUpdated | default(omit) != item.criteriaLastBlobUpdated | default(None) or
+    ( __nexus_cleanup_policies__.json | selectattr('name', 'equalto', item.name) | first).criteriaLastDownloaded | default(omit) != item.criteriaLastDownloaded | default(None) or
+    ( __nexus_cleanup_policies__.json | selectattr('name', 'equalto', item.name) | first).criteriaAssetRegex | default(omit) != item.criteriaAssetRegex | default(None) or
+    ( __nexus_cleanup_policies__.json | selectattr('name', 'equalto', item.name) | first).criteriaReleaseType | default(omit) != item.criteriaReleaseType | default(None) or
+    ( __nexus_cleanup_policies__.json | selectattr('name', 'equalto', item.name) | first).notes | default(omit) != item.notes | default(None) or
+    ( __nexus_cleanup_policies__.json | selectattr('name', 'equalto', item.name) | first).format | default(omit) != item.format | default(None)
 
 - name: Compare maven hosted repositories for changes
   set_fact:
@@ -255,6 +288,15 @@
   with_items:
     - "{{ maven_proxy_repos_to_update | default([]) }}"
   when: maven_proxy_repos_to_update | length > 0
+
+- name: Update configured Cleanup Policies using Nexus API
+  ansible.builtin.include_tasks: cleanup-policies.yml
+  vars:
+    policies: "{{ item | default([]) }}"
+    method: PUT
+  with_items:
+    - "{{ nexus_repos_cleanup_policies_to_update | default([]) }}"
+  when: nexus_repos_cleanup_policies_to_update | length > 0
 
 - name: Delete Maven Hosted repositories using Nexus API
   ansible.builtin.include_tasks: repositories-api.yml

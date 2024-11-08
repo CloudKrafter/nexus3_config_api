@@ -8,3 +8,142 @@ nexus_enable_pro: true
 
 nexus_license_b64:
 nexus_license_path: ../files/license.lic
+
+nexus_repos_cleanup_policies:
+  - name: maven_cleanup
+    format: maven2
+    notes: "maven"
+    criteriaLastBlobUpdated: 60
+    criteriaLastDownloaded: 120
+    criteriaAssetRegex: "your-regex*"
+  - name: maven_releases_cleanup
+    format: maven2
+    notes: "maven RELEASES"
+    criteriaLastBlobUpdated: 60
+    criteriaLastDownloaded: 120
+    criteriaReleaseType: RELEASES
+    criteriaAssetRegex: "your-regex*"
+  - name: maven_prereleases_cleanup
+    format: maven2
+    notes: "maven PRERELEASES"
+    criteriaLastBlobUpdated: 60
+    criteriaLastDownloaded: 120
+    criteriaReleaseType: PRERELEASES
+    criteriaAssetRegex: "your-regex*"
+  - name: python_cleanup
+    format: pypi
+    notes: "Python pip"
+    criteriaLastBlobUpdated: 60
+    criteriaLastDownloaded: 120
+    criteriaAssetRegex: "your-regex*"
+  - name: docker_cleanup
+    format: docker
+    notes: "Docker"
+    criteriaLastBlobUpdated: 60
+    criteriaLastDownloaded: 120
+    criteriaAssetRegex: "your-regex*"
+  - name: raw_cleanup
+    format: raw
+    notes: "Raw"
+    criteriaLastBlobUpdated: 60
+    criteriaLastDownloaded: 120
+    criteriaAssetRegex: "your-regex*"
+  - name: rubygems_cleanup
+    format: rubygems
+    notes: "Rubygems"
+    criteriaLastBlobUpdated: 60
+    criteriaLastDownloaded: 120
+    criteriaAssetRegex: "your-regex*"
+  - name: npm_cleanup
+    format: npm
+    notes: ""
+    criteriaAssetRegex: "your-regex*"
+  - name: npm_releases_cleanup
+    format: npm
+    notes: "npm RELEASES"
+    criteriaAssetRegex: "your-regex*"
+    criteriaReleaseType: RELEASES
+  - name: npm_prereleases_cleanup
+    format: npm
+    notes: "npm PRERELEASES"
+    criteriaAssetRegex: "your-regex*"
+    criteriaReleaseType: PRERELEASES
+  - name: nuget_cleanup
+    format: nuget
+    notes: "NuGet"
+    criteriaLastBlobUpdated: 60
+    criteriaLastDownloaded: 120
+    criteriaAssetRegex: "your-regex*"
+  - name: gitlfs_cleanup
+    format: gitlfs
+    notes: "gitlfs"
+    criteriaLastBlobUpdated: 60
+    criteriaLastDownloaded: 120
+  - name: yum_prerelease_cleanup
+    format: yum
+    notes: "yum PRERELEASES"
+    criteriaLastBlobUpdated: 60
+    criteriaLastDownloaded: 120
+    criteriaAssetRegex: "your-regex*"
+    criteriaReleaseType: PRERELEASES
+  - name: yum_releases_cleanup
+    format: yum
+    notes: "yum RELEASES"
+    criteriaLastBlobUpdated: 60
+    criteriaLastDownloaded: 120
+    criteriaAssetRegex: "your-regex*"
+    criteriaReleaseType: PRERELEASES
+  - name: yum_cleanup
+    format: yum
+    notes: "yum"
+    criteriaLastBlobUpdated: 60
+    criteriaLastDownloaded: 120
+    criteriaAssetRegex: "your-regex*"
+  - name: apt_cleanup
+    format: apt
+    notes: "apt"
+    criteriaLastBlobUpdated: 60
+    criteriaLastDownloaded: 120
+    criteriaAssetRegex: "your-regex*"
+  - name: helm_cleanup
+    format: helm
+    notes: "Helm"
+    criteriaLastBlobUpdated: 60
+    criteriaLastDownloaded: 120
+    criteriaAssetRegex: "your-regex*"
+  - name: r_cleanup
+    format: r
+    notes: "r"
+    criteriaLastBlobUpdated: 60
+    criteriaLastDownloaded: 120
+    criteriaAssetRegex: "your-regex*"
+  - name: conda_cleanup
+    format: conda
+    notes: "conda"
+    criteriaLastBlobUpdated: 60
+    criteriaLastDownloaded: 120
+    criteriaAssetRegex: "your-regex*"
+  - name: go_cleanup
+    format: go
+    notes: "go"
+    criteriaLastBlobUpdated: 60
+    criteriaLastDownloaded: 120
+    criteriaAssetRegex: "your-regex*"
+  - name: cocoapods_cleanup
+    format: cocoapods
+    notes: "cocoapods"
+    criteriaLastBlobUpdated: 60
+    criteriaLastDownloaded: 120
+    criteriaAssetRegex: "your-regex*"
+  - name: conan_cleanup
+    format: conan
+    notes: "conan"
+    criteriaLastBlobUpdated: 60
+    criteriaLastDownloaded: 120
+    criteriaAssetRegex: "your-regex*"
+  - name: p2_cleanup
+    format: p2
+    notes: "p2-notes"
+    criteriaLastBlobUpdated: 60
+    criteriaLastDownloaded: 120
+    criteriaAssetRegex: "your-regex*"
