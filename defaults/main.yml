@@ -53,7 +53,12 @@ __nexus_repos_maven_proxy_defaults:
       enableCircularRedirects: false
       enableCookies: false
       useTrustStore: false
-    authentication:
+    # authentication:
+    #   type:
+    #   username:
+    #   preemptive:
+    #   ntlmHost:
+    #   ntlmDomain:
   routingRule:
   replication:
   maven:

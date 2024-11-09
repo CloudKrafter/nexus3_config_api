@@ -1,7 +1,15 @@
 ---
 # include tasks from license-api.yml
 - include_tasks: license-api.yml
+- name: Initialize empty array for assets to be updated
+  set_fact:
+    maven_hosted_repos_to_update: []
+    maven_proxy_repos_to_update: []
+    maven_group_repos_to_update: []
+    nexus_repos_cleanup_policies_to_update: []
     nexus_routing_rules_to_update: []
+
+############ Cleanup Policies ############
 
 - name: Get all Cleanup policies
   uri:
@@ -25,8 +33,33 @@
     nexus_repos_cleanup_policies_to_delete: "{{ __nexus_cleanup_policies__.json | rejectattr('name', 'in', nexus_repos_cleanup_policies | map(attribute='name') | list) | list }}"
   when: nexus_enable_pro | bool
 
+- name: Compare cleanup policies for changes
+  set_fact:
+    nexus_repos_cleanup_policies_to_update: "{{ nexus_repos_cleanup_policies_to_update + [ item ] }}"
+  loop: "{{ nexus_repos_cleanup_policies | list }}"
+  when: >
+    ( __nexus_cleanup_policies__.json | selectattr('name', 'equalto', item.name) | first) is not defined or
+    ( __nexus_cleanup_policies__.json | selectattr('name', 'equalto', item.name) | first).criteriaLastBlobUpdated | default(omit) != item.criteriaLastBlobUpdated | default(None) or
+    ( __nexus_cleanup_policies__.json | selectattr('name', 'equalto', item.name) | first).criteriaLastDownloaded | default(omit) != item.criteriaLastDownloaded | default(None) or
+    ( __nexus_cleanup_policies__.json | selectattr('name', 'equalto', item.name) | first).criteriaAssetRegex | default(omit) != item.criteriaAssetRegex | default(None) or
+    ( __nexus_cleanup_policies__.json | selectattr('name', 'equalto', item.name) | first).criteriaReleaseType | default(omit) != item.criteriaReleaseType | default(None) or
+    ( __nexus_cleanup_policies__.json | selectattr('name', 'equalto', item.name) | first).notes | default(omit) != item.notes | default(None) or
+    ( __nexus_cleanup_policies__.json | selectattr('name', 'equalto', item.name) | first).format | default(omit) != item.format | default(None)
+
+- name: Show nexus_repos_cleanup_policies_to_create
+  debug:
+    var: nexus_repos_cleanup_policies_to_create | length
+
+- name: Show nexus_repos_cleanup_policies_to_update
+  debug:
+    var: nexus_repos_cleanup_policies_to_update | length
+
+- name: Show nexus_repos_cleanup_policies_to_delete
+  debug:
+    var: nexus_repos_cleanup_policies_to_delete | length
+
 - name: Create configured Cleanup Policies using Nexus API
-  ansible.builtin.include_tasks: cleanup-policies.yml
+  ansible.builtin.include_tasks: cleanup-policies-api.yml
   vars:
     policies: "{{ item | default([]) }}"
     method: POST
@@ -34,8 +67,17 @@
     - "{{ nexus_repos_cleanup_policies_to_create | default([]) }}"
   when: nexus_repos_cleanup_policies_to_create | length > 0
 
+- name: Update configured Cleanup Policies using Nexus API
+  ansible.builtin.include_tasks: cleanup-policies-api.yml
+  vars:
+    policies: "{{ item | default([]) }}"
+    method: PUT
+  with_items:
+    - "{{ nexus_repos_cleanup_policies_to_update | default([]) }}"
+  when: nexus_repos_cleanup_policies_to_update | length > 0
+
 - name: Delete Cleanup Policies using Nexus API
-  ansible.builtin.include_tasks: cleanup-policies.yml
+  ansible.builtin.include_tasks: cleanup-policies-api.yml
   vars:
     policies: "{{ item | default([]) }}"
     method: DELETE
@@ -43,8 +85,8 @@
     - "{{ nexus_repos_cleanup_policies_to_delete | default([]) }}"
   when: nexus_repos_cleanup_policies_to_delete | length > 0
 
-# Show all cleanup policies
-- name: Show all cleanup policies
+############ END Cleanup Policies ############
+
 ############ Routing Rules ############
 
 - name: Get all routing rules
@@ -117,6 +159,7 @@
 
 ############ END Routing Rules ############
 
+############ Repositories ############
 
 - name: Get all repositories
   uri:
@@ -132,6 +175,8 @@
   retries: 30
   delay: 10
 
+############ Maven Repositories ############
+
 - name: Process definitions for maven
   when: nexus_config_maven | bool
   block:
@@ -145,9 +190,9 @@
           {%- endfor -%}
           {{ result | to_json | from_json }}
 
-    - name: Show final_nexus_repos_maven_proxy
-      debug:
-        var: final_nexus_repos_maven_proxy
+    # - name: Show final_nexus_repos_maven_proxy
+    #   debug:
+    #     var: final_nexus_repos_maven_proxy
 
     - name: Apply defaults to maven hosted repos
       ansible.builtin.set_fact:
@@ -159,9 +204,9 @@
           {%- endfor -%}
           {{ result | to_json | from_json }}
 
-    - name: Show final_nexus_repos_maven_hosted
-      debug:
-        var: final_nexus_repos_maven_hosted
+    # - name: Show final_nexus_repos_maven_hosted
+    #   debug:
+    #     var: final_nexus_repos_maven_hosted
 
     # - name: Apply defaults to maven group repos
     #   ansible.builtin.set_fact:
@@ -220,11 +265,16 @@
     #       }}
 
 # Need filtered facts for existing repositories because the API has different endpoints for each type and format
+
 - name: Filter existing repositories
   set_fact:
     existing_maven_hosted_repos: "{{ __nexus_repositories__.json | selectattr('format', 'equalto', 'maven2') | selectattr('type', 'equalto', 'hosted') | list }}"
     existing_maven_proxy_repos: "{{ __nexus_repositories__.json | selectattr('format', 'equalto', 'maven2') | selectattr('type', 'equalto', 'proxy') | list }}"
     existing_maven_group_repos: "{{ __nexus_repositories__.json | selectattr('format', 'equalto', 'maven2') | selectattr('type', 'equalto', 'group') | list }}"
+
+- name: Show existing_maven_proxy_repos
+  debug:
+    var: existing_maven_proxy_repos
 
 - name: Determine repositories to create
   set_fact:
@@ -238,42 +288,24 @@
     maven_proxy_repos_to_delete: "{{ existing_maven_proxy_repos | rejectattr('name', 'in', final_nexus_repos_maven_proxy | map(attribute='name') | list) | list }}"
     maven_group_repos_to_delete: "{{ existing_maven_group_repos | rejectattr('name', 'in', nexus_repos_maven_group | map(attribute='name') | list) | list }}"
 
-- name: Initialize empty array for assets to be updated
-  set_fact:
-    maven_hosted_repos_to_update: []
-    maven_proxy_repos_to_update: []
-    maven_group_repos_to_update: []
-    nexus_repos_cleanup_policies_to_update: []
-
-- name: Compare cleanup policies for changes
-  set_fact:
-    nexus_repos_cleanup_policies_to_update: "{{ nexus_repos_cleanup_policies_to_update + [ item ] }}"
-  loop: "{{ nexus_repos_cleanup_policies | list }}"
-  when: >
-    ( __nexus_cleanup_policies__.json | selectattr('name', 'equalto', item.name) | first) is not defined or
-    ( __nexus_cleanup_policies__.json | selectattr('name', 'equalto', item.name) | first).criteriaLastBlobUpdated | default(omit) != item.criteriaLastBlobUpdated | default(None) or
-    ( __nexus_cleanup_policies__.json | selectattr('name', 'equalto', item.name) | first).criteriaLastDownloaded | default(omit) != item.criteriaLastDownloaded | default(None) or
-    ( __nexus_cleanup_policies__.json | selectattr('name', 'equalto', item.name) | first).criteriaAssetRegex | default(omit) != item.criteriaAssetRegex | default(None) or
-    ( __nexus_cleanup_policies__.json | selectattr('name', 'equalto', item.name) | first).criteriaReleaseType | default(omit) != item.criteriaReleaseType | default(None) or
-    ( __nexus_cleanup_policies__.json | selectattr('name', 'equalto', item.name) | first).notes | default(omit) != item.notes | default(None) or
-    ( __nexus_cleanup_policies__.json | selectattr('name', 'equalto', item.name) | first).format | default(omit) != item.format | default(None)
-
 - name: Compare maven hosted repositories for changes
   set_fact:
     maven_hosted_repos_to_update: "{{ maven_hosted_repos_to_update + [ item ] }}"
   loop: "{{ final_nexus_repos_maven_hosted | list }}"
-  # TODO: implement cleanup policies, proprietaryComponents component
+  # TODO: implement cleanup policies
   when: >
     (existing_maven_hosted_repos | selectattr('name', 'equalto', item.name) | first) is not defined or
-    (existing_maven_hosted_repos | selectattr('name', 'equalto', item.name) | first).format | default(omit) != item.format | default(None) or
-    (existing_maven_hosted_repos | selectattr('name', 'equalto', item.name) | first).type | default(omit) != item.type | default(None) or
-    (existing_maven_hosted_repos | selectattr('name', 'equalto', item.name) | first).online | default(omit) != item.online | default(None) or
+    (existing_maven_hosted_repos | selectattr('name', 'equalto', item.name) | first).format | default('maven2') != item.format | default('maven2') or
+    (existing_maven_hosted_repos | selectattr('name', 'equalto', item.name) | first).type | default('hosted') != item.type | default('hosted') or
+    (existing_maven_hosted_repos | selectattr('name', 'equalto', item.name) | first).online | default(true) != item.online | default(true) or
+    (existing_maven_hosted_repos | selectattr('name', 'equalto', item.name) | first).cleanup.policyNames | default(omit) != item.cleanup.policyNames | default(omit) or
     (existing_maven_hosted_repos | selectattr('name', 'equalto', item.name) | first).storage.blobStoreName | default(omit) != item.storage.blobStoreName | default(None) or
-    (existing_maven_hosted_repos | selectattr('name', 'equalto', item.name) | first).storage.strictContentTypeValidation | default(omit) != item.storage.strictContentTypeValidation | default(None) or
+    (existing_maven_hosted_repos | selectattr('name', 'equalto', item.name) | first).storage.strictContentTypeValidation | default(false) != item.storage.strictContentTypeValidation | default(false) or
     (existing_maven_hosted_repos | selectattr('name', 'equalto', item.name) | first).storage.writePolicy | default(omit) != item.storage.writePolicy | default(None) or
     (existing_maven_hosted_repos | selectattr('name', 'equalto', item.name) | first).maven.versionPolicy | default(omit) != item.maven.versionPolicy | default(None) or
     (existing_maven_hosted_repos | selectattr('name', 'equalto', item.name) | first).maven.layoutPolicy | default(omit) != item.maven.layoutPolicy | default(None) or
-    (existing_maven_hosted_repos | selectattr('name', 'equalto', item.name) | first).maven.contentDisposition | default(omit) != item.maven.contentDisposition | default(None)
+    (existing_maven_hosted_repos | selectattr('name', 'equalto', item.name) | first).maven.contentDisposition | default(omit) != item.maven.contentDisposition | default(None) or
+    (existing_maven_hosted_repos | selectattr('name', 'equalto', item.name) | first).component.proprietaryComponents | default(false) != item.component.proprietaryComponents | default(false)
 
 - name: Compare maven proxy repositories for changes
   set_fact:
@@ -282,18 +314,18 @@
   # TODO: implement replication and authentication
   when: >
     (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first) is not defined or
-    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).format | default(omit) != item.format | default(None) or
-    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).type | default(omit) != item.type | default(None) or
-    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).online | default(omit) != item.online | default(None) or
+    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).format | default('maven2') != item.format | default('maven2') or
+    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).type | default('proxy') != item.type | default('proxy') or
+    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).online | default(true) != item.online | default(true) or
     (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).storage.blobStoreName | default(omit) != item.storage.blobStoreName | default(None) or
-    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).storage.strictContentTypeValidation | default(omit) != item.storage.strictContentTypeValidation | default(None) or
+    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).storage.strictContentTypeValidation | default(false) != item.storage.strictContentTypeValidation | default(false) or
     (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).proxy.remoteUrl | default(omit) != item.proxy.remoteUrl | default(None) or
     (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).proxy.contentMaxAge | default(omit) != item.proxy.contentMaxAge | default(None) or
     (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).proxy.metadataMaxAge | default(omit) != item.proxy.metadataMaxAge | default(None) or
-    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).negativeCache.enabled | default(omit) != item.negativeCache.enabled | default(None) or
+    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).negativeCache.enabled | default(false) != item.negativeCache.enabled | default(false) or
     (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).negativeCache.timeToLive | default(omit) != item.negativeCache.timeToLive | default(None) or
     (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).httpClient.blocked | default(omit) != item.httpClient.blocked | default(None) or
-    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).httpClient.autoBlock | default(omit) != item.httpClient.autoBlock | default(None) or
+    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).httpClient.autoBlock | default(false) != item.httpClient.autoBlock | default(false) or
     (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).httpClient.connection.retries | default(omit) != item.httpClient.connection.retries | default(None) or
     (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).httpClient.connection.userAgentSuffix | default(omit) != item.httpClient.connection.userAgentSuffix | default(None) or
     (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).httpClient.connection.timeout | default(omit) != item.httpClient.connection.timeout | default(None) or
@@ -317,6 +349,10 @@
 - name: Show maven_hosted_repos_to_delete
   debug:
     var: maven_hosted_repos_to_delete | length
+
+- name: Show maven_proxy_repos_to_update
+  debug:
+    var: maven_proxy_repos_to_update | length
 
 - name: Create configured Maven Hosted repositories using Nexus API
   ansible.builtin.include_tasks: repositories-api.yml
@@ -361,15 +397,6 @@
   with_items:
     - "{{ maven_proxy_repos_to_update | default([]) }}"
   when: maven_proxy_repos_to_update | length > 0
-
-- name: Update configured Cleanup Policies using Nexus API
-  ansible.builtin.include_tasks: cleanup-policies.yml
-  vars:
-    policies: "{{ item | default([]) }}"
-    method: PUT
-  with_items:
-    - "{{ nexus_repos_cleanup_policies_to_update | default([]) }}"
-  when: nexus_repos_cleanup_policies_to_update | length > 0
 
 - name: Delete Maven Hosted repositories using Nexus API
   ansible.builtin.include_tasks: repositories-api.yml
