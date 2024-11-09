@@ -62,11 +62,6 @@
           }
         body_format: json
 
-    - name: If NEXUS_LICENSE_B64 is set
-      ansible.builtin.debug:
-        msg: "{{ lookup('env', 'NEXUS_LICENSE_B64') }}"
-      when: lookup('env', 'NEXUS_LICENSE_B64') is defined
-
     - name: Create license file
       ansible.builtin.copy:
         content: "{{ lookup('env', 'NEXUS_LICENSE_B64') | b64decode }}"
