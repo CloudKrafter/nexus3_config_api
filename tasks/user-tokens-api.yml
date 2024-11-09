@@ -1,0 +1,41 @@
+---
+- name: Get status of User tokens capability
+  ansible.builtin.uri:
+    url: "{{ nexus_protocol }}://{{ nexus_hostname }}:{{ nexus_port }}/service/rest/v1/security/user-tokens"
+    method: GET
+    validate_certs: false
+    user: "{{ nexus_admin_username }}"
+    password: "{{ nexus_admin_password }}"
+    force_basic_auth: true
+    headers:
+      Accept: "application/json"
+    status_code: 200
+  register: __nexus_user_tokens__
+
+- name: Set fact for __nexus_user_tokens__
+  set_fact:
+    current_nexus_user_tokens: "{{ __nexus_user_tokens__.json | dict2items | sort(attribute='key') | items2dict }}"
+  when: __nexus_user_tokens__.status == 200
+
+- name: Set fact for nexus_user_tokens_capability
+  set_fact:
+    desired_nexus_user_tokens_capability: "{{ nexus_user_tokens_capability | dict2items | sort(attribute='key') | items2dict }}"
+
+- name: Configure User tokens capability
+  ansible.builtin.uri:
+    url: "{{ nexus_protocol }}://{{ nexus_hostname }}:{{ nexus_port }}/service/rest/v1/security/user-tokens"
+    method: PUT
+    validate_certs: false
+    user: "{{ nexus_admin_username }}"
+    password: "{{ nexus_admin_password }}"
+    force_basic_auth: true
+    headers:
+      Accept: "application/json"
+      Content-Type: "application/json"
+    body: "{{ desired_nexus_user_tokens_capability | to_json }}"
+    status_code: 200
+  register: __nexus_user_tokens_update__
+  when: current_nexus_user_tokens != desired_nexus_user_tokens_capability
+  # The API always returns 200, even if the configuration is not changed
+  # So we need to check if the configuration is changed to be idempotent
+  changed_when: current_nexus_user_tokens != desired_nexus_user_tokens_capability

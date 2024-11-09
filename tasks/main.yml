@@ -1,6 +1,7 @@
 ---
 # include tasks from license-api.yml
 - include_tasks: license-api.yml
+- include_tasks: user-tokens-api.yml
 
 - name: Initialize empty array for assets to be updated
   set_fact:
