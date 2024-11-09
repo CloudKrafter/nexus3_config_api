@@ -3,6 +3,7 @@
   hosts: localhost
   gather_facts: false
   tasks:
+
     - name: Gather facts about the nexus3-oss container
       community.docker.docker_container_info:
         name: nexus3-oss
@@ -60,3 +61,59 @@
             "realmName": "NexusAuthorizingRealm"
           }
         body_format: json
+
+    - name: If NEXUS_LICENSE_B64 is set
+      ansible.builtin.debug:
+        msg: "{{ lookup('env', 'NEXUS_LICENSE_B64') }}"
+      when: lookup('env', 'NEXUS_LICENSE_B64') is defined
+
+    - name: Create license file
+      ansible.builtin.copy:
+        content: "{{ lookup('env', 'NEXUS_LICENSE_B64') | b64decode }}"
+        dest: "nexus.lic"
+        mode: '0644'
+      register: __license_status__
+      when: lookup('env', 'NEXUS_LICENSE_B64') is defined
+
+    - name: Upload license file through API
+      ansible.builtin.uri:
+        url: "http://{{ nexus3_ip }}:8081/service/rest/v1/system/license"
+        method: POST
+        validate_certs: false
+        user: admin
+        password: changeme
+        force_basic_auth: true
+        headers:
+          Accept: "application/json"
+          Content-Type: "application/octet-stream"
+        src: "nexus.lic"
+        status_code: 200
+      register: __uploaded_license__
+      when: lookup('env', 'NEXUS_LICENSE_B64') is defined
+      ignore_errors: true
+
+    - name: Remove license from file system
+      ansible.builtin.file:
+        path: "nexus.lic"
+        state: absent
+
+    - name: Stop container
+      community.docker.docker_container:
+        name: nexus3-oss
+        state: stopped
+
+    - name: Start container
+      community.docker.docker_container:
+        name: nexus3-oss
+        state: started
+
+    - name: Wait for Nexus writable API endpoint to be available
+      ansible.builtin.uri:
+        url: "http://{{ nexus3_ip }}:8081/service/rest/v1/status/writable"
+        method: GET
+        validate_certs: false
+        status_code: 200
+      register: __nexus_writable__
+      until: __nexus_writable__.status == 200
+      retries: 30
+      delay: 10
