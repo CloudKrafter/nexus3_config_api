@@ -153,12 +153,16 @@ nexus_repos_maven_hosted:
     cleanup:
       policyNames:
         - maven_cleanup
-        - maven_prereleases_cleanup
+    component:
+      proprietaryComponents: true
     maven:
       versionPolicy: RELEASE
       layoutPolicy: STRICT
       contentDisposition: INLINE
   - name: maven-snapshots
+    cleanup:
+      policyNames:
+        - maven_cleanup
     storage:
       strictContentTypeValidation: true
       writePolicy: ALLOW_ONCE
@@ -166,6 +170,8 @@ nexus_repos_maven_hosted:
       contentDisposition: INLINE
       layoutPolicy: STRICT
       versionPolicy: SNAPSHOT
+    component:
+      proprietaryComponents: true
 
   - name: maven-releases
     online: true
@@ -175,15 +181,19 @@ nexus_repos_maven_hosted:
       contentDisposition: INLINE
       layoutPolicy: STRICT
       versionPolicy: RELEASE
-
-  - name: repo-2
-
-nexus_repos_maven_proxy:
-  - name: maven-central
+    component:
+      proprietaryComponents: true
     cleanup:
       policyNames:
         - maven_cleanup
-        - maven_releases_cleanup
+
+  - name: repo-2
+    cleanup:
+      policyNames:
+        - maven_cleanup
+
+nexus_repos_maven_proxy:
+  - name: maven-central
     proxy:
       remoteUrl: https://repo1.maven.org/maven2/
       contentMaxAge: -1
