@@ -1,4 +1,4 @@
-# Get current license information when nexus_enable_pro is true
+---
 - name: Get license information
   ansible.builtin.uri:
     url: "{{ nexus_protocol }}://{{ nexus_hostname }}:{{ nexus_port }}/service/rest/v1/system/license"
@@ -10,21 +10,19 @@
     status_code: [200, 402]
   register: __nexus_license_info__
 
-- name: Get NEXUS_LICENSE_B64 from the environment variable
-  ansible.builtin.set_fact:
-    nexus_license_b64: "{{ lookup('env', 'NEXUS_LICENSE_B64') }}"
-  when: nexus_license_b64 is not defined
+- name: show __nexus_license_info__
+  ansible.builtin.debug:
+    var: __nexus_license_info__
 
-- name: Check if "{{ nexus_license_path }}" exists
-  ansible.builtin.stat:
-    path: "{{ nexus_license_path }}"
-  register: __license_file_path__
-
+# Nexus API expects a license file in binary format to be uploaded
+# So we need to decode the base64 encoded license string into a file
 - name: Create license file
   ansible.builtin.copy:
-    content: "{{ nexus_license_b64 | b64decode }}"
-    dest: "{{ nexus_license_path }}"
-  when: __license_file_path__.stat.exists == False and nexus_enable_pro == true
+    content: "{{ (lookup('env', 'NEXUS_LICENSE_B64') or nexus_license_b64) | b64decode }}"
+    dest: "nexus.lic"
+    mode: "0644"
+  register: __license_status__
+  when: (lookup('env', 'NEXUS_LICENSE_B64') is defined or nexus_license_b64 is defined) and nexus_enable_pro == true and __nexus_license_info__.json.effectiveDate is not defined
 
 - name: Upload license file through API
   ansible.builtin.uri:
@@ -37,10 +35,16 @@
     headers:
       Accept: "application/json"
       Content-Type: "application/octet-stream"
-    src: "{{ nexus_license_path }}"
+    src: "nexus.lic"
     status_code: 200
   register: __uploaded_license__
-  when: __license_file_path__.stat.exists == True and nexus_enable_pro == true
+  when: (lookup('env', 'NEXUS_LICENSE_B64') is defined or nexus_license_b64 is defined) and nexus_enable_pro == true and __nexus_license_info__.json.effectiveDate is not defined
+
+# After uploading the license file, we can remove it from the file system
+- name: Remove license from file system
+  ansible.builtin.file:
+    path: "nexus.lic"
+    state: absent
 
 - name: Remove license
   ansible.builtin.uri:
@@ -51,4 +55,4 @@
     password: "{{ nexus_admin_password }}"
     force_basic_auth: true
     status_code: 204
-  when: nexus_enable_pro == false
+  when: (lookup('env', 'NEXUS_LICENSE_B64') is not defined or nexus_license_b64 is not defined) and nexus_enable_pro == false
