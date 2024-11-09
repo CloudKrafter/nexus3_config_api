@@ -15,14 +15,14 @@ To make this role work out-of-the-box you have to provide the following values f
 - `nexus_admin_password:`
 
 If you want to enable the Pro features, please note that you have to provide your own license.
-If your Nexus instance is already running on the Pro version, you can leave the `nexus_enable_pro` set to false. If you decide to change it's value to `true`, keep in mind it will check for the licence on every run.
+If your Nexus instance is already running on the Pro version, you can leave the `nexus_enable_pro` set to false.
 
 Role Variables
 --------------
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+<!-- A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well. -->
 
-# defaults file for nexus3-config-as-code
+### defaults file for nexus3-config-as-code
 nexus_protocol: http
 nexus_hostname: localhost
 nexus_port: 8081
@@ -98,12 +98,10 @@ nexus_repos_maven_group: []
 
 nexus_routing_rules: []
 
-# If you set nexus_enable_pro to true, you must provide a base64 encoded license file
-# Either by setting the NEXUS_LICENSE_B64 environment variable or by providing the base64 encoded license file directly below.
-nexus_license_b64: # <your Nexus .lic license file encoded into a base64 string>
+If you set `nexus_enable_pro` to `true`, you must provide a base64 encoded license file
 
-# where to obtain the license file from or where to store it during an playbook run
-nexus_license_path: files/license.lic
+Either by setting the `NEXUS_LICENSE_B64` environment variable or by providing the base64 encoded license string directly below.
+`nexus_license_b64: <your Nexus .lic license file encoded into a base64 string>`
 
 
 Dependencies
@@ -112,10 +110,10 @@ No dependencies
 
 Example Playbook
 ----------------
-This role will be executed against the Nexus API only. It does not make any changes to your target, so we can run this playbook from localhost, given the fact the machine you're running this on is able to establish a connection to your Nexus instance.
+This role will be executed against the Nexus API only. It does not make any changes to your target, so we can run this playbook from localhost, given the fact the machine you're running this on, is able to establish a connection to your Nexus instance.
 
 ```yaml
-- name: Converge
+- name: Configure Nexus
   hosts: localhost
   gather_facts: true
   roles:
