@@ -1,6 +1,7 @@
 ---
 # include tasks from license-api.yml
 - include_tasks: license-api.yml
+    nexus_routing_rules_to_update: []
 
 - name: Get all Cleanup policies
   uri:
@@ -44,8 +45,78 @@
 
 # Show all cleanup policies
 - name: Show all cleanup policies
+############ Routing Rules ############
+
+- name: Get all routing rules
+  uri:
+    url: "{{ nexus_protocol }}://{{ nexus_hostname }}:{{ nexus_port }}/service/rest/v1/routing-rules"
+    method: GET
+    validate_certs: false
+    status_code: 200
+    user: "{{ nexus_admin_username }}"
+    password: "{{ nexus_admin_password }}"
+    force_basic_auth: true
+  register: __nexus_routing_rules__
+
+- name: Determine routing rules to create
+  set_fact:
+    nexus_routing_rules_to_create: "{{ nexus_routing_rules | rejectattr('name', 'in', __nexus_routing_rules__.json | map(attribute='name') | list) | list }}"
+
+- name: Determine routing rules to delete
+  set_fact:
+    nexus_routing_rules_to_delete: "{{ __nexus_routing_rules__.json | rejectattr('name', 'in', nexus_routing_rules | map(attribute='name') | list) | list }}"
+
+- name: Compare routing rules for changes
+  set_fact:
+    nexus_routing_rules_to_update: "{{ nexus_routing_rules_to_update + [ item ] }}"
+  loop: "{{ nexus_routing_rules | list }}"
+  when: >
+    ( __nexus_routing_rules__.json | selectattr('name', 'equalto', item.name) | first) is not defined or
+    ( __nexus_routing_rules__.json | selectattr('name', 'equalto', item.name) | first).description | default(omit) != item.description | default(omit) or
+    ( __nexus_routing_rules__.json | selectattr('name', 'equalto', item.name) | first).mode | default(omit) != item.mode | default(None) or
+    ( __nexus_routing_rules__.json | selectattr('name', 'equalto', item.name) | first).matchers | default(omit) != item.matchers | default(omit)
+
+- name: Show nexus_routing_rules_to_create
   debug:
-    var: __nexus_cleanup_policies__
+    var: nexus_routing_rules_to_create | length
+
+- name: Show nexus_routing_rules_to_update
+  debug:
+    var: nexus_routing_rules_to_update | length
+
+- name: Show nexus_routing_rules_to_delete
+  debug:
+    var: nexus_routing_rules_to_delete | length
+
+- name: Create configured Routing Rules using Nexus API
+  ansible.builtin.include_tasks: routing-rules-api.yml
+  vars:
+    rules: "{{ item | default([]) }}"
+    method: POST
+  with_items:
+    - "{{ nexus_routing_rules | default([]) }}"
+  when: nexus_routing_rules_to_create | length > 0
+
+- name: Update configured Routing Rules using Nexus API
+  ansible.builtin.include_tasks: routing-rules-api.yml
+  vars:
+    rules: "{{ item | default([]) }}"
+    method: PUT
+  with_items:
+    - "{{ nexus_routing_rules_to_update | default([]) }}"
+  when: nexus_routing_rules_to_update | length > 0
+
+- name: Delete Routing Rules using Nexus API
+  ansible.builtin.include_tasks: routing-rules-api.yml
+  vars:
+    rules: "{{ item | default([]) }}"
+    method: DELETE
+  with_items:
+    - "{{ nexus_routing_rules_to_delete | default([]) }}"
+  when: nexus_routing_rules_to_delete | length > 0
+
+############ END Routing Rules ############
+
 
 - name: Get all repositories
   uri:
@@ -208,7 +279,7 @@
   set_fact:
     maven_proxy_repos_to_update: "{{ maven_proxy_repos_to_update + [ item ] }}"
   loop: "{{ final_nexus_repos_maven_proxy | list }}"
-  # TODO: implement routingRule, replication and authentication
+  # TODO: implement replication and authentication
   when: >
     (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first) is not defined or
     (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).format | default(omit) != item.format | default(None) or
@@ -232,7 +303,8 @@
     (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).maven.versionPolicy | default(omit) != item.maven.versionPolicy | default(None) or
     (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).maven.layoutPolicy | default(omit) != item.maven.layoutPolicy | default(None) or
     (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).maven.contentDisposition | default(omit) != item.maven.contentDisposition | default(None) or
-    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).cleanup.policyNames | default(omit) != item.cleanup.policyNames | default(None)
+    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).cleanup.policyNames | default(omit) != item.cleanup.policyNames | default(omit) or
+    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).routingRuleName | default(omit) != item.routingRule | default(omit)
 
 - name: Show maven_hosted_repos_to_update
   debug:
