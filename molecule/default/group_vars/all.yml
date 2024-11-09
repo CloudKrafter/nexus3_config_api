@@ -6,6 +6,12 @@ nexus_admin_username: admin
 nexus_admin_password: changeme
 nexus_enable_pro: true
 
+nexus_user_tokens_capability:
+  enabled: true
+  protectContent: true
+  expirationEnabled: true
+  expirationDays: 180
+
 # nexus_license_b64: "your-base64-encoded-license-string"
 nexus_license_path: ../files/license.lic
 
