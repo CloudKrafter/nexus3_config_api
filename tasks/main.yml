@@ -1,6 +1,7 @@
 ---
 # include tasks from license-api.yml
 - include_tasks: license-api.yml
+
 - name: Initialize empty array for assets to be updated
   set_fact:
     maven_hosted_repos_to_update: []
@@ -8,6 +9,84 @@
     maven_group_repos_to_update: []
     nexus_repos_cleanup_policies_to_update: []
     nexus_routing_rules_to_update: []
+    nexus_users_to_update: []
+
+########### Users ############
+
+- name: Get all Users
+  ansible.builtin.uri:
+    url: "{{ nexus_protocol }}://{{ nexus_hostname }}:{{ nexus_port }}/service/rest/v1/security/users"
+    method: GET
+    validate_certs: false
+    user: "{{ nexus_admin_username }}"
+    password: "{{ nexus_admin_password }}"
+    force_basic_auth: true
+    status_code: 200
+  register: __nexus_existing_users__
+
+- name: Determine users to create
+  set_fact:
+    nexus_users_to_create: "{{ nexus_users | rejectattr('userId', 'in', __nexus_existing_users__.json | map(attribute='userId') | list) | list }}"
+
+- name: Determine users to delete
+  set_fact:
+    nexus_users_to_delete: "{{ __nexus_existing_users__.json | rejectattr('userId', 'in', nexus_users | map(attribute='userId') | list) | list }}"
+
+- name: Compare users for changes
+  set_fact:
+    nexus_users_to_update: "{{ nexus_users_to_update + [ item ] }}"
+  loop: "{{ nexus_users | list }}"
+  # TODO: implement AND TEST readOnly attribute
+  when: >
+    ( __nexus_existing_users__.json | selectattr('userId', 'equalto', item.userId) | first) is not defined or
+    ( __nexus_existing_users__.json | selectattr('userId', 'equalto', item.userId) | first).firstName | default(omit) != item.firstName | default(omit) or
+    ( __nexus_existing_users__.json | selectattr('userId', 'equalto', item.userId) | first).lastName | default(omit) != item.lastName | default(omit) or
+    ( __nexus_existing_users__.json | selectattr('userId', 'equalto', item.userId) | first).emailAddress | default(omit) != item.emailAddress | default(omit) or
+    ( __nexus_existing_users__.json | selectattr('userId', 'equalto', item.userId) | first).source | default(omit) != item.source | default(omit) or
+    ( __nexus_existing_users__.json | selectattr('userId', 'equalto', item.userId) | first).status | default(omit) != item.status | default(omit) or
+    ( __nexus_existing_users__.json | selectattr('userId', 'equalto', item.userId) | first).roles | default([]) | sort != item.roles | default([]) | sort or
+    ( __nexus_existing_users__.json | selectattr('userId', 'equalto', item.userId) | first).externalRoles | default([]) | sort != item.externalRoles | default([]) | sort
+
+- name: Show nexus_users_to_create
+  debug:
+    var: nexus_users_to_create | length
+
+- name: Show nexus_users_to_update
+  debug:
+    var: nexus_users_to_update | length
+
+- name: Show nexus_users_to_delete
+  debug:
+    var: nexus_users_to_delete | length
+
+- name: Create configured Users using Nexus API
+  ansible.builtin.include_tasks: users-api.yml
+  vars:
+    users: "{{ item | default([]) }}"
+    method: POST
+  with_items:
+    - "{{ nexus_users_to_create | default([]) }}"
+  when: nexus_users_to_create | length > 0
+
+- name: Update configured Users using Nexus API
+  ansible.builtin.include_tasks: users-api.yml
+  vars:
+    users: "{{ item | default([]) }}"
+    method: PUT
+  with_items:
+    - "{{ nexus_users_to_update | default([]) }}"
+  when: nexus_users_to_update | length > 0
+
+- name: Delete Users using Nexus API
+  ansible.builtin.include_tasks: users-api.yml
+  vars:
+    users: "{{ item | default([]) }}"
+    method: DELETE
+  with_items:
+    - "{{ nexus_users_to_delete | default([]) }}"
+  when: nexus_users_to_delete | length > 0
+
+############ End Users ############
 
 ############ Cleanup Policies ############
 

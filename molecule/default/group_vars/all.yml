@@ -9,6 +9,60 @@ nexus_enable_pro: true
 # nexus_license_b64: "your-base64-encoded-license-string"
 nexus_license_path: ../files/license.lic
 
+nexus_default_user_password: changeme
+nexus_users:
+  - userId: anonymous
+    firstName: Anonymous
+    lastName: User
+    emailAddress: anonymous@example.org
+    source: default
+    status: active
+    readOnly: false
+    roles:
+      - nx-anonymous
+    externalRoles: []
+  - userId: admin
+    firstName: Administrator
+    lastName: User
+    emailAddress: admin@example.org
+    source: default
+    status: active
+    readOnly: false
+    roles:
+      - nx-admin
+    externalRoles: []
+  - userId: disabled-user
+    firstName: Disabled
+    lastName: User
+    emailAddress: info@users.org
+    source: default
+    status: disabled
+    readOnly: false
+    roles:
+      - nx-anonymous
+    externalRoles: []
+  - userId: secondary-admin
+    firstName: Secondary
+    lastName: AdminUser
+    emailAddress: test@test.com
+    source: default
+    status: active
+    readOnly: false
+    roles:
+      - nx-anonymous
+      - nx-admin
+    externalRoles: []
+  - userId: read-only-user
+    firstName: Read
+    lastName: OnlyUser
+    emailAddress: readonly@users.org
+    source: default
+    status: active
+    readOnly: true
+    roles:
+      - nx-anonymous
+    externalRoles: []
+
 nexus_repos_cleanup_policies:
   - name: maven_cleanup
     format: maven2
