@@ -29,3 +29,26 @@ Once Python3.10 or higher is available, continue to create a virtual environment
 If you have another python3 version, feel free to name the virtual environment accordingly, for example `python3 -m venv .venv-3.13`.
 Once the virtual environment is created, activate it with the following command:
 `source .venv-3.10/bin/activate`
+
+## Enabling Nexus Pro
+
+To enable Nexus Pro features during development, you'll have to bring your own license.
+The molecule prepare playbook will look for the environment variable `NEXUS_LICENSE_B64` on the host. i.e your development environment. This may be a GitHub Codespace or your system environment variable.
+
+To base64 encode your Nexus Pro license file and set it as an environment variable, follow these steps:
+
+1. **Encode the file**: Use the following command to encode your license file:
+    ```sh
+    base64 path/to/your/nexus-license.lic > encoded-license.txt
+    ```
+    Replace `path/to/your/nexus-license.lic` with the actual path to your Nexus Pro license file.
+
+2. **Set the environment variable**: Copy the contents of `encoded-license.txt` and set it as an environment variable:
+    ```sh
+    export NEXUS_LICENSE_B64=$(cat encoded-license.txt)
+    ```
+
+Now, the `NEXUS_LICENSE_B64` environment variable contains your base64 encoded license, which will be detected by the molecule to enable the pro features.
+If you provide an invalid license Nexus will ignore it and start as the OSS version.
+
+If working with an environment variable is not an option, you can provide the base64 encoded license using an Ansible variable: `nexus_license_b64: "your-base64-encoded-license-string"`
