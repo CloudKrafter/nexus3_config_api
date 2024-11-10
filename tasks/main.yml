@@ -1,6 +1,10 @@
 ---
 # include tasks from license-api.yml
 - include_tasks: license-api.yml
+
+- include_tasks: security-anonymous-api.yml
+  tags: security-anonymous-access
+
 - include_tasks: user-tokens-api.yml
   when: nexus_enable_pro | bool
 

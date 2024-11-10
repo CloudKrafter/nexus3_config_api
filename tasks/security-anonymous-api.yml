@@ -1,0 +1,45 @@
+---
+- name: Get status of Anonymous Access configuration
+  ansible.builtin.uri:
+    url: "{{ nexus_protocol }}://{{ nexus_hostname }}:{{ nexus_port }}/service/rest/v1/security/anonymous"
+    method: GET
+    validate_certs: false
+    user: "{{ nexus_admin_username }}"
+    password: "{{ nexus_admin_password }}"
+    force_basic_auth: true
+    headers:
+      Accept: "application/json"
+    status_code: 200
+  register: __nexus_anonymous_config__
+  tags: security-anonymous-access
+
+- name: Set fact for current_nexus_anonymous_config
+  set_fact:
+    current_nexus_anonymous_config: "{{ __nexus_anonymous_config__.json | dict2items | sort(attribute='key') | items2dict }}"
+  when: __nexus_anonymous_config__.status == 200
+  tags: security-anonymous-access
+
+- name: Set fact for desired_nexus_anonymous_config
+  set_fact:
+    desired_nexus_anonymous_config: "{{ nexus_anonymous_access | dict2items | sort(attribute='key') | items2dict }}"
+  tags: security-anonymous-access
+
+- name: Configure Anonymous Access
+  ansible.builtin.uri:
+    url: "{{ nexus_protocol }}://{{ nexus_hostname }}:{{ nexus_port }}/service/rest/v1/security/anonymous"
+    method: PUT
+    validate_certs: false
+    user: "{{ nexus_admin_username }}"
+    password: "{{ nexus_admin_password }}"
+    force_basic_auth: true
+    headers:
+      Accept: "application/json"
+      Content-Type: "application/json"
+    body: "{{ desired_nexus_anonymous_config | to_json }}"
+    status_code: 200
+  register: __nexus_anonymous_config_update__
+  when: current_nexus_anonymous_config != desired_nexus_anonymous_config
+  # The API always returns 200, even if the configuration is not changed
+  # So we need to check if the configuration is changed to be idempotent
+  changed_when: current_nexus_anonymous_config != desired_nexus_anonymous_config
+  tags: security-anonymous-access

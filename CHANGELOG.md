@@ -1,6 +1,15 @@
 # Changelog
-## [v1.3.0] - 2024-11-09
+
+## [v1.3.0] - 2024-11-10
+### Added
 - Added support for Content Selectors API endpoint
+- Added support for Security - Anonymous Access API endpoint
+
+### Changed
+No changes in existing behaviour.
+
+### Fixes
+- API endpoints that require a pro license will be skipped when `nexus_enable_pro: false` is set.
 
 ## [v1.2.0] - 2024-11-09
 ### Added

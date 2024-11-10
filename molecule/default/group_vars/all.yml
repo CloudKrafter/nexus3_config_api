@@ -6,6 +6,11 @@ nexus_admin_username: admin
 nexus_admin_password: changeme
 nexus_enable_pro: true
 
+nexus_anonymous_access:
+  enabled: true
+  userId: anonymouse
+  realmName: NexusAuthorizingRealm
+
 nexus_content_selectors:
   - name: raw-selector
     type: csel

@@ -13,7 +13,6 @@ if the order of the roles/privileges changes, it will not be updated, but it wil
 - Email endpoint
 - Blob store endpoint
 - HTTPS System settings
-- Security Mangement Anonymous Access
 - Security Management LDAP
 - Security Management REALMS
 - Security Management Privileges
