@@ -1,12 +1,14 @@
 ---
 # include tasks from license-api.yml
 - include_tasks: license-api.yml
+  tags: license
 
 - include_tasks: security-anonymous-api.yml
   tags: security-anonymous-access
 
 - include_tasks: user-tokens-api.yml
   when: nexus_enable_pro | bool
+  tags: user-tokens
 
 - name: Initialize empty array for assets to be updated
   set_fact:
@@ -197,14 +199,17 @@
     force_basic_auth: true
     status_code: 200
   register: __nexus_existing_users__
+  tags: users
 
 - name: Determine users to create
   set_fact:
     nexus_users_to_create: "{{ nexus_users | rejectattr('userId', 'in', __nexus_existing_users__.json | map(attribute='userId') | list) | list }}"
+  tags: users
 
 - name: Determine users to delete
   set_fact:
     nexus_users_to_delete: "{{ __nexus_existing_users__.json | rejectattr('userId', 'in', nexus_users | map(attribute='userId') | list) | list }}"
+  tags: users
 
 - name: Compare users for changes
   set_fact:
@@ -220,18 +225,22 @@
     ( __nexus_existing_users__.json | selectattr('userId', 'equalto', item.userId) | first).status | default(omit) != item.status | default(omit) or
     ( __nexus_existing_users__.json | selectattr('userId', 'equalto', item.userId) | first).roles | default([]) | sort != item.roles | default([]) | sort or
     ( __nexus_existing_users__.json | selectattr('userId', 'equalto', item.userId) | first).externalRoles | default([]) | sort != item.externalRoles | default([]) | sort
+  tags: users
 
 - name: Show nexus_users_to_create
   debug:
     var: nexus_users_to_create | length
+  tags: users
 
 - name: Show nexus_users_to_update
   debug:
     var: nexus_users_to_update | length
+  tags: users
 
 - name: Show nexus_users_to_delete
   debug:
     var: nexus_users_to_delete | length
+  tags: users
 
 - name: Create configured Users using Nexus API
   ansible.builtin.include_tasks: users-api.yml
@@ -241,6 +250,7 @@
   with_items:
     - "{{ nexus_users_to_create | default([]) }}"
   when: nexus_users_to_create | length > 0
+  tags: users
 
 - name: Update configured Users using Nexus API
   ansible.builtin.include_tasks: users-api.yml
@@ -250,6 +260,7 @@
   with_items:
     - "{{ nexus_users_to_update | default([]) }}"
   when: nexus_users_to_update | length > 0
+  tags: users
 
 - name: Delete Users using Nexus API
   ansible.builtin.include_tasks: users-api.yml
@@ -259,6 +270,7 @@
   with_items:
     - "{{ nexus_users_to_delete | default([]) }}"
   when: nexus_users_to_delete | length > 0
+  tags: users
 
 ############ End Users ############
 
@@ -275,16 +287,19 @@
     force_basic_auth: true
   register: __nexus_cleanup_policies__
   when: nexus_enable_pro | bool
+  tags: cleanup-policies
 
 - name: Determine cleanup policies to create
   set_fact:
     nexus_repos_cleanup_policies_to_create: "{{ nexus_repos_cleanup_policies | rejectattr('name', 'in', __nexus_cleanup_policies__.json | map(attribute='name') | list) | list }}"
   when: nexus_enable_pro | bool
+  tags: cleanup-policies
 
 - name: Determine cleanup policies to delete
   set_fact:
     nexus_repos_cleanup_policies_to_delete: "{{ __nexus_cleanup_policies__.json | rejectattr('name', 'in', nexus_repos_cleanup_policies | map(attribute='name') | list) | list }}"
   when: nexus_enable_pro | bool
+  tags: cleanup-policies
 
 - name: Compare cleanup policies for changes
   set_fact:
@@ -299,21 +314,25 @@
     ( __nexus_cleanup_policies__.json | selectattr('name', 'equalto', item.name) | first).criteriaReleaseType | default(omit) != item.criteriaReleaseType | default(None) or
     ( __nexus_cleanup_policies__.json | selectattr('name', 'equalto', item.name) | first).notes | default(omit) != item.notes | default(None) or
     ( __nexus_cleanup_policies__.json | selectattr('name', 'equalto', item.name) | first).format | default(omit) != item.format | default(None))
+  tags: cleanup-policies
 
 - name: Show nexus_repos_cleanup_policies_to_create
   debug:
     var: nexus_repos_cleanup_policies_to_create | length
   when: nexus_enable_pro | bool
+  tags: cleanup-policies
 
 - name: Show nexus_repos_cleanup_policies_to_update
   debug:
     var: nexus_repos_cleanup_policies_to_update | length
   when: nexus_enable_pro | bool
+  tags: cleanup-policies
 
 - name: Show nexus_repos_cleanup_policies_to_delete
   debug:
     var: nexus_repos_cleanup_policies_to_delete | length
   when: nexus_enable_pro | bool
+  tags: cleanup-policies
 
 - name: Create configured Cleanup Policies using Nexus API
   ansible.builtin.include_tasks: cleanup-policies-api.yml
@@ -323,6 +342,7 @@
   with_items:
     - "{{ nexus_repos_cleanup_policies_to_create | default([]) }}"
   when: nexus_repos_cleanup_policies_to_create | length > 0 and nexus_enable_pro | bool
+  tags: cleanup-policies
 
 - name: Update configured Cleanup Policies using Nexus API
   ansible.builtin.include_tasks: cleanup-policies-api.yml
@@ -332,6 +352,7 @@
   with_items:
     - "{{ nexus_repos_cleanup_policies_to_update | default([]) }}"
   when: nexus_repos_cleanup_policies_to_update | length > 0 and nexus_enable_pro | bool
+  tags: cleanup-policies
 
 - name: Delete Cleanup Policies using Nexus API
   ansible.builtin.include_tasks: cleanup-policies-api.yml
@@ -341,6 +362,7 @@
   with_items:
     - "{{ nexus_repos_cleanup_policies_to_delete | default([]) }}"
   when: nexus_repos_cleanup_policies_to_delete | length > 0 and nexus_enable_pro | bool
+  tags: cleanup-policies
 
 ############ END Cleanup Policies ############
 
@@ -356,14 +378,17 @@
     password: "{{ nexus_admin_password }}"
     force_basic_auth: true
   register: __nexus_routing_rules__
+  tags: routing-rules
 
 - name: Determine routing rules to create
   set_fact:
     nexus_routing_rules_to_create: "{{ nexus_routing_rules | rejectattr('name', 'in', __nexus_routing_rules__.json | map(attribute='name') | list) | list }}"
+  tags: routing-rules
 
 - name: Determine routing rules to delete
   set_fact:
     nexus_routing_rules_to_delete: "{{ __nexus_routing_rules__.json | rejectattr('name', 'in', nexus_routing_rules | map(attribute='name') | list) | list }}"
+  tags: routing-rules
 
 - name: Compare routing rules for changes
   set_fact:
@@ -374,18 +399,22 @@
     ( __nexus_routing_rules__.json | selectattr('name', 'equalto', item.name) | first).description | default(omit) != item.description | default(omit) or
     ( __nexus_routing_rules__.json | selectattr('name', 'equalto', item.name) | first).mode | default(omit) != item.mode | default(None) or
     ( __nexus_routing_rules__.json | selectattr('name', 'equalto', item.name) | first).matchers | default(omit) != item.matchers | default(omit)
+  tags: routing-rules
 
 - name: Show nexus_routing_rules_to_create
   debug:
     var: nexus_routing_rules_to_create | length
+  tags: routing-rules
 
 - name: Show nexus_routing_rules_to_update
   debug:
     var: nexus_routing_rules_to_update | length
+  tags: routing-rules
 
 - name: Show nexus_routing_rules_to_delete
   debug:
     var: nexus_routing_rules_to_delete | length
+  tags: routing-rules
 
 - name: Create configured Routing Rules using Nexus API
   ansible.builtin.include_tasks: routing-rules-api.yml
@@ -395,6 +424,7 @@
   with_items:
     - "{{ nexus_routing_rules | default([]) }}"
   when: nexus_routing_rules_to_create | length > 0
+  tags: routing-rules
 
 - name: Update configured Routing Rules using Nexus API
   ansible.builtin.include_tasks: routing-rules-api.yml
@@ -404,6 +434,7 @@
   with_items:
     - "{{ nexus_routing_rules_to_update | default([]) }}"
   when: nexus_routing_rules_to_update | length > 0
+  tags: routing-rules
 
 - name: Delete Routing Rules using Nexus API
   ansible.builtin.include_tasks: routing-rules-api.yml
@@ -413,6 +444,7 @@
   with_items:
     - "{{ nexus_routing_rules_to_delete | default([]) }}"
   when: nexus_routing_rules_to_delete | length > 0
+  tags: routing-rules
 
 ############ END Routing Rules ############
 

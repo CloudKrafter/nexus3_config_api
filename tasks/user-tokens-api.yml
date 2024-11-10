@@ -11,15 +11,18 @@
       Accept: "application/json"
     status_code: 200
   register: __nexus_user_tokens__
+  tags: user-tokens
 
 - name: Set fact for __nexus_user_tokens__
   set_fact:
     current_nexus_user_tokens: "{{ __nexus_user_tokens__.json | dict2items | sort(attribute='key') | items2dict }}"
   when: __nexus_user_tokens__.status == 200
+  tags: user-tokens
 
 - name: Set fact for nexus_user_tokens_capability
   set_fact:
     desired_nexus_user_tokens_capability: "{{ nexus_user_tokens_capability | dict2items | sort(attribute='key') | items2dict }}"
+  tags: user-tokens
 
 - name: Configure User tokens capability
   ansible.builtin.uri:
@@ -39,3 +42,4 @@
   # The API always returns 200, even if the configuration is not changed
   # So we need to check if the configuration is changed to be idempotent
   changed_when: current_nexus_user_tokens != desired_nexus_user_tokens_capability
+  tags: user-tokens

@@ -7,7 +7,7 @@
 - Added support for Roles API endpoint
 
 ### Changed
-No changes in existing behaviour.
+- Each part of the configuration can be ran seperately by specifing its tag. For example `--tags="roles,users,cleanup-policies"`
 
 ### Fixes
 - API endpoints that require a pro license will be skipped when `nexus_enable_pro: false` is set.
