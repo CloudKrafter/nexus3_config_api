@@ -9,10 +9,12 @@
     force_basic_auth: true
     status_code: [200, 402]
   register: __nexus_license_info__
+  tags: license
 
 - name: show __nexus_license_info__
   ansible.builtin.debug:
     var: __nexus_license_info__
+  tags: license
 
 # Nexus API expects a license file in binary format to be uploaded
 # So we need to decode the base64 encoded license string into a file
@@ -23,6 +25,7 @@
     mode: "0644"
   register: __license_status__
   when: (lookup('env', 'NEXUS_LICENSE_B64') is defined or nexus_license_b64 is defined) and nexus_enable_pro == true and __nexus_license_info__.json.effectiveDate is not defined
+  tags: license
 
 - name: Upload license file through API
   ansible.builtin.uri:
@@ -39,12 +42,14 @@
     status_code: 200
   register: __uploaded_license__
   when: (lookup('env', 'NEXUS_LICENSE_B64') is defined or nexus_license_b64 is defined) and nexus_enable_pro == true and __nexus_license_info__.json.effectiveDate is not defined
+  tags: license
 
 # After uploading the license file, we can remove it from the file system
 - name: Remove license from file system
   ansible.builtin.file:
     path: "nexus.lic"
     state: absent
+  tags: license
 
 - name: Remove license
   ansible.builtin.uri:
@@ -56,3 +61,4 @@
     force_basic_auth: true
     status_code: 204
   when: (lookup('env', 'NEXUS_LICENSE_B64') is not defined or nexus_license_b64 is not defined) and nexus_enable_pro == false
+  tags: license

@@ -16,3 +16,4 @@
     body: "{{ item }}"
     body_format: json
   changed_when: true
+  tags: cleanup-policies

@@ -13,6 +13,7 @@
       {% else %}
         {{ item | to_json }}
       {% endif %}
+  tags: users
 
 - name: "{{ method }} {{ item.userId }} user"
   uri:
@@ -26,3 +27,4 @@
     body: "{{ api_body }}"
     body_format: json
   changed_when: true
+  tags: users
