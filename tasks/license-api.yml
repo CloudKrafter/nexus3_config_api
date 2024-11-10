@@ -60,5 +60,6 @@
     password: "{{ nexus_admin_password }}"
     force_basic_auth: true
     status_code: 204
-  when: (lookup('env', 'NEXUS_LICENSE_B64') is not defined or nexus_license_b64 is not defined) and nexus_enable_pro == false
+  when: nexus_enable_pro == false and __nexus_license_info__.json.effectiveDate is defined
+  changed_when: true
   tags: license
