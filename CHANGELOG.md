@@ -4,6 +4,7 @@
 ### Added
 - Added support for Content Selectors API endpoint
 - Added support for Security - Anonymous Access API endpoint
+- Added support for Roles API endpoint
 
 ### Changed
 No changes in existing behaviour.
