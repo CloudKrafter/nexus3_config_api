@@ -68,7 +68,7 @@
         dest: "nexus.lic"
         mode: '0644'
       register: __license_status__
-      when: (lookup('env', 'NEXUS_LICENSE_B64') is defined or nexus_license_b64 is defined) and nexus_enable_pro == true
+      when: (lookup('env', 'NEXUS_LICENSE_B64') is defined or nexus_license_b64 is defined) and nexus_enable_pro
 
     - name: Upload license file through API
       ansible.builtin.uri:
@@ -84,7 +84,7 @@
         src: "nexus.lic"
         status_code: 200
       register: __uploaded_license__
-      when: (lookup('env', 'NEXUS_LICENSE_B64') is defined or nexus_license_b64 is defined) and nexus_enable_pro == true
+      when: (lookup('env', 'NEXUS_LICENSE_B64') is defined or nexus_license_b64 is defined) and nexus_enable_pro
       ignore_errors: true
 
     - name: Remove license from file system
