@@ -8,6 +8,8 @@
 
 ### Changed
 - Each part of the configuration can be ran seperately by specifing its tag. For example `--tags="roles,users,cleanup-policies"`
+- moved role to cloudkrafter namespace
+- renamed role from nexus_config_as_code to nexus_config_api
 
 ### Fixes
 - API endpoints that require a pro license will be skipped when `nexus_enable_pro: false` is set.

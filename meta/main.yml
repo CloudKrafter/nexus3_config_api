@@ -1,7 +1,8 @@
 galaxy_info:
   author: Brian Veltman
+  namespace: cloudkrafter
   description: Ansible role to configure Nexus3 with Config as Code through the Nexus REST API
-  role_name: nexus3_config_as_code
+  role_name: nexus3_config_api
   license: GPL-3.0-only
   min_ansible_version: ">2.4"
 
