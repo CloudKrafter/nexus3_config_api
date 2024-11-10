@@ -2,6 +2,10 @@ When using this in a 'desired-state' kind of way, renaming repositories is not s
 
 Unfortunatly repos do not have an unique identifier that's returned by the Nexus API, therefore we can not use that to update a new of a repo.
 
+## FAQ
+
+Q: After enabling the Pro eatures, my playbook fails when configuring User Tokens or Cleanup Policies.
+A: After enabling the pro features by uploading or installing the license, you have to reboot your Nexus instance first beore the additional API endpoints become available.
 
 Take away: when not all attributes for PUT are passed through the API, the role might see it as changed, eventho its not.
 
