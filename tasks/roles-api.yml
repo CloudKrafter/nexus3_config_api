@@ -1,0 +1,19 @@
+---
+- name: "{{ method }} {{ item.name }} role"
+  uri:
+    url: >
+      {% if method in ['POST'] %}
+        {{ nexus_protocol }}://{{ nexus_hostname }}:{{ nexus_port }}/service/rest/v1/security/roles
+      {% elif method in ['PUT', 'DELETE'] %}
+        {{ nexus_protocol }}://{{ nexus_hostname }}:{{ nexus_port }}/service/rest/v1/security/roles/{{ item.id }}
+      {% endif %}
+    method: "{{ method }}"
+    validate_certs: false
+    status_code: "{{ '200' if method == 'POST' else '204' }}"
+    user: "{{ nexus_admin_username }}"
+    password: "{{ nexus_admin_password }}"
+    force_basic_auth: true
+    body: "{{ item }}"
+    body_format: json
+  changed_when: true
+  tags: roles

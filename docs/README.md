@@ -16,6 +16,5 @@ if the order of the roles/privileges changes, it will not be updated, but it wil
 - Security Management LDAP
 - Security Management REALMS
 - Security Management Privileges
-- Security Management Roles
 - Security Certificates
 - Tasks
