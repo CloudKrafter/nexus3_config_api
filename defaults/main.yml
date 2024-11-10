@@ -88,3 +88,5 @@ nexus_user_tokens_capability:
   protectContent: true
   expirationEnabled: true
   expirationDays: 30
+
+nexus_content_selectors: []

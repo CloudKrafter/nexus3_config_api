@@ -6,6 +6,20 @@ nexus_admin_username: admin
 nexus_admin_password: changeme
 nexus_enable_pro: true
 
+nexus_content_selectors:
+  - name: raw-selector
+    type: csel
+    description: raw-selectorrr
+    expression: format == "raw"
+  - name: maven-org-selector
+    type: csel
+    description: maven-org-selectorrr
+    expression: format == "maven2" and path =^ "/org"
+  - name: maven-com-selector
+    type: csel
+    description: maven-com-selector
+    expression: format == "maven2" and path =^ "/com"
+
 nexus_user_tokens_capability:
   enabled: true
   protectContent: true
