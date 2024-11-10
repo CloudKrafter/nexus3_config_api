@@ -1,0 +1,24 @@
+---
+- name: Construct API url
+  set_fact:
+    api_url: >
+      {% if method in ['POST'] %}
+        {{ nexus_protocol }}://{{ nexus_hostname }}:{{ nexus_port }}/service/rest/v1/security/content-selectors
+      {% elif method in ['PUT', 'DELETE'] %}
+        {{ nexus_protocol }}://{{ nexus_hostname }}:{{ nexus_port }}/service/rest/v1/security/content-selectors/{{ item.name }}
+      {% endif %}
+  tags: content-selectors
+
+- name: "{{ method }} {{ item.name }} content seelctor"
+  uri:
+    url: "{{ api_url }}"
+    method: "{{ method }}"
+    validate_certs: false
+    status_code: 204
+    user: "{{ nexus_admin_username }}"
+    password: "{{ nexus_admin_password }}"
+    force_basic_auth: true
+    body: "{{ item }}"
+    body_format: json
+  changed_when: true
+  tags: content-selectors
