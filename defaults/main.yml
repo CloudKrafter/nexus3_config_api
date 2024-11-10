@@ -89,4 +89,9 @@ nexus_user_tokens_capability:
   expirationEnabled: true
   expirationDays: 30
 
+nexus_anonymous_access:
+  enabled: true
+  userId: anonymous
+  realmName: NexusAuthorizingRealm
+
 nexus_content_selectors: []
