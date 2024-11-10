@@ -1,4 +1,6 @@
 # Changelog
+## [v1.3.0] - 2024-11-09
+- Added support for Content Selectors API endpoint
 
 ## [v1.2.0] - 2024-11-09
 ### Added

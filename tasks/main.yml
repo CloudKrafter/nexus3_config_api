@@ -11,6 +11,90 @@
     nexus_repos_cleanup_policies_to_update: []
     nexus_routing_rules_to_update: []
     nexus_users_to_update: []
+    nexus_content_selectors_to_update: []
+  tags: always
+
+########### Content Selectors ###########
+
+- name: Get all Content Selectors
+  uri:
+    url: "{{ nexus_protocol }}://{{ nexus_hostname }}:{{ nexus_port }}/service/rest/v1/security/content-selectors"
+    method: GET
+    validate_certs: false
+    status_code: 200
+    user: "{{ nexus_admin_username }}"
+    password: "{{ nexus_admin_password }}"
+    force_basic_auth: true
+  register: __nexus_content_selectors__
+  tags: content-selectors
+
+- name: Determine content selectors to create
+  set_fact:
+    nexus_content_selectors_to_create: "{{ nexus_content_selectors | rejectattr('name', 'in', __nexus_content_selectors__.json | map(attribute='name') | list) | list }}"
+  tags: content-selectors
+
+- name: Determine content selectors to delete
+  set_fact:
+    nexus_content_selectors_to_delete: "{{ __nexus_content_selectors__.json | rejectattr('name', 'in', nexus_content_selectors | map(attribute='name') | list) | list }}"
+  tags: content-selectors
+
+- name: Compare content selectors for changes
+  set_fact:
+    nexus_content_selectors_to_update: "{{ nexus_content_selectors_to_update + [ item ] }}"
+  loop: "{{ nexus_content_selectors | list }}"
+  when: >
+    ( __nexus_content_selectors__.json | selectattr('name', 'equalto', item.name) | first) is not defined or
+    ( __nexus_content_selectors__.json | selectattr('name', 'equalto', item.name) | first).description | default(omit) != item.description | default(omit) or
+    ( __nexus_content_selectors__.json | selectattr('name', 'equalto', item.name) | first).type | default(omit) != item.type | default(omit) or
+    ( __nexus_content_selectors__.json | selectattr('name', 'equalto', item.name) | first).expression | default(omit) != item.expression | default(omit)
+  tags: content-selectors
+
+- name: Show nexus_content_selectors_to_create
+  debug:
+    var: nexus_content_selectors_to_create | length
+  tags: content-selectors
+
+- name: Show nexus_content_selectors_to_update
+  debug:
+    var: nexus_content_selectors_to_update | length
+  tags: content-selectors
+
+- name: Show nexus_content_selectors_to_delete
+  debug:
+    var: nexus_content_selectors_to_delete | length
+  tags: content-selectors
+
+- name: Create configured Content Selectors using Nexus API
+  ansible.builtin.include_tasks: content-selectors-api.yml
+  vars:
+    selectors: "{{ item | default([]) }}"
+    method: POST
+  with_items:
+    - "{{ nexus_content_selectors_to_create | default([]) }}"
+  when: nexus_content_selectors_to_create | length > 0
+  tags: content-selectors
+
+- name: Update configured Content Selectors using Nexus API
+  ansible.builtin.include_tasks: content-selectors-api.yml
+  vars:
+    selectors: "{{ item | default([]) }}"
+    method: PUT
+  with_items:
+    - "{{ nexus_content_selectors_to_update | default([]) }}"
+  when: nexus_content_selectors_to_update | length > 0
+  tags: content-selectors
+
+- name: Delete Content Selectors using Nexus API
+  ansible.builtin.include_tasks: content-selectors-api.yml
+  vars:
+    selectors: "{{ item | default([]) }}"
+    method: DELETE
+  with_items:
+    - "{{ nexus_content_selectors_to_delete | default([]) }}"
+  when: nexus_content_selectors_to_delete | length > 0
+  tags: content-selectors
+
+############ End Content Selectors ############
 
 ########### Users ############
 
