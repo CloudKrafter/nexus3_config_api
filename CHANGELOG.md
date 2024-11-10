@@ -11,6 +11,7 @@
 
 ### Fixes
 - API endpoints that require a pro license will be skipped when `nexus_enable_pro: false` is set.
+- License will now be removed properly when `nexus_enable_pro: false` is set.
 
 ## [v1.2.0] - 2024-11-09
 ### Added

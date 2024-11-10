@@ -10,11 +10,15 @@ if the order of the roles/privileges changes, it will not be updated, but it wil
 
 # TODO:
 - ALL repository endpoints
-- Email endpoint
 - Blob store endpoint
 - HTTPS System settings
+- IQ Repo Firewall
 - Security Management LDAP
 - Security Management REALMS
-- Security Management Privileges
 - Security Certificates
 - Tasks
+- Security Management SAML
+- Email endpoint
+- Security Atlassian Cloud
+- Security Management Privileges
+- Tags
