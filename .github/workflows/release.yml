@@ -1,8 +1,10 @@
 ---
-name: GitHub Action
+name: Publish new version to Galaxy
 
 on:
-  - push
+  push:
+    branches:
+      - main
 
 jobs:
   build:
