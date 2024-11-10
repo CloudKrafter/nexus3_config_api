@@ -17,7 +17,91 @@
     nexus_routing_rules_to_update: []
     nexus_users_to_update: []
     nexus_content_selectors_to_update: []
+    nexus_roles_to_update: []
   tags: always
+
+########### Roles ###########
+
+- name: Get all Roles
+  uri:
+    url: "{{ nexus_protocol }}://{{ nexus_hostname }}:{{ nexus_port }}/service/rest/v1/security/roles"
+    method: GET
+    validate_certs: false
+    status_code: 200
+    user: "{{ nexus_admin_username }}"
+    password: "{{ nexus_admin_password }}"
+    force_basic_auth: true
+  register: __nexus_roles__
+  tags: roles
+
+- name: Determine roles to create
+  set_fact:
+    nexus_roles_to_create: "{{ nexus_roles | rejectattr('name', 'in', __nexus_roles__.json | map(attribute='name') | list) | list }}"
+  tags: roles
+
+- name: Determine roles to delete
+  set_fact:
+    nexus_roles_to_delete: "{{ __nexus_roles__.json | rejectattr('name', 'in', nexus_roles | map(attribute='name') | list) | list }}"
+  tags: roles
+
+- name: Compare roles for changes
+  set_fact:
+    nexus_roles_to_update: "{{ nexus_roles_to_update + [ item ] }}"
+  loop: "{{ nexus_roles | list }}"
+  when: >
+    ( __nexus_roles__.json | selectattr('id', 'equalto', item.id) | first) is not defined or
+    ( __nexus_roles__.json | selectattr('id', 'equalto', item.id) | first).name | default(omit) != item.name | default(omit) or
+    ( __nexus_roles__.json | selectattr('id', 'equalto', item.id) | first).description | default(omit) != item.description | default(omit) or
+    ( __nexus_roles__.json | selectattr('id', 'equalto', item.id) | first).privileges | default([]) | sort != item.privileges | default([]) | sort or
+    ( __nexus_roles__.json | selectattr('id', 'equalto', item.id) | first).roles | default([]) | sort != item.roles | default([]) | sort
+  tags: roles
+
+- name: Show nexus_roles_to_create
+  debug:
+    var: nexus_roles_to_create | length
+  tags: roles
+
+- name: Show nexus_roles_to_update
+  debug:
+    var: nexus_roles_to_update | length
+  tags: roles
+
+- name: Show nexus_roles_to_delete
+  debug:
+    var: nexus_roles_to_delete | length
+  tags: roles
+
+- name: Create configured Roles using Nexus API
+  ansible.builtin.include_tasks: roles-api.yml
+  vars:
+    roles: "{{ item | default([]) }}"
+    method: POST
+  with_items:
+    - "{{ nexus_roles_to_create | default([]) }}"
+  when: nexus_roles_to_create | length > 0
+  tags: roles
+
+- name: Update configured Roles using Nexus API
+  ansible.builtin.include_tasks: roles-api.yml
+  vars:
+    roles: "{{ item | default([]) }}"
+    method: PUT
+  with_items:
+    - "{{ nexus_roles_to_update | default([]) }}"
+  when: nexus_roles_to_update | length > 0
+  tags: roles
+
+- name: Delete Roles using Nexus API
+  ansible.builtin.include_tasks: roles-api.yml
+  vars:
+    roles: "{{ item | default([]) }}"
+    method: DELETE
+  with_items:
+    - "{{ nexus_roles_to_delete | default([]) }}"
+  when: nexus_roles_to_delete | length > 0
+  tags: roles
+
+############ End Roles ############
 
 ########### Content Selectors ###########
 
