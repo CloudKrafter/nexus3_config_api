@@ -11,7 +11,7 @@
   tags: user-tokens
 
 - name: Initialize empty array for assets to be updated
-  set_fact:
+  ansible.builtin.set_fact:
     maven_hosted_repos_to_update: []
     maven_proxy_repos_to_update: []
     maven_group_repos_to_update: []
@@ -21,6 +21,36 @@
     nexus_content_selectors_to_update: []
     nexus_roles_to_update: []
   tags: always
+
+########### Blobstores ###########
+
+- name: Get all blobstores
+  ansible.builtin.uri:
+    url: "{{ nexus_protocol }}://{{ nexus_hostname }}:{{ nexus_port }}/service/rest/v1/blobstores"
+    method: GET
+    validate_certs: false
+    status_code: 200
+    user: "{{ nexus_admin_username }}"
+    password: "{{ nexus_admin_password }}"
+    force_basic_auth: true
+  register: all_blobstores
+  tags: blobstores
+
+# We're not looping over all blob types because that would trigger the config for each type on every run
+# Instead, we're looping over the types we're interested in, and control them with tags.
+# This way, we can run the playbook with --tags blobstores --skip-tags file-blobstores to only process the non-file blobstores
+# or --tags blobstores,file-blobstores to only process the file blobstores etc..
+- name: Process file blobstores
+  ansible.builtin.include_tasks: process_blobstores.yml
+  vars:
+    type: "File"
+  tags:
+    - blobstores
+    - file-blobstores
+
+# TODO: Implement and test creation and deletetion of S3 and Azure blobstores
+
+############ End Blobstores ############
 
 ########### Roles ###########
 
