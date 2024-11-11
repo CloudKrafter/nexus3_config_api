@@ -6,6 +6,14 @@ nexus_admin_username: admin
 nexus_admin_password: changeme
 nexus_enable_pro: false
 
+nexus_blobstores:
+- name: default
+  type: File
+  path: default
+  softQuota:
+    type: spaceRemainingQuota
+    limit: 104857600 #100Mb
+
 nexus_repos_cleanup_policies: []
 
 nexus_config_maven: true
