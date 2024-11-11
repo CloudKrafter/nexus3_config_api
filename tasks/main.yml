@@ -20,7 +20,186 @@
     nexus_users_to_update: []
     nexus_content_selectors_to_update: []
     nexus_roles_to_update: []
+    nexus_file_blobstores_to_update: []
   tags: always
+
+########### Blobstores ###########
+
+- name: Get all Blobstores
+  uri:
+    url: "{{ nexus_protocol }}://{{ nexus_hostname }}:{{ nexus_port }}/service/rest/v1/blobstores"
+    method: GET
+    validate_certs: false
+    status_code: 200
+    user: "{{ nexus_admin_username }}"
+    password: "{{ nexus_admin_password }}"
+    force_basic_auth: true
+  register: __nexus_blobstores__
+  tags: blobstores
+
+- name: Show __nexus_blobstores__
+  debug:
+    var: __nexus_blobstores__
+  tags: blobstores
+
+- name: Filter existing blobstores
+  set_fact:
+    # The type is case sensitive!
+    existing_file_blobstores: "{{ __nexus_blobstores__.json | selectattr('type', 'equalto', 'File') | list }}"
+    #existing_s3_blobstores: "{{ __nexus_blobstores__.json | selectattr('type', 'equalto', 'S3') | list }}"
+    #existing_azure_blobstores: "{{ __nexus_blobstores__.json | selectattr('type', 'equalto', 'Azure') | list }}"
+  tags: blobstores
+
+- name: Determine blobstores to create
+  set_fact:
+    nexus_file_blobstores_to_create: "{{ nexus_blobstores | rejectattr('name', 'in', existing_file_blobstores | map(attribute='name') | list) | list }}"
+    #nexus_s3_blobstores_to_create: "{{ nexus_blobstores | rejectattr('name', 'in', existing_s3_blobstores | map(attribute='name') | list) | list }}"
+    #nexus_azure_blobstores_to_create: "{{ nexus_blobstores | rejectattr('name', 'in', existing_azure_blobstores | map(attribute='name') | list) | list }}"
+  tags: blobstores
+
+- name: Determine blobstores to delete
+  set_fact:
+    nexus_file_blobstores_to_delete: "{{ existing_file_blobstores | rejectattr('name', 'in', nexus_blobstores | map(attribute='name') | list) | list }}"
+    #nexus_s3_blobstores_to_delete: "{{ existing_s3_blobstores | rejectattr('name', 'in', nexus_blobstores | map(attribute='name') | list) | list }}"
+    #nexus_azure_blobstores_to_delete: "{{ existing_azure_blobstores | rejectattr('name', 'in', nexus_blobstores | map(attribute='name') | list) | list }}"
+  tags: blobstores
+
+# This wont work because the GET blobstores API does not return the path.
+# Have to get all blobnames, then get each blobstore by name to get the path.
+- name: Compare file blobstores for changes
+  set_fact:
+    nexus_file_blobstores_to_update: "{{ nexus_file_blobstores_to_update + [ item ] }}"
+  loop: "{{ nexus_blobstores | selectattr('type', 'equalto', 'file') | list }}"
+  when: >
+    ( existing_file_blobstores | selectattr('name', 'equalto', item.name) | first) is not defined or
+    ( existing_file_blobstores | selectattr('name', 'equalto', item.name) | first).softQuota.limit | default(omit) != item.softQuota.limit | default(omit) or
+    ( existing_file_blobstores | selectattr('name', 'equalto', item.name) | first).softQuota.type | default(omit) != item.softQuota.type | default(omit)
+    ( existing_file_blobstores | selectattr('name', 'equalto', item.name) | first).path | default(omit) != item.type | default(omit) or
+  tags: blobstores
+
+- name: Show nexus_file_blobstores_to_create
+  debug:
+    var: nexus_file_blobstores_to_create | length
+  tags: blobstores
+
+# - name: Show nexus_s3_blobstores_to_create
+#   debug:
+#     var: nexus_s3_blobstores_to_create | length
+#   tags: blobstores
+
+# - name: Show nexus_azure_blobstores_to_create
+#   debug:
+#     var: nexus_azure_blobstores_to_create | length
+#   tags: blobstores
+
+- name: Show nexus_file_blobstores_to_update
+  debug:
+    var: nexus_file_blobstores_to_update | length
+  tags: blobstores
+
+# - name: Show nexus_s3_blobstores_to_update
+#   debug:
+#     var: nexus_s3_blobstores_to_update | length
+#   tags: blobstores
+
+# - name: Show nexus_azure_blobstores_to_update
+#   debug:
+#     var: nexus_azure_blobstores_to_update | length
+#   tags: blobstores
+
+- name: Show nexus_file_blobstores_to_delete
+  debug:
+    var: nexus_file_blobstores_to_delete | length
+  tags: blobstores
+
+# - name: Show nexus_s3_blobstores_to_delete
+#   debug:
+#     var: nexus_s3_blobstores_to_delete | length
+#   tags: blobstores
+
+# - name: Show nexus_azure_blobstores_to_delete
+#   debug:
+#     var: nexus_azure_blobstores_to_delete | length
+#   tags: blobstores
+
+- name: Create configured File Blobstores using Nexus API
+  ansible.builtin.include_tasks: blobstores-api.yml
+  vars:
+    blobstores: "{{ item | default([]) }}"
+    type: file
+    method: POST
+  with_items:
+    - "{{ nexus_file_blobstores_to_create | default([]) }}"
+  when: nexus_file_blobstores_to_create | length > 0
+  tags: blobstores
+
+# - name: Create configured S3 Blobstores using Nexus API
+#   ansible.builtin.include_tasks: blobstores-api.yml
+#   vars:
+#     blobstores: "{{ item | default([]) }}"
+#     type: s3
+#     method: POST
+#   with_items:
+#     - "{{ nexus_s3_blobstores_to_create | default([]) }}"
+#   when: nexus_s3_blobstores_to_create | length > 0
+#   tags: blobstores
+
+# - name: Create configured Azure Blobstores using Nexus API
+#   ansible.builtin.include_tasks: blobstores-api.yml
+#   vars:
+#     blobstores: "{{ item | default([]) }}"
+#     type: azure
+#     method: POST
+#   with_items:
+#     - "{{ nexus_azure_blobstores_to_create | default([]) }}"
+#   when: nexus_azure_blobstores_to_create | length > 0
+#   tags: blobstores
+
+- name: Delete File Blobstores using Nexus API
+  ansible.builtin.include_tasks: blobstores-api.yml
+  vars:
+    blobstores: "{{ item | default([]) }}"
+    type: file
+    method: DELETE
+  with_items:
+    - "{{ nexus_file_blobstores_to_delete | default([]) }}"
+  when: nexus_file_blobstores_to_delete | length > 0
+  tags: blobstores
+
+# - name: Delete S3 Blobstores using Nexus API
+#   ansible.builtin.include_tasks: blobstores-api.yml
+#   vars:
+#     blobstores: "{{ item | default([]) }}"
+#     type: s3
+#     method: DELETE
+#   with_items:
+#     - "{{ nexus_s3_blobstores_to_delete | default([]) }}"
+#   when: nexus_s3_blobstores_to_delete | length > 0
+#   tags: blobstores
+
+# - name: Delete Azure Blobstores using Nexus API
+#   ansible.builtin.include_tasks: blobstores-api.yml
+#   vars:
+#     blobstores: "{{ item | default([]) }}"
+#     type: azure
+#     method: DELETE
+#   with_items:
+#     - "{{ nexus_azure_blobstores_to_delete | default([]) }}"
+#   when: nexus_azure_blobstores_to_delete | length > 0
+#   tags: blobstores
+
+- name: Update File Blobstores using Nexus API
+  ansible.builtin.include_tasks: blobstores-api.yml
+  vars:
+    blobstores: "{{ item | default([]) }}"
+    type: file
+    method: PUT
+  with_items:
+    - "{{ nexus_file_blobstores_to_update | default([]) }}"
+  when: nexus_file_blobstores_to_update | length > 0
+  tags: blobstores
+
+############ End Blobstores ############
 
 ########### Roles ###########
 

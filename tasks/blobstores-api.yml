@@ -1,0 +1,21 @@
+---
+- name: "{{ method }} {{ item.name }} {{ type }} blobstore"
+  uri:
+    url: >
+      {% if method in ['POST'] %}
+        {{ nexus_protocol }}://{{ nexus_hostname }}:{{ nexus_port }}/service/rest/v1/blobstores/{{ type }}
+      {% elif method in ['PUT'] %}
+        {{ nexus_protocol }}://{{ nexus_hostname }}:{{ nexus_port }}/service/rest/v1/blobstores/{{ type }}/{{ item.name }}
+      {% elif method in ['DELETE'] %}
+        {{ nexus_protocol }}://{{ nexus_hostname }}:{{ nexus_port }}/service/rest/v1/blobstores/{{ item.name }}
+      {% endif %}
+    method: "{{ method }}"
+    validate_certs: false
+    status_code: "{{ '204' if method == 'POST' else '204' }}"
+    user: "{{ nexus_admin_username }}"
+    password: "{{ nexus_admin_password }}"
+    force_basic_auth: true
+    body: "{{ item }}"
+    body_format: json
+  changed_when: true
+  tags: blobstores
