@@ -6,6 +6,11 @@ nexus_admin_username: admin
 nexus_admin_password: changeme
 nexus_enable_pro: false
 
+nexus_blobstores:
+  - name: default
+    type: File
+    path: default
+
 nexus_repos_cleanup_policies: []
 
 nexus_config_maven: true
