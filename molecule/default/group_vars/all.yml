@@ -6,6 +6,32 @@ nexus_admin_username: admin
 nexus_admin_password: changeme
 nexus_enable_pro: true
 
+nexus_blobstores:
+  - name: default
+    type: File
+    path: default-21
+    softQuota:
+      type: spaceRemainingQuota
+      limit: 408957600 #100Mb
+  - name: default-200
+    type: File
+    path: default-200
+    softQuota:
+      type: spaceRemainingQuota
+      limit: 104857600 #100Mb
+  - name: file-quota-100-remaining
+    type: File
+    path: default-quota-100-remaining
+    softQuota:
+      type: spaceRemainingQuota
+      limit: 104857600 #100Mb
+  - name: file-quota-100-used
+    type: File
+    path: default-quota-100-used
+    softQuota:
+      type: spaceUsedQuota
+      limit: 104857600 #100Mb
+
 nexus_roles:
   - id: "nx-admin"
     name: "nx-admin"
