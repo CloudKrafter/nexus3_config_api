@@ -52,7 +52,7 @@
 
 - name: Determine {{ type }} blobstores to create
   set_fact:
-    blobstores_to_create: "{{ nexus_blobstores | rejectattr('name', 'in', existing_blobstores | map(attribute='name') | list) | list }}"
+    blobstores_to_create: "{{ desired_blobstores | rejectattr('name', 'in', existing_blobstores | map(attribute='name') | list) | list }}"
   tags: blobstores
 
 - name: Show {{ type }} blobstores to create
