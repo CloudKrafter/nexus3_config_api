@@ -26,5 +26,11 @@ jobs:
         run: echo "${{ secrets.DOCKER_HUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
       - name: Build the Docker image
         run: docker build -t cloudkrafter/ansible-devcontainer:${{ env.TIMESTAMP }} -f .devcontainer/Dockerfile .
+      - name: Tag the Docker image as latest if on main branch
+        if: github.ref == 'refs/heads/main'
+        run: docker tag cloudkrafter/ansible-devcontainer:${{ env.TIMESTAMP }} cloudkrafter/ansible-devcontainer:latest
       - name: Push the Docker image
         run: docker push cloudkrafter/ansible-devcontainer:${{ env.TIMESTAMP }}
+      - name: Push the latest Docker image if on main branch
+        if: github.ref == 'refs/heads/main'
+        run: docker push cloudkrafter/ansible-devcontainer:latest
