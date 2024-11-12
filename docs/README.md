@@ -14,7 +14,8 @@ if the order of the roles/privileges changes, it will not be updated, but it wil
 
 # TODO:
 - ALL repository endpoints
-- Blob store endpoint
+- S3 Blob store endpoint
+- Group Blob store endpoit
 - HTTPS System settings
 - IQ Repo Firewall
 - Security Management LDAP
@@ -26,3 +27,5 @@ if the order of the roles/privileges changes, it will not be updated, but it wil
 - Security Atlassian Cloud
 - Security Management Privileges
 - Tags
+- Azure Blob store endpoint
+- Google Blob store endpoint

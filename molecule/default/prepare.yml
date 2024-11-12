@@ -3,6 +3,44 @@
   hosts: localhost
   gather_facts: false
   tasks:
+    - name: Gather facts about the s3-storage container
+      community.docker.docker_container_info:
+        name: s3-storage
+      register: s3_storage_info
+
+    - name: Set s3_storage_ip variable
+      ansible.builtin.set_fact:
+        s3_storage_ip: "{{ s3_storage_info.container.NetworkSettings.Networks.bridge.IPAddress }}"
+
+    - name: Configure MinIO CLI
+      ansible.builtin.command: |
+        mc alias set s3-storage http://{{ s3_storage_ip }}:9000 minioadmin minioadmin
+      register: minio_cli_configured
+      changed_when: "'s3-storage' not in minio_cli_configured.stdout"
+
+    - name: Show minio_cli_configured
+      ansible.builtin.debug:
+        var: minio_cli_configured
+
+    - name: Create S3 bucket in MinIO for Nexus
+      ansible.builtin.command: >
+        mc mb s3-storage/nexus-storage
+      when: minio_cli_configured.stdout is not search('successfully')
+
+    - name: Create new access keys (service account) for Nexus
+      ansible.builtin.command: >
+        mc admin user add s3-storage nexus-user nexus-password
+
+    - name: Attach readwrite policy to new access keys
+      command: >
+        mc admin policy attach s3-storage readwrite --user nexus-user
+      register: attach_policy_result
+
+    - name: Create service account (access key) for existing user
+      command: >
+        mc admin user svcacct add s3-storage nexus-user --access-key nexus-access-key --secret-key nexus-secret-key
+      register: svcacct_result
+      tags: minio
 
     - name: Gather facts about the nexus3-oss container
       community.docker.docker_container_info:

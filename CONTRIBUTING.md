@@ -52,3 +52,14 @@ Now, the `NEXUS_LICENSE_B64` environment variable contains your base64 encoded l
 If you provide an invalid license Nexus will ignore it and start as the OSS version.
 
 If working with an environment variable is not an option, you can provide the base64 encoded license using an Ansible variable: `nexus_license_b64: "your-base64-encoded-license-string"`
+
+## Using S3 object sorage
+
+default username:password
+minioadmin:minioadmin
+
+user: nexus-user
+password; nexus-password
+
+--access-key nexus-access-key
+--secret-key nexus-secret-key
