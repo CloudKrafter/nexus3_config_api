@@ -31,6 +31,24 @@ nexus_blobstores:
     softQuota:
       type: spaceUsedQuota
       limit: 104857600 #100Mb
+  - name: s3-minio
+    type: S3
+    softQuota:
+      type: spaceUsedQuota
+      limit: 104857600 #100Mb
+    bucketConfiguration:
+      bucket:
+        region: us-east-1
+        name: nexus-storage
+        prefix:
+        expiration: 3
+      failoverBuckets: []
+      bucketSecurity:
+        accessKeyId: nexus-access-key
+        secretAccessKey: nexus-secret-key
+      advancedBucketConnection:
+        endpoint: "http://172.17.0.4:9000"
+        forcePathStyle: true
 
 nexus_roles:
   - id: "nx-admin"
