@@ -28,7 +28,7 @@
 
 - name: Extract relevant details from full {{ type }} blobstores
   set_fact:
-    full_existing_blobstores: "{{ full_existing_blobstores | default([]) + [ { 'name': result.blobstore.name, 'path': result.json.path, 'softQuota': { 'limit': result.json.softQuota.limit, 'type': result.json.softQuota.type } } ] }}"
+    full_existing_blobstores: "{{ full_existing_blobstores | default([]) + [ { 'name': result.blobstore.name, 'path': result.json.path, 'softQuota': { 'limit': result.json.softQuota.limit  | default(omit), 'type': result.json.softQuota.type  | default(omit) } } ] }}"
   loop: "{{ blobstore_details.results }}"
   loop_control:
     label: "{{ result.blobstore.name }}"
