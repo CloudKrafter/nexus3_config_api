@@ -1,5 +1,8 @@
 ## Building the devcontainer
 
+[![Docker Image CI](https://github.com/CloudKrafter/nexus3_config_api/actions/workflows/docker-image.yml/badge.svg)](https://github.com/CloudKrafter/nexus3_config_api/actions/workflows/docker-image.yml)
+[![Codespaces Prebuilds](https://github.com/CloudKrafter/nexus3_config_api/actions/workflows/codespaces/create_codespaces_prebuilds/badge.svg)](https://github.com/CloudKrafter/nexus3_config_api/actions/workflows/codespaces/create_codespaces_prebuilds)
+
 The `.devcontainer/Dockerfile` is used to built a prebuild container to speed up the starting process of the actual devcontainer itself.
 When you update the Dockerfile, make sure you rebuild it with:
 
