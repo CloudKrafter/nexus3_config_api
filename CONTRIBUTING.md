@@ -1,5 +1,9 @@
 # Ansible-Nexus3-Pro
 
+The top 4 contributors with an active GitHub Sponsors account will be added to the FUNDING.yml to show up on the GitHub repository page.
+
+More information about GitHub Sponsors can be found at [GitHub Sponsors](https://github.com/sponsors) and [GitHub FUNDING.yml](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/displaying-a-sponsor-button-in-your-repository)
+
 ## Setting up local development and test environment
 There are a few ways to get this project up & running locally.
 

@@ -1,5 +1,8 @@
-Ansible-Nexus3-Config-as-Code
+nexus3_config_api
 =========
+
+[![Publish new version to Galaxy](https://github.com/CloudKrafter/nexus3_config_api/actions/workflows/release.yml/badge.svg)](https://github.com/CloudKrafter/nexus3_config_api/actions/workflows/release.yml)
+[![Dependabot Updates](https://github.com/CloudKrafter/nexus3_config_api/actions/workflows/dependabot/dependabot-updates/badge.svg)](https://github.com/CloudKrafter/nexus3_config_api/actions/workflows/dependabot/dependabot-updates)
 
 Ansible role to configure Nexus3 with Config as Code.
 
