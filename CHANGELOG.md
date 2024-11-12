@@ -1,5 +1,9 @@
 # Changelog
 
+## [v.1.4.0] - 2024-11-11
+### Added
+- Added support for File blob stores
+
 ## [v1.3.0] - 2024-11-10
 ### Added
 - Added support for Content Selectors API endpoint
