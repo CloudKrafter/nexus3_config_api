@@ -1,5 +1,9 @@
 # Changelog
 
+## [v.1.4.0] - 2024-11-11
+### Added
+- Added support for File blob stores
+
 ## [v1.3.0] - 2024-11-10
 ### Added
 - Added support for Content Selectors API endpoint
@@ -8,6 +12,8 @@
 
 ### Changed
 - Each part of the configuration can be ran seperately by specifing its tag. For example `--tags="roles,users,cleanup-policies"`
+- moved role to cloudkrafter namespace
+- renamed role from nexus_config_as_code to nexus_config_api
 
 ### Fixes
 - API endpoints that require a pro license will be skipped when `nexus_enable_pro: false` is set.
