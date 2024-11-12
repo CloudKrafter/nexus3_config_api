@@ -1,7 +1,7 @@
 # Dockerfile
 FROM mcr.microsoft.com/devcontainers/python:1-3.12-bullseye
 
-# Install Python dependencies and Ansible Galaxy roles in a single RUN command
+# Install Python dependencies and Ansible Galaxy roles
 COPY requirements.txt /tmp/
 RUN pip install --upgrade pip setuptools && \
     pip install -r /tmp/requirements.txt && \
