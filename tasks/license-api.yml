@@ -11,7 +11,7 @@
   register: __nexus_license_info__
   tags: license
 
-- name: show __nexus_license_info__
+- name: Show __nexus_license_info__
   ansible.builtin.debug:
     var: __nexus_license_info__
   tags: license
@@ -24,7 +24,7 @@
     dest: "nexus.lic"
     mode: "0644"
   register: __license_status__
-  when: (lookup('env', 'NEXUS_LICENSE_B64') is defined or nexus_license_b64 is defined) and nexus_enable_pro == true and __nexus_license_info__.json.effectiveDate is not defined
+  when: nexus_enable_pro and (__nexus_license_info__.json.effectiveDate is not defined) and (lookup('env', 'NEXUS_LICENSE_B64') or nexus_license_b64)
   tags: license
 
 - name: Upload license file through API
@@ -41,7 +41,7 @@
     src: "nexus.lic"
     status_code: 200
   register: __uploaded_license__
-  when: (lookup('env', 'NEXUS_LICENSE_B64') is defined or nexus_license_b64 is defined) and nexus_enable_pro == true and __nexus_license_info__.json.effectiveDate is not defined
+  when: nexus_enable_pro and (__nexus_license_info__.json.effectiveDate is not defined) and (lookup('env', 'NEXUS_LICENSE_B64') or nexus_license_b64)
   tags: license
 
 # After uploading the license file, we can remove it from the file system
@@ -60,6 +60,6 @@
     password: "{{ nexus_admin_password }}"
     force_basic_auth: true
     status_code: 204
-  when: nexus_enable_pro == false and __nexus_license_info__.json.effectiveDate is defined
+  when: not nexus_enable_pro and __nexus_license_info__.json.effectiveDate is defined
   changed_when: true
   tags: license
