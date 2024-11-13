@@ -617,7 +617,7 @@
     (existing_maven_hosted_repos | selectattr('name', 'equalto', item.name) | first).format | default('maven2') != item.format | default('maven2') or
     (existing_maven_hosted_repos | selectattr('name', 'equalto', item.name) | first).type | default('hosted') != item.type | default('hosted') or
     (existing_maven_hosted_repos | selectattr('name', 'equalto', item.name) | first).online | default(true) != item.online | default(true) or
-    (existing_maven_hosted_repos | selectattr('name', 'equalto', item.name) | first).cleanup.policyNames | default(omit) != item.cleanup.policyNames | default(omit) or
+    (existing_maven_hosted_repos | selectattr('name', 'equalto', item.name) | first).cleanup.policyNames | default([]) | sort != item.cleanup.policyNames | default([]) | sort or
     (existing_maven_hosted_repos | selectattr('name', 'equalto', item.name) | first).storage.blobStoreName | default(omit) != item.storage.blobStoreName | default(None) or
     (existing_maven_hosted_repos | selectattr('name', 'equalto', item.name) | first).storage.strictContentTypeValidation | default(false) != item.storage.strictContentTypeValidation | default(false) or
     (existing_maven_hosted_repos | selectattr('name', 'equalto', item.name) | first).storage.writePolicy | default(omit) != item.storage.writePolicy | default(None) or
@@ -654,7 +654,7 @@
     (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).maven.versionPolicy | default(omit) != item.maven.versionPolicy | default(None) or
     (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).maven.layoutPolicy | default(omit) != item.maven.layoutPolicy | default(None) or
     (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).maven.contentDisposition | default(omit) != item.maven.contentDisposition | default(None) or
-    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).cleanup.policyNames | default(omit) != item.cleanup.policyNames | default(omit) or
+    (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).cleanup.policyNames | default([]) | sort != item.cleanup.policyNames | default([]) | sort or
     (existing_maven_proxy_repos | selectattr('name', 'equalto', item.name) | first).routingRuleName | default(omit) != item.routingRule | default(omit)
 
 - name: Show maven_hosted_repos_to_update
