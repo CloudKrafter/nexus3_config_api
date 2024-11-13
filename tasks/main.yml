@@ -1,14 +1,14 @@
 ---
 # include tasks from license-api.yml
-- include_tasks: license-api.yml
+- name: Include license-api
   ansible.builtin.include_tasks: license-api.yml
   tags: license
 
-- include_tasks: security-anonymous-api.yml
+- name: Include security-anonymous-api
   ansible.builtin.include_tasks: security-anonymous-api.yml
   tags: security-anonymous-access
 
-- include_tasks: user-tokens-api.yml
+- name: Include user-tokens-api
   ansible.builtin.include_tasks: user-tokens-api.yml
   when: nexus_enable_pro | bool
   tags: user-tokens
@@ -81,7 +81,7 @@
 
 - name: Compare roles for changes
   ansible.builtin.set_fact:
-    nexus_roles_to_update: "{{ nexus_roles_to_update + [ item ] }}"
+    nexus_roles_to_update: "{{ nexus_roles_to_update + [item] }}"
   loop: "{{ nexus_roles | list }}"
   when: >
     ( __nexus_roles__.json | selectattr('id', 'equalto', item.id) | first) is not defined or
@@ -109,7 +109,7 @@
 - name: Create configured Roles using Nexus API
   ansible.builtin.include_tasks: roles-api.yml
   vars:
-    roles: "{{ item | default([]) }}"
+    nexus_roles: "{{ item | default([]) }}"
     method: POST
   with_items:
     - "{{ nexus_roles_to_create | default([]) }}"
@@ -119,7 +119,7 @@
 - name: Update configured Roles using Nexus API
   ansible.builtin.include_tasks: roles-api.yml
   vars:
-    roles: "{{ item | default([]) }}"
+    nexus_roles: "{{ item | default([]) }}"
     method: PUT
   with_items:
     - "{{ nexus_roles_to_update | default([]) }}"
@@ -129,7 +129,7 @@
 - name: Delete Roles using Nexus API
   ansible.builtin.include_tasks: roles-api.yml
   vars:
-    roles: "{{ item | default([]) }}"
+    nexus_roles: "{{ item | default([]) }}"
     method: DELETE
   with_items:
     - "{{ nexus_roles_to_delete | default([]) }}"
@@ -164,7 +164,7 @@
 
 - name: Compare content selectors for changes
   ansible.builtin.set_fact:
-    nexus_content_selectors_to_update: "{{ nexus_content_selectors_to_update + [ item ] }}"
+    nexus_content_selectors_to_update: "{{ nexus_content_selectors_to_update + [item] }}"
   loop: "{{ nexus_content_selectors | list }}"
   when: >
     ( __nexus_content_selectors__.json | selectattr('name', 'equalto', item.name) | first) is not defined or
@@ -246,7 +246,7 @@
 
 - name: Compare users for changes
   ansible.builtin.set_fact:
-    nexus_users_to_update: "{{ nexus_users_to_update + [ item ] }}"
+    nexus_users_to_update: "{{ nexus_users_to_update + [item] }}"
   loop: "{{ nexus_users | list }}"
   # TODO: implement AND TEST readOnly attribute
   when: >
@@ -336,7 +336,7 @@
 
 - name: Compare cleanup policies for changes
   ansible.builtin.set_fact:
-    nexus_repos_cleanup_policies_to_update: "{{ nexus_repos_cleanup_policies_to_update + [ item ] }}"
+    nexus_repos_cleanup_policies_to_update: "{{ nexus_repos_cleanup_policies_to_update + [item] }}"
   loop: "{{ nexus_repos_cleanup_policies | list }}"
   when: >
     nexus_enable_pro | bool and (
@@ -425,7 +425,7 @@
 
 - name: Compare routing rules for changes
   ansible.builtin.set_fact:
-    nexus_routing_rules_to_update: "{{ nexus_routing_rules_to_update + [ item ] }}"
+    nexus_routing_rules_to_update: "{{ nexus_routing_rules_to_update + [item] }}"
   loop: "{{ nexus_routing_rules | list }}"
   when: >
     ( __nexus_routing_rules__.json | selectattr('name', 'equalto', item.name) | first) is not defined or
@@ -612,7 +612,7 @@
 
 - name: Compare maven hosted repositories for changes
   ansible.builtin.set_fact:
-    maven_hosted_repos_to_update: "{{ maven_hosted_repos_to_update + [ item ] }}"
+    maven_hosted_repos_to_update: "{{ maven_hosted_repos_to_update + [item] }}"
   loop: "{{ final_nexus_repos_maven_hosted | list }}"
   # TODO: implement cleanup policies
   when: >
@@ -631,7 +631,7 @@
 
 - name: Compare maven proxy repositories for changes
   ansible.builtin.set_fact:
-    maven_proxy_repos_to_update: "{{ maven_proxy_repos_to_update + [ item ] }}"
+    maven_proxy_repos_to_update: "{{ maven_proxy_repos_to_update + [item] }}"
   loop: "{{ final_nexus_repos_maven_proxy | list }}"
   # TODO: implement replication and authentication
   when: >
