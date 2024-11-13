@@ -301,6 +301,10 @@ nexus_repos_cleanup_policies:
 
 nexus_repos_maven_hosted:
   - name: repo-1
+    online: true
+    storage:
+      strictContentTypeValidation: true
+      writePolicy: ALLOW_ONCE # Disable redeploy
     cleanup:
       policyNames:
         - maven_cleanup
@@ -310,37 +314,76 @@ nexus_repos_maven_hosted:
       versionPolicy: RELEASE
       layoutPolicy: STRICT
       contentDisposition: INLINE
-  - name: maven-snapshots
+  - name: repo-2
+    online: true
+    storage:
+      strictContentTypeValidation: false
+      writePolicy: ALLOW # Allow redeploy
     cleanup:
-      policyNames:
-        - maven_cleanup
+      policyNames: []
+    component:
+      proprietaryComponents: false
+    maven:
+      versionPolicy: SNAPSHOT
+      layoutPolicy: PERMISSIVE
+      contentDisposition: ATTACHMENT
+  - name: repo-3-offline
+    online: false
+    storage:
+      strictContentTypeValidation: false
+      writePolicy: DENY # Read only
+    cleanup:
+      policyNames: []
+    component:
+      proprietaryComponents: false
+    maven:
+      versionPolicy:
+      layoutPolicy: PERMISSIVE
+      contentDisposition: ATTACHMENT
+  - name: maven-snapshots
+    online: true
     storage:
       strictContentTypeValidation: true
       writePolicy: ALLOW_ONCE
+    cleanup:
+      policyNames:
+        - maven_cleanup
+    component:
+      proprietaryComponents: true
     maven:
       contentDisposition: INLINE
       layoutPolicy: STRICT
       versionPolicy: SNAPSHOT
-    component:
-      proprietaryComponents: true
-
   - name: maven-releases
     online: true
     storage:
       strictContentTypeValidation: true
+    cleanup:
+      policyNames:
+        - maven_cleanup
+    component:
+      proprietaryComponents: true
     maven:
       contentDisposition: INLINE
       layoutPolicy: STRICT
       versionPolicy: RELEASE
-    component:
-      proprietaryComponents: true
+  - name: repo-cleanup-order-1
     cleanup:
       policyNames:
         - maven_cleanup
-
-  - name: repo-2
+        - maven_releases_cleanup
+        - maven_prereleases_cleanup
+  - name: repo-cleanup-order-2
     cleanup:
       policyNames:
+        - maven_releases_cleanup
+        - maven_cleanup
+        - maven_prereleases_cleanup
+  - name: repo-cleanup-order-3
+    cleanup:
+      policyNames:
+        - maven_prereleases_cleanup
+        - maven_releases_cleanup
         - maven_cleanup
 
 nexus_repos_maven_proxy:
