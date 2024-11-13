@@ -52,12 +52,12 @@
 
 - name: Determine {{ type }} blobstores to create
   ansible.builtin.set_fact:
-    blobstores_to_create: "{{ desired_blobstores | rejectattr('name', 'in', existing_blobstores | map(attribute='name') | list) | list }}"
+    nxs_create_blobstores: "{{ desired_blobstores | rejectattr('name', 'in', existing_blobstores | map(attribute='name') | list) | list }}"
   tags: blobstores
 
 - name: Show {{ type }} blobstores to create
   ansible.builtin.debug:
-    var: blobstores_to_create | length
+    var: nxs_create_blobstores | length
   tags: blobstores
 
 - name: Create {{ type }} blobstores
@@ -73,16 +73,16 @@
       Accept: "application/json"
     body: "{{ blobstore }}"
     body_format: json
-  loop: "{{ blobstores_to_create }}"
+  loop: "{{ nxs_create_blobstores }}"
   loop_control:
     loop_var: blobstore
-  when: blobstores_to_create | length > 0
+  when: nxs_create_blobstores | length > 0
   changed_when: true
   tags: blobstores
 
 - name: Set fact for {{ type }} blobstores to update
   ansible.builtin.set_fact:
-    blobstores_to_update: []
+    nxs_update_blobstores: []
   tags: blobstores
 
 # TODO: Implement and test S3 and Azure blobstores comparison logic
@@ -94,7 +94,7 @@
 # The template would then generate the comparison logic based on the {{ type }}.
 - name: Compare {{ type }} blobstores for changes
   ansible.builtin.set_fact:
-    blobstores_to_update: "{{ blobstores_to_update + [blobstore] }}"
+    nxs_update_blobstores: "{{ nxs_update_blobstores + [blobstore] }}"
   loop: "{{ desired_blobstores }}"
   loop_control:
     loop_var: blobstore
@@ -109,7 +109,7 @@
 
 - name: Show {{ type }} blobstores to update
   ansible.builtin.debug:
-    var: blobstores_to_update | length
+    var: nxs_update_blobstores | length
   tags: blobstores
 
 - name: Update {{ type }} blobstores
@@ -125,21 +125,21 @@
       Accept: "application/json"
     body: "{{ blobstore }}"
     body_format: json
-  loop: "{{ blobstores_to_update }}"
+  loop: "{{ nxs_update_blobstores }}"
   loop_control:
     loop_var: blobstore
-  when: blobstores_to_update | length > 0
+  when: nxs_update_blobstores | length > 0
   changed_when: true
   tags: blobstores
 
 - name: Determine {{ type }} blobstores to delete
   ansible.builtin.set_fact:
-    blobstores_to_delete: "{{ existing_blobstores | rejectattr('name', 'in', nexus_blobstores | map(attribute='name') | list) | list }}"
+    nxs_delete_blobstores: "{{ existing_blobstores | rejectattr('name', 'in', nexus_blobstores | map(attribute='name') | list) | list }}"
   tags: blobstores
 
 - name: Show {{ type }} blobstores to delete
   ansible.builtin.debug:
-    var: blobstores_to_delete | length
+    var: nxs_delete_blobstores | length
   tags: blobstores
 
 - name: Delete {{ type }} blobstores
@@ -151,9 +151,9 @@
     password: "{{ nexus_admin_password }}"
     force_basic_auth: true
     status_code: 204
-  loop: "{{ blobstores_to_delete }}"
+  loop: "{{ nxs_delete_blobstores }}"
   loop_control:
     loop_var: blobstore
-  when: blobstores_to_delete | length > 0
+  when: nxs_delete_blobstores | length > 0
   changed_when: true
   tags: blobstores
