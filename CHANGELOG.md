@@ -1,5 +1,28 @@
 # Changelog
 
+## [v.1.4.2] - 2024-11-12
+### Added
+- Added ansible-lint configuration
+
+### Changed
+- repo has been moved to Cloudkrafters GitHub organization
+- Role will be published at the Cloudkrafter namespace in Galaxy
+- Updated pip requirements
+
+### Fixed
+- Podman support for molecule scenario
+- Maven repo updates are now idempotent again
+
+## [v.1.4.1] - 2024-11-11
+### Added
+No features added
+
+### Changed
+No existing behaviour has changed
+
+### Fixed
+- Refactored code base for maintainability
+
 ## [v.1.4.0] - 2024-11-11
 ### Added
 - Added support for File blob stores
