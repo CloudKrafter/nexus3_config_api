@@ -1,6 +1,6 @@
 ---
 - name: Construct API call
-  set_fact:
+  ansible.builtin.set_fact:
     api_url: >
       {% if method in ['POST'] %}
         {{ nexus_protocol }}://{{ nexus_hostname }}:{{ nexus_port }}/service/rest/v1/security/users
@@ -16,7 +16,7 @@
   tags: users
 
 - name: "{{ method }} {{ item.userId }} user"
-  uri:
+  ansible.builtin.uri:
     url: "{{ api_url }}"
     method: "{{ method }}"
     validate_certs: false

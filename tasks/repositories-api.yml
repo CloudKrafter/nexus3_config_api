@@ -1,6 +1,6 @@
 ---
 - name: "{{ method }} {{ item.name }} {{ format }} {{ type }} repository"
-  uri:
+  ansible.builtin.uri:
     url: >
       {% if method in ['POST'] %}
         {{ nexus_protocol }}://{{ nexus_hostname }}:{{ nexus_port }}/service/rest/v1/repositories/{{ format }}/{{ type }}

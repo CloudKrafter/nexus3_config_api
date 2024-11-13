@@ -1,0 +1,9 @@
+# This file contains ignores rule violations for ansible-lint
+tasks/cleanup-policies-api.yml name[template]
+tasks/content-selectors-api.yml name[template]
+tasks/main.yml yaml[line-length]
+tasks/process_blobstores.yml name[template]
+tasks/repositories-api.yml name[template]
+tasks/roles-api.yml name[template]
+tasks/routing-rules-api.yml name[template]
+tasks/users-api.yml name[template]

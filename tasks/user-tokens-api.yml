@@ -14,13 +14,13 @@
   tags: user-tokens
 
 - name: Set fact for __nexus_user_tokens__
-  set_fact:
+  ansible.builtin.set_fact:
     current_nexus_user_tokens: "{{ __nexus_user_tokens__.json | dict2items | sort(attribute='key') | items2dict }}"
   when: __nexus_user_tokens__.status == 200
   tags: user-tokens
 
 - name: Set fact for nexus_user_tokens_capability
-  set_fact:
+  ansible.builtin.set_fact:
     desired_nexus_user_tokens_capability: "{{ nexus_user_tokens_capability | dict2items | sort(attribute='key') | items2dict }}"
   tags: user-tokens
 
