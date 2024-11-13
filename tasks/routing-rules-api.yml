@@ -1,6 +1,6 @@
 ---
 - name: "{{ method }} {{ item.name }} routing rule"
-  uri:
+  ansible.builtin.uri:
     url: >
       {% if method in ['POST'] %}
         {{ nexus_protocol }}://{{ nexus_hostname }}:{{ nexus_port }}/service/rest/v1/routing-rules

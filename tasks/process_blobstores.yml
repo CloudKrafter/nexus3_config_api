@@ -1,16 +1,16 @@
 - name: Reset full_existing_blobstores and desired_blobstores fact
-  set_fact:
+  ansible.builtin.set_fact:
     full_existing_blobstores: []
     desired_blobstores: []
   tags: blobstores
 
 - name: Filter existing blobstores of type {{ type }}
-  set_fact:
+  ansible.builtin.set_fact:
     existing_blobstores: "{{ all_blobstores.json | selectattr('type', 'equalto', type) | list }}"
   tags: blobstores
 
 - name: Get full details of each {{ type }} blobstore
-  uri:
+  ansible.builtin.uri:
     url: "{{ nexus_protocol }}://{{ nexus_hostname }}:{{ nexus_port }}/service/rest/v1/blobstores/{{ type | lower }}/{{ blobstore.name }}"
     method: GET
     validate_certs: false
@@ -27,7 +27,7 @@
   tags: blobstores
 
 - name: Extract relevant details from full {{ type }} blobstores
-  set_fact:
+  ansible.builtin.set_fact:
     full_existing_blobstores: "{{ full_existing_blobstores | default([]) + [ { 'name': result.blobstore.name, 'path': result.json.path, 'softQuota': { 'limit': result.json.softQuota.limit  | default(omit), 'type': result.json.softQuota.type  | default(omit) } } ] }}"
   loop: "{{ blobstore_details.results }}"
   loop_control:
@@ -36,27 +36,27 @@
   tags: blobstores
 
 - name: Debug full existing {{ type }} blobstores
-  debug:
+  ansible.builtin.debug:
     var: full_existing_blobstores
   tags: blobstores
 
 - name: Set fact for desired {{ type }} blobstores
-  set_fact:
+  ansible.builtin.set_fact:
     desired_blobstores: "{{ nexus_blobstores | selectattr('type', 'equalto', type) | list }}"
   tags: blobstores
 
 - name: Debug desired {{ type }} blobstores
-  debug:
+  ansible.builtin.debug:
     var: desired_blobstores
   tags: blobstores
 
 - name: Determine {{ type }} blobstores to create
-  set_fact:
+  ansible.builtin.set_fact:
     blobstores_to_create: "{{ desired_blobstores | rejectattr('name', 'in', existing_blobstores | map(attribute='name') | list) | list }}"
   tags: blobstores
 
 - name: Show {{ type }} blobstores to create
-  debug:
+  ansible.builtin.debug:
     var: blobstores_to_create | length
   tags: blobstores
 
@@ -81,7 +81,7 @@
   tags: blobstores
 
 - name: Set fact for {{ type }} blobstores to update
-  set_fact:
+  ansible.builtin.set_fact:
     blobstores_to_update: []
   tags: blobstores
 
@@ -93,7 +93,7 @@
 # The constructor could be a Jinja2 template that takes the {{ type }} as an argument.
 # The template would then generate the comparison logic based on the {{ type }}.
 - name: Compare {{ type }} blobstores for changes
-  set_fact:
+  ansible.builtin.set_fact:
     blobstores_to_update: "{{ blobstores_to_update + [ blobstore ] }}"
   loop: "{{ desired_blobstores }}"
   loop_control:
@@ -108,7 +108,7 @@
   tags: blobstores
 
 - name: Show {{ type }} blobstores to update
-  debug:
+  ansible.builtin.debug:
     var: blobstores_to_update | length
   tags: blobstores
 
@@ -133,12 +133,12 @@
   tags: blobstores
 
 - name: Determine {{ type }} blobstores to delete
-  set_fact:
+  ansible.builtin.set_fact:
     blobstores_to_delete: "{{ existing_blobstores | rejectattr('name', 'in', nexus_blobstores | map(attribute='name') | list) | list }}"
   tags: blobstores
 
 - name: Show {{ type }} blobstores to delete
-  debug:
+  ansible.builtin.debug:
     var: blobstores_to_delete | length
   tags: blobstores
 

@@ -14,13 +14,13 @@
   tags: security-anonymous-access
 
 - name: Set fact for current_nexus_anonymous_config
-  set_fact:
+  ansible.builtin.set_fact:
     current_nexus_anonymous_config: "{{ __nexus_anonymous_config__.json | dict2items | sort(attribute='key') | items2dict }}"
   when: __nexus_anonymous_config__.status == 200
   tags: security-anonymous-access
 
 - name: Set fact for desired_nexus_anonymous_config
-  set_fact:
+  ansible.builtin.set_fact:
     desired_nexus_anonymous_config: "{{ nexus_anonymous_access | dict2items | sort(attribute='key') | items2dict }}"
   tags: security-anonymous-access
 
