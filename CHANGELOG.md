@@ -1,5 +1,9 @@
 # Changelog
 
+## [v.1.5.0] - 2024-11-15
+### Added
+- Creating, updating and deleting maven group repositories
+
 ## [v.1.4.2] - 2024-11-12
 ### Added
 - Added ansible-lint configuration
