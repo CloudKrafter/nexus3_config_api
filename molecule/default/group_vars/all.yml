@@ -416,6 +416,28 @@ nexus_repos_maven_proxy:
       blocked: false
       autoBlock: true
 
+nexus_repos_maven_group:
+  - name: maven-group
+    online: true
+    storage:
+      blobStoreName: default
+      strictContentTypeValidation: true
+    group:
+      memberNames:
+        - maven-central
+        - maven-proxy-2
+        - maven-proxy-3
+  - name: maven-group-reverse-group-order
+    online: false
+    storage:
+      blobStoreName: default
+      strictContentTypeValidation: false
+    group:
+      memberNames:
+        - maven-proxy-3
+        - maven-proxy-2
+        - maven-central
+
 nexus_routing_rules:
   - name: routing-rule-block-nmap
     description: routing-rule-1
