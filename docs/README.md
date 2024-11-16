@@ -17,6 +17,7 @@ if the order of the roles/privileges changes, it will not be updated, but it wil
 - setting version policy on maven groups
 - enabling trust store on maven proxies
 - create cleanup policy for format 'all'
+- allow anonymous docker pull
 
 
 # TODO:

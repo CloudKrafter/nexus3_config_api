@@ -296,6 +296,41 @@ nexus_repos_cleanup_policies:
     criteriaLastDownloaded: 120
     criteriaAssetRegex: "your-regex*"
 
+nexus_repos_docker_hosted:
+  - name: docker-hosted-1
+    online: true
+    storage:
+      blobStoreName: default
+      strictContentTypeValidation: true
+      writePolicy: allow_once
+      latestPolicy: true
+    cleanup:
+      policyNames: []
+    docker:
+      v1Enabled: false
+      forceBasicAuth: false
+      httpPort: 10000
+      httpsPort: 10001
+
+  - name: docker-hosted-offline
+    online: false
+    storage:
+      blobStoreName: default
+      strictContentTypeValidation: true
+      writePolicy: allow_once
+      latestPolicy: true
+    cleanup:
+      policyNames:
+        - docker_cleanup
+    component:
+      proprietaryComponents: true
+    docker:
+      v1Enabled: true
+      forceBasicAuth: true
+      httpPort: 10002
+      httpsPort: 10003
+      subdomain: docker-hosted-offline
+
 nexus_repos_maven_hosted:
   - name: repo-1
     online: true
