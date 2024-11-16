@@ -500,22 +500,9 @@
 ############ Maven Repositories ############
 
 - name: Process definitions for maven
+  # test this conditional
   when: nexus_config_maven | bool
   block:
-    - name: Apply defaults to maven proxy repos
-      ansible.builtin.set_fact:
-        nxs_desired_mvn_proxy_repos: >-
-          {%- set result = [] -%}
-          {%- for repo in nexus_repos_maven_proxy -%}
-            {%- set combined_repo = __nexus_repos_maven_proxy_defaults | combine(repo, recursive=True) -%}
-              {{ result.append(combined_repo) }}
-          {%- endfor -%}
-          {{ result | to_json | from_json }}
-
-    # - name: Show nxs_desired_mvn_proxy_repos
-    #   ansible.builtin.debug:
-    #     var: nxs_desired_mvn_proxy_repos
-
     - name: Apply defaults to maven hosted repos
       ansible.builtin.set_fact:
         nxs_desired_mvn_hosted_repos: >-
@@ -526,68 +513,27 @@
           {%- endfor -%}
           {{ result | to_json | from_json }}
 
-    # - name: Show nxs_desired_mvn_hosted_repos
-    #   ansible.builtin.debug:
-    #     var: nxs_desired_mvn_hosted_repos
+    - name: Apply defaults to maven proxy repos
+      ansible.builtin.set_fact:
+        nxs_desired_mvn_proxy_repos: >-
+          {%- set result = [] -%}
+          {%- for repo in nexus_repos_maven_proxy -%}
+            {%- set combined_repo = __nexus_repos_maven_proxy_defaults | combine(repo, recursive=True) -%}
+              {{ result.append(combined_repo) }}
+          {%- endfor -%}
+          {{ result | to_json | from_json }}
 
-    # - name: Apply defaults to maven group repos
-    #   ansible.builtin.set_fact:
-    #     nexus_repos_maven_group: >-
-    #       {%- set result = [] -%}
-    #       {%- for repo in nexus_repos_maven_group -%}
-    #         {%- set combined_repo = _nexus_repos_maven_defaults | combine(repo) -%}
-    #         {%- set transformed_repo = {
-    #           'name': combined_repo.name,
-    #           'online': combined_repo.online | default(true),
-    #           'storage': {
-    #             'blobStoreName': combined_repo.blob_store | default('default'),
-    #             'strictContentTypeValidation': combined_repo.strict_content_validation | default(true)
-    #           },
-    #           'group': {
-    #             'memberNames': combined_repo.member_repos | default([])
-    #           }
-    #         } -%}
-    #         {%- if use_api -%}
-    #           {{ result.append(transformed_repo) }}
-    #         {%- else -%}
-    #           {{ result.append(combined_repo) }}
-    #         {%- endif -%}
-    #       {%- endfor -%}
-    #       {{ result | to_json | from_json }}
-
-    # - name: Add maven repositories to global repos list
-    #   ansible.builtin.set_fact:
-    #     _nexus_repos_global_list: >-
-    #       {{
-    #         _nexus_repos_global_list | default([])
-    #         +
-    #         (nexus_repos_maven_proxy | map('combine', {"format": "maven2", "type": "proxy"}) | list)
-    #         +
-    #         (nexus_repos_maven_hosted | map('combine', {"format": "maven2", "type": "hosted"}) | list)
-    #         +
-    #         (nexus_repos_maven_group | map('combine', {"format": "maven2", "type": "group"}) | list)
-    #       }}
-    #     _nexus_repos_maven_proxy: >-
-    #       {{
-    #         _nexus_repos_maven_proxy | default([])
-    #         +
-    #         (nexus_repos_maven_proxy | map('combine', {"format": "maven", "type": "proxy"}) | list)
-    #       }}
-    #     _nexus_repos_maven_hosted: >-
-    #       {{
-    #         _nexus_repos_maven_hosted | default([])
-    #         +
-    #         (nexus_repos_maven_hosted | map('combine', {"format": "maven", "type": "hosted"}) | list)
-    #       }}
-    #     _nexus_repos_maven_group: >-
-    #       {{
-    #         _nexus_repos_maven_group | default([])
-    #         +
-    #         (nexus_repos_maven_group | map('combine', {"format": "maven", "type": "group"}) | list)
-    #       }}
+    - name: Apply defaults to maven group repos
+      ansible.builtin.set_fact:
+        nxs_desired_mvn_group_repos: >-
+          {%- set result = [] -%}
+          {%- for repo in nexus_repos_maven_group -%}
+            {%- set combined_repo = __nexus_repos_maven_group_defaults | combine(repo) -%}
+              {{ result.append(combined_repo) }}
+          {%- endfor -%}
+          {{ result | to_json | from_json }}
 
 # Need filtered facts for existing repositories because the API has different endpoints for each type and format
-
 - name: Filter existing repositories
   ansible.builtin.set_fact:
     __nxs_crnt_mvn_hstd__: "{{ __nxs_all_repos__.json | selectattr('format', 'equalto', 'maven2') | selectattr('type', 'equalto', 'hosted') | list }}"
@@ -598,23 +544,26 @@
   ansible.builtin.debug:
     var: __nxs_crnt_mvn_prxy__
 
+- name: Show __nxs_crnt_mvn_grp__
+  ansible.builtin.debug:
+    var: __nxs_crnt_mvn_grp__
+
 - name: Determine repositories to create
   ansible.builtin.set_fact:
     nxs_create_mvn_hosted_repos: "{{ nxs_desired_mvn_hosted_repos | rejectattr('name', 'in', __nxs_crnt_mvn_hstd__ | map(attribute='name') | list) | list }}"
     nxs_create_mvn_proxy_repos: "{{ nxs_desired_mvn_proxy_repos | rejectattr('name', 'in', __nxs_crnt_mvn_prxy__ | map(attribute='name') | list) | list }}"
-    maven_group_repos_to_create: "{{ nexus_repos_maven_group | rejectattr('name', 'in', __nxs_crnt_mvn_grp__ | map(attribute='name') | list) | list }}"
+    nxs_create_mvn_group_repos: "{{ nxs_desired_mvn_group_repos | rejectattr('name', 'in', __nxs_crnt_mvn_grp__ | map(attribute='name') | list) | list }}"
 
 - name: Determine repositories to delete
   ansible.builtin.set_fact:
     nxs_delete_mvn_hosted_repos: "{{ __nxs_crnt_mvn_hstd__ | rejectattr('name', 'in', nxs_desired_mvn_hosted_repos | map(attribute='name') | list) | list }}"
     nxs_delete_mvn_proxy_repos: "{{ __nxs_crnt_mvn_prxy__ | rejectattr('name', 'in', nxs_desired_mvn_proxy_repos | map(attribute='name') | list) | list }}"
-    maven_group_repos_to_delete: "{{ __nxs_crnt_mvn_grp__ | rejectattr('name', 'in', nexus_repos_maven_group | map(attribute='name') | list) | list }}"
+    nxs_delete_mvn_group_repos: "{{ __nxs_crnt_mvn_grp__ | rejectattr('name', 'in', nxs_desired_mvn_group_repos | map(attribute='name') | list) | list }}"
 
 - name: Compare maven hosted repositories for changes
   ansible.builtin.set_fact:
     nxs_update_mvn_hosted_repos: "{{ nxs_update_mvn_hosted_repos + [item] }}"
   loop: "{{ nxs_desired_mvn_hosted_repos | list }}"
-  # TODO: implement cleanup policies
   when: >
     (__nxs_crnt_mvn_hstd__ | selectattr('name', 'equalto', item.name) | first) is not defined or
     (__nxs_crnt_mvn_hstd__ | selectattr('name', 'equalto', item.name) | first).format | default('maven2') != item.format | default('maven2') or
@@ -660,9 +609,18 @@
     (__nxs_crnt_mvn_prxy__ | selectattr('name', 'equalto', item.name) | first).cleanup.policyNames | default([]) | sort != item.cleanup.policyNames | default([]) | sort or
     (__nxs_crnt_mvn_prxy__ | selectattr('name', 'equalto', item.name) | first).routingRuleName | default(omit) != item.routingRule | default(omit)
 
-- name: Show nxs_update_mvn_hosted_repos
-  ansible.builtin.debug:
-    var: nxs_update_mvn_hosted_repos | length
+- name: Compare maven group repositories for changes
+  ansible.builtin.set_fact:
+    nxs_update_mvn_group_repos: "{{ nxs_update_mvn_group_repos + [item] }}"
+  loop: "{{ nxs_desired_mvn_group_repos | list }}"
+  when: >
+    (__nxs_crnt_mvn_grp__ | selectattr('name', 'equalto', item.name) | first) is not defined or
+    (__nxs_crnt_mvn_grp__ | selectattr('name', 'equalto', item.name) | first).format | default('maven2') != item.format | default('maven2') or
+    (__nxs_crnt_mvn_grp__ | selectattr('name', 'equalto', item.name) | first).type | default('group') != item.type | default('group') or
+    (__nxs_crnt_mvn_grp__ | selectattr('name', 'equalto', item.name) | first).online | default(true) != item.online | default(true) or
+    (__nxs_crnt_mvn_grp__ | selectattr('name', 'equalto', item.name) | first).storage.blobStoreName | default(omit) != item.storage.blobStoreName | default(None) or
+    (__nxs_crnt_mvn_grp__ | selectattr('name', 'equalto', item.name) | first).storage.strictContentTypeValidation | default(false) != item.storage.strictContentTypeValidation | default(false) or
+    (__nxs_crnt_mvn_grp__ | selectattr('name', 'equalto', item.name) | first).group.memberNames | default([]) != item.group.memberNames | default([])
 
 - name: Show nxs_create_mvn_hosted_repos
   ansible.builtin.debug:
@@ -675,6 +633,22 @@
 - name: Show nxs_update_mvn_proxy_repos
   ansible.builtin.debug:
     var: nxs_update_mvn_proxy_repos | length
+
+- name: Show nxs_delete_mvn_proxy_repos
+  ansible.builtin.debug:
+    var: nxs_delete_mvn_proxy_repos | length
+
+- name: Show nxs_create_mvn_group_repos
+  ansible.builtin.debug:
+    var: nxs_create_mvn_group_repos | length
+
+- name: Show nxs_update_mvn_group_repos
+  ansible.builtin.debug:
+    var: nxs_update_mvn_group_repos | length
+
+- name: Show nxs_delete_mvn_group_repos
+  ansible.builtin.debug:
+    var: nxs_delete_mvn_group_repos | length
 
 - name: Create configured Maven Hosted repositories using Nexus API
   ansible.builtin.include_tasks: repositories-api.yml
@@ -698,6 +672,17 @@
     - "{{ nxs_create_mvn_proxy_repos | default([]) }}"
   when: nxs_create_mvn_proxy_repos | length > 0
 
+- name: Create configured Maven Group repositories using Nexus API
+  ansible.builtin.include_tasks: repositories-api.yml
+  vars:
+    repos: "{{ item | default([]) }}"
+    format: maven
+    type: group
+    method: POST
+  with_items:
+    - "{{ nxs_create_mvn_group_repos | default([]) }}"
+  when: nxs_create_mvn_group_repos | length > 0
+
 - name: Update configured Maven Hosted repositories using Nexus API
   ansible.builtin.include_tasks: repositories-api.yml
   vars:
@@ -720,6 +705,17 @@
     - "{{ nxs_update_mvn_proxy_repos | default([]) }}"
   when: nxs_update_mvn_proxy_repos | length > 0
 
+- name: Update configured Maven Group repositories using Nexus API
+  ansible.builtin.include_tasks: repositories-api.yml
+  vars:
+    repos: "{{ item | default([]) }}"
+    format: maven
+    type: group
+    method: PUT
+  with_items:
+    - "{{ nxs_update_mvn_group_repos | default([]) }}"
+  when: nxs_update_mvn_group_repos | length > 0
+
 - name: Delete Maven Hosted repositories using Nexus API
   ansible.builtin.include_tasks: repositories-api.yml
   vars:
@@ -741,3 +737,14 @@
   with_items:
     - "{{ nxs_delete_mvn_proxy_repos | default([]) }}"
   when: nxs_delete_mvn_proxy_repos | length > 0
+
+- name: Delete Maven Group repositories using Nexus API
+  ansible.builtin.include_tasks: repositories-api.yml
+  vars:
+    repos: "{{ nxs_delete_mvn_group_repos | default([]) }}"
+    format: maven
+    type: group
+    method: DELETE
+  with_items:
+    - "{{ nxs_delete_mvn_group_repos | default([]) }}"
+  when: nxs_delete_mvn_group_repos | length > 0

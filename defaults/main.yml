@@ -18,6 +18,16 @@ nexus_repos_cleanup_policies: []
 
 nexus_config_maven: true
 
+__nexus_repos_maven_group_defaults:
+  online: true
+  format: maven2
+  type: group
+  storage:
+    blobStoreName: default
+    strictContentTypeValidation: false
+  group:
+    memberNames: []
+
 __nexus_repos_maven_hosted_defaults:
   online: true
   format: maven2
