@@ -13,18 +13,6 @@
   when: nexus_enable_pro | bool
   tags: user-tokens
 
-- name: Initialize empty array for assets to be updated
-  ansible.builtin.set_fact:
-    nxs_update_mvn_hosted_repos: []
-    nxs_update_mvn_proxy_repos: []
-    maven_group_repos_to_update: []
-    nxs_update_cleanuppolicies: []
-    nxs_update_routingrules: []
-    nxs_update_users: []
-    nxs_update_content_selectors: []
-    nxs_update_roles: []
-  tags: always
-
 ########### Blobstores ###########
 
 - name: Get all blobstores
@@ -540,6 +528,10 @@
     __nxs_crnt_mvn_prxy__: "{{ __nxs_all_repos__.json | selectattr('format', 'equalto', 'maven2') | selectattr('type', 'equalto', 'proxy') | list }}"
     __nxs_crnt_mvn_grp__: "{{ __nxs_all_repos__.json | selectattr('format', 'equalto', 'maven2') | selectattr('type', 'equalto', 'group') | list }}"
 
+- name: Show __nxs_crnt_mvn_hstd__
+  ansible.builtin.debug:
+    var: __nxs_crnt_mvn_hstd__
+
 - name: Show __nxs_crnt_mvn_prxy__
   ansible.builtin.debug:
     var: __nxs_crnt_mvn_prxy__
@@ -626,9 +618,17 @@
   ansible.builtin.debug:
     var: nxs_create_mvn_hosted_repos | length
 
+- name: Show nxs_update_mvn_hosted_repos
+  ansible.builtin.debug:
+    var: nxs_update_mvn_hosted_repos | length
+
 - name: Show nxs_delete_mvn_hosted_repos
   ansible.builtin.debug:
     var: nxs_delete_mvn_hosted_repos | length
+
+- name: Show nxs_create_mvn_proxy_repos
+  ansible.builtin.debug:
+    var: nxs_create_mvn_proxy_repos | length
 
 - name: Show nxs_update_mvn_proxy_repos
   ansible.builtin.debug:

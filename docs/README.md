@@ -11,6 +11,13 @@ Take away: when not all attributes for PUT are passed through the API, the role 
 
 if the order of the roles/privileges changes, it will not be updated, but it will try to PUT all the changes to the api
 
+## Missing support on API
+- setting content disposition on maven groups
+- setting layout policy on maven groups
+- setting version policy on maven groups
+- enabling trust store on maven proxies
+- create cleanup policy for format 'all'
+
 
 # TODO:
 - ALL repository endpoints

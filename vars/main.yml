@@ -1,1 +1,9 @@
 # vars file for nexus3-config-as-code
+nxs_update_mvn_hosted_repos: []
+nxs_update_mvn_proxy_repos: []
+nxs_update_mvn_group_repos: []
+nxs_update_cleanuppolicies: []
+nxs_update_routingrules: []
+nxs_update_users: []
+nxs_update_content_selectors: []
+nxs_update_roles: []
