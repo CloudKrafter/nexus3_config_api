@@ -25,6 +25,54 @@ nexus_config_conda: true
 nexus_config_helm: true
 nexus_config_r: true
 nexus_config_nuget: true
+nexus_config_apt: true
+
+__nexus_repos_apt_hosted_defaults:
+  online: true
+  format: apt
+  type: hosted
+  storage:
+    blobStoreName: default
+    strictContentTypeValidation: false
+    writePolicy: allow_once
+  cleanup:
+    policyNames: []
+  component:
+    proprietaryComponents: false
+  apt:
+    distribution: bionic
+  aptSigning:
+    keypair: default
+
+__nexus_repos_apt_proxy_defaults:
+  format: apt
+  type: proxy
+  online: true
+  storage:
+    blobStoreName: default
+    strictContentTypeValidation: true
+  cleanup:
+    policyNames: []
+  proxy:
+    remoteUrl: https://remote.repository.com
+    contentMaxAge: 1440
+    metadataMaxAge: 1440
+  negativeCache:
+    enabled: true
+    timeToLive: 1440
+  httpClient:
+    blocked: false
+    autoBlock: true
+    connection:
+      retries: 0
+      userAgentSuffix: string
+      timeout: 60
+      enableCircularRedirects: false
+      enableCookies: false
+      useTrustStore: false
+  apt:
+    distribution: bionic
+    flat: false
 
 __nexus_repos_nuget_hosted_defaults:
   online: true
@@ -447,6 +495,10 @@ __nexus_repos_maven_proxy_defaults:
     versionPolicy: MIXED
     layoutPolicy: STRICT
     contentDisposition: ATTACHMENT
+
+nexus_repos_apt_hosted: []
+
+nexus_repos_apt_proxy: []
 
 nexus_repos_r_hosted: []
 
