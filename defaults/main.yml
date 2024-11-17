@@ -21,6 +21,34 @@ nexus_config_docker: true
 nexus_config_gitlfs: true
 nexus_config_npm: true
 nexus_config_pypi: true
+nexus_config_conda: true
+
+__nexus_repos_conda_proxy_defaults:
+  format: conda
+  type: proxy
+  online: true
+  storage:
+    blobStoreName: default
+    strictContentTypeValidation: true
+  cleanup:
+    policyNames: []
+  proxy:
+    remoteUrl: https://remote.repository.com
+    contentMaxAge: 1440
+    metadataMaxAge: 1440
+  negativeCache:
+    enabled: true
+    timeToLive: 1440
+  httpClient:
+    blocked: false
+    autoBlock: true
+    connection:
+      retries: 0
+      userAgentSuffix: string
+      timeout: 60
+      enableCircularRedirects: false
+      enableCookies: false
+      useTrustStore: false
 
 __nexus_repos_pypi_hosted_defaults:
   online: true
@@ -273,6 +301,8 @@ __nexus_repos_maven_proxy_defaults:
     versionPolicy: MIXED
     layoutPolicy: STRICT
     contentDisposition: ATTACHMENT
+
+nexus_repos_conda_proxy: []
 
 nexus_repos_pypi_hosted: []
 

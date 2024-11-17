@@ -1,4 +1,7 @@
 # Changelog
+## [v1.7.0] - 2024-11-17
+### Added
+- Creating, updating and deleting Conda proxy repos
 
 ## [v1.6.0] - 2024-11-16
 ### Added
