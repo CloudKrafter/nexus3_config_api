@@ -22,6 +22,98 @@ nexus_config_gitlfs: true
 nexus_config_npm: true
 nexus_config_pypi: true
 nexus_config_conda: true
+nexus_config_helm: true
+nexus_config_r: true
+
+__nexus_repos_r_hosted_defaults:
+  online: true
+  format: r
+  type: hosted
+  storage:
+    blobStoreName: default
+    strictContentTypeValidation: false
+    writePolicy: allow_once
+  cleanup:
+    policyNames: []
+  component:
+    proprietaryComponents: false
+
+__nexus_repos_r_proxy_defaults:
+  format: r
+  type: proxy
+  online: true
+  storage:
+    blobStoreName: default
+    strictContentTypeValidation: true
+  cleanup:
+    policyNames: []
+  proxy:
+    remoteUrl: https://remote.repository.com
+    contentMaxAge: 1440
+    metadataMaxAge: 1440
+  negativeCache:
+    enabled: true
+    timeToLive: 1440
+  httpClient:
+    blocked: false
+    autoBlock: true
+    connection:
+      retries: 0
+      userAgentSuffix: string
+      timeout: 60
+      enableCircularRedirects: false
+      enableCookies: false
+      useTrustStore: false
+
+__nexus_repos_r_group_defaults:
+  online: true
+  format: r
+  type: group
+  storage:
+    blobStoreName: default
+    strictContentTypeValidation: false
+  group:
+    memberNames: []
+
+__nexus_repos_helm_hosted_defaults:
+  online: true
+  format: helm
+  type: hosted
+  storage:
+    blobStoreName: default
+    strictContentTypeValidation: false
+    writePolicy: allow_once
+  cleanup:
+    policyNames: []
+  component:
+    proprietaryComponents: false
+
+__nexus_repos_helm_proxy_defaults:
+  format: helm
+  type: proxy
+  online: true
+  storage:
+    blobStoreName: default
+    strictContentTypeValidation: true
+  cleanup:
+    policyNames: []
+  proxy:
+    remoteUrl: https://remote.repository.com
+    contentMaxAge: 1440
+    metadataMaxAge: 1440
+  negativeCache:
+    enabled: true
+    timeToLive: 1440
+  httpClient:
+    blocked: false
+    autoBlock: true
+    connection:
+      retries: 0
+      userAgentSuffix: string
+      timeout: 60
+      enableCircularRedirects: false
+      enableCookies: false
+      useTrustStore: false
 
 __nexus_repos_conda_proxy_defaults:
   format: conda
@@ -301,6 +393,16 @@ __nexus_repos_maven_proxy_defaults:
     versionPolicy: MIXED
     layoutPolicy: STRICT
     contentDisposition: ATTACHMENT
+
+nexus_repos_r_hosted: []
+
+nexus_repos_r_proxy: []
+
+nexus_repos_r_group: []
+
+nexus_repos_helm_hosted: []
+
+nexus_repos_helm_proxy: []
 
 nexus_repos_conda_proxy: []
 
