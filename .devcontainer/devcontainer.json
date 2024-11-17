@@ -36,6 +36,9 @@
 	// Use 'postCreateCommand' to run commands after the container is created.
 	"onCreateCommand": ".devcontainer/post-create.sh",
 	"postStartCommand": ".devcontainer/post-start.sh",
+	"remoteEnv": {
+		"NEXUS_LICENSE_B64": "${localEnv:NEXUS_LICENSE_B64}"
+	},
 	// Configure tool-specific properties.
 	"customizations": {
 		"vscode": {
