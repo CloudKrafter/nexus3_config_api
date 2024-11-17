@@ -24,6 +24,60 @@ nexus_config_pypi: true
 nexus_config_conda: true
 nexus_config_helm: true
 nexus_config_r: true
+nexus_config_nuget: true
+
+__nexus_repos_nuget_hosted_defaults:
+  online: true
+  format: nuget
+  type: hosted
+  storage:
+    blobStoreName: default
+    strictContentTypeValidation: false
+    writePolicy: allow_once
+  cleanup:
+    policyNames: []
+  component:
+    proprietaryComponents: false
+
+__nexus_repos_nuget_proxy_defaults:
+  format: nuget
+  type: proxy
+  online: true
+  storage:
+    blobStoreName: default
+    strictContentTypeValidation: true
+  cleanup:
+    policyNames: []
+  proxy:
+    remoteUrl: https://remote.repository.com
+    contentMaxAge: 1440
+    metadataMaxAge: 1440
+  negativeCache:
+    enabled: true
+    timeToLive: 1440
+  httpClient:
+    blocked: false
+    autoBlock: true
+    connection:
+      retries: 0
+      userAgentSuffix: string
+      timeout: 60
+      enableCircularRedirects: false
+      enableCookies: false
+      useTrustStore: false
+  nugetProxy:
+    queryCacheItemMaxAge: 3600
+    nugetVersion: V3
+
+__nexus_repos_nuget_group_defaults:
+  online: true
+  format: nuget
+  type: group
+  storage:
+    blobStoreName: default
+    strictContentTypeValidation: false
+  group:
+    memberNames: []
 
 __nexus_repos_r_hosted_defaults:
   online: true
