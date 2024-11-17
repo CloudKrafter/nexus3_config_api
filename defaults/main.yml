@@ -19,6 +19,112 @@ nexus_repos_cleanup_policies: []
 nexus_config_maven: true
 nexus_config_docker: true
 nexus_config_gitlfs: true
+nexus_config_npm: true
+nexus_config_pypi: true
+
+__nexus_repos_pypi_hosted_defaults:
+  online: true
+  format: pypi
+  type: hosted
+  storage:
+    blobStoreName: default
+    strictContentTypeValidation: false
+    writePolicy: allow_once
+  cleanup:
+    policyNames: []
+  component:
+    proprietaryComponents: false
+
+__nexus_repos_pypi_proxy_defaults:
+  format: pypi
+  type: proxy
+  online: true
+  storage:
+    blobStoreName: default
+    strictContentTypeValidation: true
+  cleanup:
+    policyNames: []
+  proxy:
+    remoteUrl: https://remote.repository.com
+    contentMaxAge: 1440
+    metadataMaxAge: 1440
+  negativeCache:
+    enabled: true
+    timeToLive: 1440
+  httpClient:
+    blocked: false
+    autoBlock: true
+    connection:
+      retries: 0
+      userAgentSuffix: string
+      timeout: 60
+      enableCircularRedirects: false
+      enableCookies: false
+      useTrustStore: false
+  pypi:
+    removeQuarantined: false
+
+__nexus_repos_pypi_group_defaults:
+  online: true
+  format: pypi
+  type: group
+  storage:
+    blobStoreName: default
+    strictContentTypeValidation: false
+  group:
+    memberNames: []
+
+__nexus_repos_npm_hosted_defaults:
+  online: true
+  format: npm
+  type: hosted
+  storage:
+    blobStoreName: default
+    strictContentTypeValidation: false
+    writePolicy: allow_once
+  cleanup:
+    policyNames: []
+  component:
+    proprietaryComponents: false
+
+__nexus_repos_npm_proxy_defaults:
+  format: npm
+  type: proxy
+  online: true
+  storage:
+    blobStoreName: default
+    strictContentTypeValidation: true
+  cleanup:
+    policyNames: []
+  proxy:
+    remoteUrl: https://remote.repository.com
+    contentMaxAge: 1440
+    metadataMaxAge: 1440
+  negativeCache:
+    enabled: true
+    timeToLive: 1440
+  httpClient:
+    blocked: false
+    autoBlock: true
+    connection:
+      retries: 0
+      userAgentSuffix: string
+      timeout: 60
+      enableCircularRedirects: false
+      enableCookies: false
+      useTrustStore: false
+  npm:
+    removeQuarantined: false
+
+__nexus_repos_npm_group_defaults:
+  online: true
+  format: npm
+  type: group
+  storage:
+    blobStoreName: default
+    strictContentTypeValidation: false
+  group:
+    memberNames: []
 
 __nexus_repos_gitlfs_hosted_defaults:
   online: true
@@ -167,6 +273,18 @@ __nexus_repos_maven_proxy_defaults:
     versionPolicy: MIXED
     layoutPolicy: STRICT
     contentDisposition: ATTACHMENT
+
+nexus_repos_pypi_hosted: []
+
+nexus_repos_pypi_proxy: []
+
+nexus_repos_pypi_group: []
+
+nexus_repos_npm_hosted: []
+
+nexus_repos_npm_proxy: []
+
+nexus_repos_npm_group: []
 
 nexus_repos_gitlfs_hosted: []
 
