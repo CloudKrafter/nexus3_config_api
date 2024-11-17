@@ -2517,8 +2517,8 @@
     (__nxs_crnt_apt_hstd__ | selectattr('name', 'equalto', item.name) | first).storage.writePolicy | default(omit) != item.storage.writePolicy | default(None) or
     (__nxs_crnt_apt_hstd__ | selectattr('name', 'equalto', item.name) | first).component.proprietaryComponents | default(false) != item.component.proprietaryComponents | default(false) or
     (__nxs_crnt_apt_hstd__ | selectattr('name', 'equalto', item.name) | first).apt.distribution | default(omit) != item.apt.distribution | default(None) or
-    (__nxs_crnt_apt_hstd__ | selectattr('name', 'equalto', item.name) | first).aptSigning.keypair | default(omit) != item.aptSigning.keypair | default(None) or
-    (__nxs_crnt_apt_hstd__ | selectattr('name', 'equalto', item.name) | first).aptSigning.passphrase | default(omit) != item.aptSigning.passphrase | default(None)
+    (__nxs_crnt_apt_hstd__ | selectattr('name', 'equalto', item.name) | first).aptSigning | default(omit) != item.aptSigning | default(None) or
+    (__nxs_crnt_apt_hstd__ | selectattr('name', 'equalto', item.name) | first).aptSigning | default(omit) != item.aptSigning | default(None)
 
 - name: Compare APT proxy repositories for changes
   ansible.builtin.set_fact:
