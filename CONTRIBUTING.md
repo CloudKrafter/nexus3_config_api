@@ -39,6 +39,8 @@ Once the virtual environment is created, activate it with the following command:
 To enable Nexus Pro features during development, you'll have to bring your own license.
 The molecule prepare playbook will look for the environment variable `NEXUS_LICENSE_B64` on the host. i.e your development environment. This may be a GitHub Codespace or your system environment variable.
 
+**Note:** when using the devcontainer, the `NEXUS_LICENSE_B64` environment variable on your local system will be used. See .devcontainer/devcontainer.json and https://code.visualstudio.com/remote/advancedcontainers/environment-variables
+
 To base64 encode your Nexus Pro license file and set it as an environment variable, follow these steps:
 
 1. **Encode the file**: Use the following command to encode your license file:
@@ -51,6 +53,8 @@ To base64 encode your Nexus Pro license file and set it as an environment variab
     ```sh
     export NEXUS_LICENSE_B64=$(cat encoded-license.txt)
     ```
+
+3. **Restart dev environment**: Depending on your setup, restart your terminal sessions, editor or rebuild the devcontainer.
 
 Now, the `NEXUS_LICENSE_B64` environment variable contains your base64 encoded license, which will be detected by the molecule to enable the pro features.
 If you provide an invalid license Nexus will ignore it and start as the OSS version.
