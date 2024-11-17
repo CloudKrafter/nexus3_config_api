@@ -587,19 +587,19 @@
     (__nxs_crnt_mvn_prxy__ | selectattr('name', 'equalto', item.name) | first).proxy.metadataMaxAge | default(omit) != item.proxy.metadataMaxAge | default(None) or
     (__nxs_crnt_mvn_prxy__ | selectattr('name', 'equalto', item.name) | first).negativeCache.enabled | default(false) != item.negativeCache.enabled | default(false) or
     (__nxs_crnt_mvn_prxy__ | selectattr('name', 'equalto', item.name) | first).negativeCache.timeToLive | default(omit) != item.negativeCache.timeToLive | default(None) or
-    (__nxs_crnt_mvn_prxy__ | selectattr('name', 'equalto', item.name) | first).httpClient.blocked | default(omit) != item.httpClient.blocked | default(None) or
+    (__nxs_crnt_mvn_prxy__ | selectattr('name', 'equalto', item.name) | first).httpClient.blocked | default(false) != item.httpClient.blocked | default(false) or
     (__nxs_crnt_mvn_prxy__ | selectattr('name', 'equalto', item.name) | first).httpClient.autoBlock | default(false) != item.httpClient.autoBlock | default(false) or
     (__nxs_crnt_mvn_prxy__ | selectattr('name', 'equalto', item.name) | first).httpClient.connection.retries | default(omit) != item.httpClient.connection.retries | default(None) or
     (__nxs_crnt_mvn_prxy__ | selectattr('name', 'equalto', item.name) | first).httpClient.connection.userAgentSuffix | default(omit) != item.httpClient.connection.userAgentSuffix | default(None) or
     (__nxs_crnt_mvn_prxy__ | selectattr('name', 'equalto', item.name) | first).httpClient.connection.timeout | default(omit) != item.httpClient.connection.timeout | default(None) or
     (__nxs_crnt_mvn_prxy__ | selectattr('name', 'equalto', item.name) | first).httpClient.connection.enableCircularRedirects | default(omit) != item.httpClient.connection.enableCircularRedirects | default(None) or
-    (__nxs_crnt_mvn_prxy__ | selectattr('name', 'equalto', item.name) | first).httpClient.connection.enableCookies | default(omit) != item.httpClient.connection.enableCookies | default(None) or
-    (__nxs_crnt_mvn_prxy__ | selectattr('name', 'equalto', item.name) | first).httpClient.connection.useTrustStore | default(omit) != item.httpClient.connection.useTrustStore | default(None) or
+    (__nxs_crnt_mvn_prxy__ | selectattr('name', 'equalto', item.name) | first).httpClient.connection.enableCookies | default(false) != item.httpClient.connection.enableCookies | default(false) or
+    (__nxs_crnt_mvn_prxy__ | selectattr('name', 'equalto', item.name) | first).httpClient.connection.useTrustStore | default(false) != item.httpClient.connection.useTrustStore | default(false) or
     (__nxs_crnt_mvn_prxy__ | selectattr('name', 'equalto', item.name) | first).maven.versionPolicy | default(omit) != item.maven.versionPolicy | default(None) or
     (__nxs_crnt_mvn_prxy__ | selectattr('name', 'equalto', item.name) | first).maven.layoutPolicy | default(omit) != item.maven.layoutPolicy | default(None) or
     (__nxs_crnt_mvn_prxy__ | selectattr('name', 'equalto', item.name) | first).maven.contentDisposition | default(omit) != item.maven.contentDisposition | default(None) or
     (__nxs_crnt_mvn_prxy__ | selectattr('name', 'equalto', item.name) | first).cleanup.policyNames | default([]) | sort != item.cleanup.policyNames | default([]) | sort or
-    (__nxs_crnt_mvn_prxy__ | selectattr('name', 'equalto', item.name) | first).routingRuleName | default(omit) != item.routingRule | default(omit)
+    (__nxs_crnt_mvn_prxy__ | selectattr('name', 'equalto', item.name) | first).routingRuleName | default(omit) != item.routingRule | default(None)
 
 - name: Compare maven group repositories for changes
   ansible.builtin.set_fact:
@@ -828,52 +828,72 @@
     (__nxs_crnt_docker_hstd__ | selectattr('name', 'equalto', item.name) | first).type | default('hosted') != item.type | default('hosted') or
     (__nxs_crnt_docker_hstd__ | selectattr('name', 'equalto', item.name) | first).online | default(true) != item.online | default(true) or
     (__nxs_crnt_docker_hstd__ | selectattr('name', 'equalto', item.name) | first).cleanup.policyNames | default([]) | sort != item.cleanup.policyNames | default([]) | sort or
-    (__nxs_crnt_docker_hstd__ | selectattr('name', 'equalto', item.name) | first).storage.blobStoreName | default(omit) != item.storage.blobStoreName | default(omit) or
+    (__nxs_crnt_docker_hstd__ | selectattr('name', 'equalto', item.name) | first).storage.blobStoreName | default(omit) != item.storage.blobStoreName | default(None) or
     (__nxs_crnt_docker_hstd__ | selectattr('name', 'equalto', item.name) | first).storage.strictContentTypeValidation | default(false) != item.storage.strictContentTypeValidation | default(false) or
-    (__nxs_crnt_docker_hstd__ | selectattr('name', 'equalto', item.name) | first).storage.writePolicy | default(omit) != item.storage.writePolicy | default(omit) or
+    (__nxs_crnt_docker_hstd__ | selectattr('name', 'equalto', item.name) | first).storage.writePolicy | default(omit) != item.storage.writePolicy | default(None) or
     (__nxs_crnt_docker_hstd__ | selectattr('name', 'equalto', item.name) | first).storage.latestPolicy | default(false) != item.storage.latestPolicy | default(false) or
     (__nxs_crnt_docker_hstd__ | selectattr('name', 'equalto', item.name) | first).component.proprietaryComponents | default(false) != item.component.proprietaryComponents | default(false) or
     (__nxs_crnt_docker_hstd__ | selectattr('name', 'equalto', item.name) | first).docker.v1Enabled | default(false) != item.docker.v1Enabled | default(false) or
     (__nxs_crnt_docker_hstd__ | selectattr('name', 'equalto', item.name) | first).docker.forceBasicAuth | default(false) != item.docker.forceBasicAuth | default(false) or
-    (__nxs_crnt_docker_hstd__ | selectattr('name', 'equalto', item.name) | first).docker.httpPort | default(omit) != item.docker.httpPort | default(omit) or
-    (__nxs_crnt_docker_hstd__ | selectattr('name', 'equalto', item.name) | first).docker.httpsPort | default(omit) != item.docker.httpsPort | default(omit) or
-    (__nxs_crnt_docker_hstd__ | selectattr('name', 'equalto', item.name) | first).docker.subDomain | default(omit) != item.docker.subDomain | default(omit)
+    (__nxs_crnt_docker_hstd__ | selectattr('name', 'equalto', item.name) | first).docker.httpPort | default(omit) != item.docker.httpPort | default(None) or
+    (__nxs_crnt_docker_hstd__ | selectattr('name', 'equalto', item.name) | first).docker.httpsPort | default(omit) != item.docker.httpsPort | default(None) or
+    (__nxs_crnt_docker_hstd__ | selectattr('name', 'equalto', item.name) | first).docker.subdomain | default(omit) != item.docker.subdomain | default(None)
 
-# - name: Compare Docker proxy repositories for changes
-#   ansible.builtin.set_fact:
-#     nxs_update_docker_proxy_repos: "{{ nxs_update_docker_proxy_repos + [item] }}"
-#   loop: "{{ nxs_desired_docker_proxy_repos | list }}"
-#   when: >
-#     (__nxs_crnt_docker_prxy__ | selectattr('name', 'equalto', item.name) | first) is not defined or
-#     (__nxs_crnt_docker_prxy__ | selectattr('name', 'equalto', item.name) | first).format | default('docker') != item.format | default('docker') or
-#     (__nxs_crnt_docker_prxy__ | selectattr('name', 'equalto', item.name) | first).type | default('proxy') != item.type | default('proxy') or
-#     (__nxs_crnt_docker_prxy__ | selectattr('name', 'equalto', item.name) | first).online | default(true) != item.online | default(true) or
-#     (__nxs_crnt_docker_prxy__ | selectattr('name', 'equalto', item.name) | first).storage.blobStoreName | default(omit) != item.storage.blobStoreName | default(None) or
-#     (__nxs_crnt_docker_prxy__ | selectattr('name', 'equalto', item.name) | first).storage.strictContentTypeValidation | default(false) != item.storage.strictContentTypeValidation | default(false) or
-#     (__nxs_crnt_docker_prxy__ | selectattr('name', 'equalto', item.name) | first).proxy.remoteUrl | default(omit) != item.proxy.remoteUrl | default(None) or
-#     (__nxs_crnt_docker_prxy__ | selectattr('name', 'equalto', item.name) | first).proxy.contentMaxAge | default(omit) != item.proxy.contentMaxAge | default(None) or
-#     (__nxs_crnt_docker_prxy__ | selectattr('name', 'equalto', item.name) | first).proxy.metadataMaxAge | default(omit) != item.proxy.metadataMaxAge | default(None) or
-#     (__nxs_crnt_docker_prxy__ | selectattr('name', 'equalto', item.name) | first).negativeCache.enabled | default(false) != item.negativeCache.enabled | default(false) or
-#     (__nxs_crnt_docker_prxy__ | selectattr('name', 'equalto', item.name) | first).negativeCache.timeToLive | default(omit) != item.negativeCache.timeToLive | default(None) or
-#     (__nxs_crnt_docker_prxy__ | selectattr('name', 'equalto', item.name) | first).httpClient.blocked | default(omit) != item.httpClient.blocked | default(None) or
-#     (__nxs_crnt_docker_prxy__ | selectattr('name', 'equalto', item.name) | first).httpClient.autoBlock | default(false) != item.httpClient.autoBlock | default(false) or
-#     (__nxs_crnt_docker_prxy__ | selectattr('name', 'equalto', item.name) | first).httpClient.connection.retries | default(omit) != item.httpClient.connection.retries | default(None) or
-#     (__nxs_crnt_docker_prxy__ | selectattr('name', 'equalto', item.name) | first).httpClient.connection.userAgentSuffix | default(omit) != item.httpClient.connection.userAgentSuffix | default(None) or
-#     (__nxs_crnt_docker_prxy__ | selectattr('name', 'equalto', item.name) | first).httpClient.connection.timeout | default(omit) != item.httpClient.connection.timeout | default(None) or
-#     (__nxs_crnt_docker_prxy__ | selectattr('name', 'equalto', item.name) | first).httpClient.connection.enableCircularRedirects | default(omit) != item.httpClient.connection.enableCircularRedirects | default(None)
+- name: Compare Docker proxy repositories for changes
+  ansible.builtin.set_fact:
+    nxs_update_docker_proxy_repos: "{{ nxs_update_docker_proxy_repos + [item] }}"
+  loop: "{{ nxs_desired_docker_proxy_repos | list }}"
+  # TODO: implement replication and authentication
+  when: >
+    (__nxs_crnt_docker_prxy__ | selectattr('name', 'equalto', item.name) | first) is not defined or
+    (__nxs_crnt_docker_prxy__ | selectattr('name', 'equalto', item.name) | first).format | default('docker') != item.format | default('docker') or
+    (__nxs_crnt_docker_prxy__ | selectattr('name', 'equalto', item.name) | first).type | default('proxy') != item.type | default('proxy') or
+    (__nxs_crnt_docker_prxy__ | selectattr('name', 'equalto', item.name) | first).online | default(true) != item.online | default(true) or
+    (__nxs_crnt_docker_prxy__ | selectattr('name', 'equalto', item.name) | first).storage.blobStoreName | default(omit) != item.storage.blobStoreName | default(None) or
+    (__nxs_crnt_docker_prxy__ | selectattr('name', 'equalto', item.name) | first).storage.strictContentTypeValidation | default(false) != item.storage.strictContentTypeValidation | default(false) or
+    (__nxs_crnt_docker_prxy__ | selectattr('name', 'equalto', item.name) | first).cleanup.policyNames | default([]) | sort != item.cleanup.policyNames | default([]) | sort or
+    (__nxs_crnt_docker_prxy__ | selectattr('name', 'equalto', item.name) | first).proxy.remoteUrl | default(omit) != item.proxy.remoteUrl | default(None) or
+    (__nxs_crnt_docker_prxy__ | selectattr('name', 'equalto', item.name) | first).proxy.contentMaxAge | default(omit) != item.proxy.contentMaxAge | default(None) or
+    (__nxs_crnt_docker_prxy__ | selectattr('name', 'equalto', item.name) | first).proxy.metadataMaxAge | default(omit) != item.proxy.metadataMaxAge | default(None) or
+    (__nxs_crnt_docker_prxy__ | selectattr('name', 'equalto', item.name) | first).negativeCache.enabled | default(false) != item.negativeCache.enabled | default(false) or
+    (__nxs_crnt_docker_prxy__ | selectattr('name', 'equalto', item.name) | first).negativeCache.timeToLive | default(omit) != item.negativeCache.timeToLive | default(None) or
+    (__nxs_crnt_docker_prxy__ | selectattr('name', 'equalto', item.name) | first).httpClient.blocked | default(false) != item.httpClient.blocked | default(false) or
+    (__nxs_crnt_docker_prxy__ | selectattr('name', 'equalto', item.name) | first).httpClient.autoBlock | default(false) != item.httpClient.autoBlock | default(false) or
+    (__nxs_crnt_docker_prxy__ | selectattr('name', 'equalto', item.name) | first).httpClient.connection.retries | default(omit) != item.httpClient.connection.retries | default(None) or
+    (__nxs_crnt_docker_prxy__ | selectattr('name', 'equalto', item.name) | first).httpClient.connection.userAgentSuffix | default(omit) != item.httpClient.connection.userAgentSuffix | default(None) or
+    (__nxs_crnt_docker_prxy__ | selectattr('name', 'equalto', item.name) | first).httpClient.connection.timeout | default(omit) != item.httpClient.connection.timeout | default(None) or
+    (__nxs_crnt_docker_prxy__ | selectattr('name', 'equalto', item.name) | first).httpClient.connection.enableCircularRedirects | default(false) != item.httpClient.connection.enableCircularRedirects | default(false) or
+    (__nxs_crnt_docker_prxy__ | selectattr('name', 'equalto', item.name) | first).httpClient.connection.enableCookies | default(false) != item.httpClient.connection.enableCookies | default(false) or
+    (__nxs_crnt_docker_prxy__ | selectattr('name', 'equalto', item.name) | first).httpClient.connection.useTrustStore | default(false) != item.httpClient.connection.useTrustStore | default(false) or
+    (__nxs_crnt_docker_prxy__ | selectattr('name', 'equalto', item.name) | first).docker.v1Enabled | default(false) != item.docker.v1Enabled | default(false) or
+    (__nxs_crnt_docker_prxy__ | selectattr('name', 'equalto', item.name) | first).docker.forceBasicAuth | default(false) != item.docker.forceBasicAuth | default(false) or
+    (__nxs_crnt_docker_prxy__ | selectattr('name', 'equalto', item.name) | first).docker.httpPort | default(omit) != item.docker.httpPort | default(None) or
+    (__nxs_crnt_docker_prxy__ | selectattr('name', 'equalto', item.name) | first).docker.httpsPort | default(omit) != item.docker.httpsPort | default(None) or
+    (__nxs_crnt_docker_prxy__ | selectattr('name', 'equalto', item.name) | first).docker.subdomain | default(omit) != item.docker.subdomain | default(None) or
+    (__nxs_crnt_docker_prxy__ | selectattr('name', 'equalto', item.name) | first).dockerProxy.indexType | default(omit) != item.dockerProxy.indexType | default(None) or
+    (__nxs_crnt_docker_prxy__ | selectattr('name', 'equalto', item.name) | first).dockerProxy.indexUrl | default(omit) != item.dockerProxy.indexUrl | default(None) or
+    (__nxs_crnt_docker_prxy__ | selectattr('name', 'equalto', item.name) | first).dockerProxy.cacheForeignLayers | default(false) != item.dockerProxy.cacheForeignLayers | default(false) or
+    (__nxs_crnt_docker_prxy__ | selectattr('name', 'equalto', item.name) | first).dockerProxy.foreignLayerUrlWhitelist | default([]) != item.dockerProxy.foreignLayerUrlWhitelist | default([]) or
+    (__nxs_crnt_docker_prxy__ | selectattr('name', 'equalto', item.name) | first).routingRuleName | default(omit) != item.routingRule | default(None)
 
-# - name: Compare Docker group repositories for changes
-#   ansible.builtin.set_fact:
-#     nxs_update_docker_group_repos: "{{ nxs_update_docker_group_repos + [item] }}"
-#   loop: "{{ nxs_desired_docker_group_repos | list }}"
-#   when: >
-#     (__nxs_crnt_docker_grp__ | selectattr('name', 'equalto', item.name) | first) is not defined or
-#     (__nxs_crnt_docker_grp__ | selectattr('name', 'equalto', item.name) | first).format | default('docker') != item.format | default('docker') or
-#     (__nxs_crnt_docker_grp__ | selectattr('name', 'equalto', item.name) | first).type | default('group') != item.type | default('group') or
-#     (__nxs_crnt_docker_grp__ | selectattr('name', 'equalto', item.name) | first).online | default(true) != item.online | default(true) or
-#     (__nxs_crnt_docker_grp__ | selectattr('name', 'equalto', item.name) | first).storage.blobStoreName | default(omit) != item.storage.blobStoreName | default(None) or
-#     (__nxs_crnt_docker_grp__ | selectattr('name', 'equalto', item.name) | first).storage.strictContentTypeValidation | default(false) != item.storage.strictContentTypeValidation | default(false) or
-#     (__nxs_crnt_docker_grp__ | selectattr('name', 'equalto', item.name) | first).group.memberNames | default([]) != item.group.memberNames | default([])
+- name: Compare Docker group repositories for changes
+  ansible.builtin.set_fact:
+    nxs_update_docker_group_repos: "{{ nxs_update_docker_group_repos + [item] }}"
+  loop: "{{ nxs_desired_docker_group_repos | list }}"
+  when: >
+    (__nxs_crnt_docker_grp__ | selectattr('name', 'equalto', item.name) | first) is not defined or
+    (__nxs_crnt_docker_grp__ | selectattr('name', 'equalto', item.name) | first).format | default('docker') != item.format | default('docker') or
+    (__nxs_crnt_docker_grp__ | selectattr('name', 'equalto', item.name) | first).type | default('group') != item.type | default('group') or
+    (__nxs_crnt_docker_grp__ | selectattr('name', 'equalto', item.name) | first).online | default(true) != item.online | default(true) or
+    (__nxs_crnt_docker_grp__ | selectattr('name', 'equalto', item.name) | first).storage.blobStoreName | default(omit) != item.storage.blobStoreName | default(None) or
+    (__nxs_crnt_docker_grp__ | selectattr('name', 'equalto', item.name) | first).storage.strictContentTypeValidation | default(false) != item.storage.strictContentTypeValidation | default(false) or
+    (__nxs_crnt_docker_grp__ | selectattr('name', 'equalto', item.name) | first).group.memberNames | default([]) != item.group.memberNames | default([]) or
+    (__nxs_crnt_docker_grp__ | selectattr('name', 'equalto', item.name) | first).group.writableMember | default(omit) != item.group.writableMember | default(None) or
+    (__nxs_crnt_docker_grp__ | selectattr('name', 'equalto', item.name) | first).docker.v1Enabled | default(false) != item.docker.v1Enabled | default(false) or
+    (__nxs_crnt_docker_grp__ | selectattr('name', 'equalto', item.name) | first).docker.forceBasicAuth | default(false) != item.docker.forceBasicAuth | default(false) or
+    (__nxs_crnt_docker_grp__ | selectattr('name', 'equalto', item.name) | first).docker.httpPort | default(omit) != item.docker.httpPort | default(None) or
+    (__nxs_crnt_docker_grp__ | selectattr('name', 'equalto', item.name) | first).docker.httpsPort | default(omit) != item.docker.httpsPort | default(None) or
+    (__nxs_crnt_docker_grp__ | selectattr('name', 'equalto', item.name) | first).docker.subdomain | default(omit) != item.docker.subdomain | default(None)
 
 - name: Show nxs_create_docker_hosted_repos
   ansible.builtin.debug:
@@ -887,29 +907,29 @@
   ansible.builtin.debug:
     var: nxs_delete_docker_hosted_repos | length
 
-# - name: Show nxs_create_docker_proxy_repos
-#   ansible.builtin.debug:
-#     var: nxs_create_docker_proxy_repos | length
+- name: Show nxs_create_docker_proxy_repos
+  ansible.builtin.debug:
+    var: nxs_create_docker_proxy_repos | length
 
-# - name: Show nxs_update_docker_proxy_repos
-#   ansible.builtin.debug:
-#     var: nxs_update_docker_proxy_repos | length
+- name: Show nxs_update_docker_proxy_repos
+  ansible.builtin.debug:
+    var: nxs_update_docker_proxy_repos | length
 
-# - name: Show nxs_delete_docker_proxy_repos
-#   ansible.builtin.debug:
-#     var: nxs_delete_docker_proxy_repos | length
+- name: Show nxs_delete_docker_proxy_repos
+  ansible.builtin.debug:
+    var: nxs_delete_docker_proxy_repos | length
 
-# - name: Show nxs_create_docker_group_repos
-#   ansible.builtin.debug:
-#     var: nxs_create_docker_group_repos | length
+- name: Show nxs_create_docker_group_repos
+  ansible.builtin.debug:
+    var: nxs_create_docker_group_repos | length
 
-# - name: Show nxs_update_docker_group_repos
-#   ansible.builtin.debug:
-#     var: nxs_update_docker_group_repos | length
+- name: Show nxs_update_docker_group_repos
+  ansible.builtin.debug:
+    var: nxs_update_docker_group_repos | length
 
-# - name: Show nxs_delete_docker_group_repos
-#   ansible.builtin.debug:
-#     var: nxs_delete_docker_group_repos | length
+- name: Show nxs_delete_docker_group_repos
+  ansible.builtin.debug:
+    var: nxs_delete_docker_group_repos | length
 
 - name: Create configured Docker Hosted repositories using Nexus API
   ansible.builtin.include_tasks: repositories-api.yml

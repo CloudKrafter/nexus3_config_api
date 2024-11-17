@@ -1,5 +1,12 @@
 # Changelog
 
+## [v1.6.0] - 2024-11-16
+### Added
+- Creating updating and deleting Docker hosted, proxy and group repos
+
+### Fixed
+- Unable to set Nexus Trust Store for maven proxy repos. Fixed now :-)
+
 ## [v.1.5.0] - 2024-11-15
 ### Added
 - Creating, updating and deleting maven group repositories
