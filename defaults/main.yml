@@ -18,6 +18,20 @@ nexus_repos_cleanup_policies: []
 
 nexus_config_maven: true
 nexus_config_docker: true
+nexus_config_gitlfs: true
+
+__nexus_repos_gitlfs_hosted_defaults:
+  online: true
+  format: gitlfs
+  type: hosted
+  storage:
+    blobStoreName: default
+    strictContentTypeValidation: false
+    writePolicy: allow_once
+  cleanup:
+    policyNames: []
+  component:
+    proprietaryComponents: false
 
 __nexus_repos_docker_group_defaults:
   online: true
@@ -153,6 +167,8 @@ __nexus_repos_maven_proxy_defaults:
     versionPolicy: MIXED
     layoutPolicy: STRICT
     contentDisposition: ATTACHMENT
+
+nexus_repos_gitlfs_hosted: []
 
 nexus_repos_docker_hosted: []
 
