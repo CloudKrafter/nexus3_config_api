@@ -3,6 +3,7 @@
 ## [v1.6.0] - 2024-11-16
 ### Added
 - Creating updating and deleting Docker hosted, proxy and group repos
+- Creating, updating and deleting GitLFS hosted repos
 
 ### Fixed
 - Unable to set Nexus Trust Store for maven proxy repos. Fixed now :-)

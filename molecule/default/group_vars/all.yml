@@ -296,6 +296,29 @@ nexus_repos_cleanup_policies:
     criteriaLastDownloaded: 120
     criteriaAssetRegex: "your-regex*"
 
+nexus_repos_gitlfs_hosted:
+  - name: gitlfs-hosted-1
+    online: true
+    storage:
+      blobStoreName: default
+      strictContentTypeValidation: true
+      writePolicy: allow_once
+    cleanup:
+      policyNames: []
+    component:
+      proprietaryComponents: true
+  - name: gitlfs-hosted-offline-2
+    online: false
+    storage:
+      blobStoreName: default
+      strictContentTypeValidation: true
+      writePolicy: allow_once
+    cleanup:
+      policyNames:
+        - gitlfs_cleanup
+    component:
+      proprietaryComponents: false
+
 nexus_repos_docker_hosted:
   - name: docker-hosted-1
     online: true
