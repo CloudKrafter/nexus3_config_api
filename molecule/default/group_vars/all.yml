@@ -296,6 +296,68 @@ nexus_repos_cleanup_policies:
     criteriaLastDownloaded: 120
     criteriaAssetRegex: "your-regex*"
 
+nexus_repos_apt_hosted:
+  - name: apt-hosted-1
+    online: true
+    storage:
+      blobStoreName: default
+      strictContentTypeValidation: true
+    cleanup:
+      policyNames: []
+    component:
+      proprietaryComponents: true
+  - name: apt-hosted-2
+    online: true
+    storage:
+      blobStoreName: default
+      strictContentTypeValidation: false
+    cleanup:
+      policyNames: []
+    component:
+      proprietaryComponents: false
+  - name: apt-hosted-offline
+    online: false
+    storage:
+      blobStoreName: default
+      strictContentTypeValidation: false
+    cleanup:
+      policyNames:
+        - apt_cleanup
+    component:
+      proprietaryComponents: false
+
+nexus_repos_apt_proxy:
+  - name: apt-proxy-1
+    proxy:
+      remoteUrl: http://archive.ubuntu.com/ubuntu/
+      contentMaxAge: 1440
+      metadataMaxAge: 1440
+    negativeCache:
+      enabled: true
+      timeToLive: 1440
+    httpClient:
+      blocked: false
+      autoBlock: true
+      connection:
+        useTrustStore: false
+  - name: apt-proxy-2
+    proxy:
+      remoteUrl: http://archive.ubuntu.com/ubuntu/
+      contentMaxAge: 1440
+      metadataMaxAge: 1440
+    routingRule: routing-rule-allow-all
+  - name: apt-proxy-flat-bionic
+    proxy:
+      remoteUrl: http://archive.ubuntu.com/ubuntu/
+      contentMaxAge: 1440
+      metadataMaxAge: 1440
+    negativeCache:
+      enabled: true
+      timeToLive: 1440
+    apt:
+      distribution: bionic
+      flat: true
+
 nexus_repos_nuget_hosted:
   - name: nuget-hosted-1
     online: true
