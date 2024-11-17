@@ -17,6 +17,76 @@ nexus_blobstores:
 nexus_repos_cleanup_policies: []
 
 nexus_config_maven: true
+nexus_config_docker: true
+
+__nexus_repos_docker_group_defaults:
+  online: true
+  format: docker
+  type: group
+  storage:
+    blobStoreName: default
+    strictContentTypeValidation: false
+  group:
+    memberNames: []
+    writableMember:
+  docker:
+    v1Enabled: false
+    forceBasicAuth: false
+
+__nexus_repos_docker_hosted_defaults:
+  online: true
+  format: docker
+  type: hosted
+  storage:
+    blobStoreName: default
+    strictContentTypeValidation: false
+    writePolicy: allow_once
+    latestPolicy: true
+  cleanup:
+    policyNames: []
+  component:
+    proprietaryComponents: false
+  docker:
+    v1Enabled: false
+    forceBasicAuth: false
+    httpPort: 10000
+    httpsPort: 10001
+    subdomain:
+
+__nexus_repos_docker_proxy_defaults:
+  format: docker
+  type: proxy
+  online: true
+  storage:
+    blobStoreName: default
+    strictContentTypeValidation: true
+  cleanup:
+    policyNames: []
+  proxy:
+    remoteUrl: https://remote.repository.com
+    contentMaxAge: 1440
+    metadataMaxAge: 1440
+  negativeCache:
+    enabled: true
+    timeToLive: 1440
+  httpClient:
+    blocked: false
+    autoBlock: true
+    connection:
+      retries: 0
+      userAgentSuffix: string
+      timeout: 60
+      enableCircularRedirects: false
+      enableCookies: false
+      useTrustStore: false
+  docker:
+    v1Enabled: false
+    forceBasicAuth: false
+  dockerProxy:
+    indexType: HUB # HUB, REGISTRY or CUSTOM
+    indexUrl: https://index.docker.io
+    cacheForeignLayers: false
+    foreignLayerUrlWhitelist: []
 
 __nexus_repos_maven_group_defaults:
   online: true
@@ -83,6 +153,12 @@ __nexus_repos_maven_proxy_defaults:
     versionPolicy: MIXED
     layoutPolicy: STRICT
     contentDisposition: ATTACHMENT
+
+nexus_repos_docker_hosted: []
+
+nexus_repos_docker_proxy: []
+
+nexus_repos_docker_group: []
 
 nexus_repos_maven_hosted: []
 

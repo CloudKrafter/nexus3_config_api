@@ -1,4 +1,10 @@
 ---
+dependency:
+  name: galaxy
+  enabled: true
+  options:
+    collections-file: ../ansible-requirements.yml
+
 driver:
   name: docker
 
@@ -8,43 +14,67 @@ platforms:
     image: sonatype/nexus3
     pull: true
     pre_build_image: true
+    privileged: true
+    override_command: false
     published_ports:
       - 9081:8081
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+    cgroupns_mode: host
     groups:
       - nexus
     networks: &nexus_networks
-      - name: nexus-networks
+      - name: bridge
 
-  # - name: postgresql-server
-  #   hostname: postgresql-server
-  #   image: postgres:14-bullseye
-  #   pull: true
-  #   pre_build_image: true
-  #   published_ports:
-  #     - 5432:5432
-  #   env:
-  #     POSTGRES_DB: nexus
-  #     POSTGRES_USER: nexus
-  #     POSTGRES_PASSWORD: nexus
-  #   groups:
-  #     - postgresql
+  - name: postgresql-server
+    hostname: postgresql-server
+    image: postgres:14-bullseye
+    pull: true
+    pre_build_image: true
+    published_ports:
+      - 5432:5432
+    env:
+      POSTGRES_DB: nexus
+      POSTGRES_USER: nexus
+      POSTGRES_PASSWORD: nexus
+    groups:
+      - postgresql
+      - nexus
+    networks: *nexus_networks
 
 provisioner:
   name: ansible
+  options:
+    vvv: True
+  collections:
+    - community.general
+    - community.docker
+  playbooks:
+    prepare: prepare.yml
+    converge: converge.yml
+  inventory:
+    links:
+      group_vars: group_vars/
 
 scenario:
+  create_sequence:
+    - create
+    - prepare
   check_sequence:
     - destroy
     - create
+    - prepare
     - converge
     - check
     - destroy
   converge_sequence:
     - create
+    - prepare
     - converge
   test_sequence:
     - destroy
     - create
+    - prepare
     - converge
     - idempotence
     - check
