@@ -296,6 +296,169 @@ nexus_repos_cleanup_policies:
     criteriaLastDownloaded: 120
     criteriaAssetRegex: "your-regex*"
 
+nexus_repos_pypi_hosted:
+  - name: pypi-hosted-1
+    online: true
+    storage:
+      blobStoreName: default
+      strictContentTypeValidation: true
+    cleanup:
+      policyNames:
+        - python_cleanup
+    component:
+      proprietaryComponents: true
+  - name: pypi-hosted-2
+    online: true
+    storage:
+      blobStoreName: default
+      strictContentTypeValidation: false
+    cleanup:
+      policyNames:
+        - python_cleanup
+    component:
+      proprietaryComponents: false
+  - name: pypi-hosted-offline
+    online: false
+    storage:
+      blobStoreName: default
+      strictContentTypeValidation: false
+    cleanup:
+      policyNames:
+        - python_cleanup
+    component:
+      proprietaryComponents: false
+
+nexus_repos_pypi_proxy:
+  - name: pypi-proxy-1
+    proxy:
+      remoteUrl: https://pypi.org/simple
+      contentMaxAge: 1440
+      metadataMaxAge: 1440
+    negativeCache:
+      enabled: true
+      timeToLive: 1440
+    httpClient:
+      blocked: false
+      autoBlock: true
+      connection:
+        useTrustStore: true
+  - name: pypi-proxy-2
+    proxy:
+      remoteUrl: https://pypi.org/simple
+      contentMaxAge: 1440
+      metadataMaxAge: 1440
+    routingRule: routing-rule-allow-all
+  - name: pypi-proxy-3
+    proxy:
+      remoteUrl: https://pypi.org/simple
+      contentMaxAge: 1440
+      metadataMaxAge: 1440
+    negativeCache:
+      enabled: true
+      timeToLive: 1440
+    pypi:
+      removeQuarantined: true
+
+nexus_repos_pypi_group:
+  - name: pypi-group
+    online: true
+    storage:
+      blobStoreName: default
+      strictContentTypeValidation: true
+    group:
+      memberNames:
+        - pypi-proxy-1
+        - pypi-proxy-2
+        - pypi-proxy-3
+        - pypi-hosted-1
+  - name: pypi-group-reverse-group-order
+    online: false
+    storage:
+      blobStoreName: default
+      strictContentTypeValidation: false
+    group:
+      memberNames:
+        - pypi-proxy-3
+        - pypi-proxy-2
+        - pypi-proxy-1
+        - pypi-hosted-1
+
+nexus_repos_npm_hosted:
+  - name: npm-hosted-1
+    online: true
+    storage:
+      blobStoreName: default
+      strictContentTypeValidation: true
+  - name: npm-hosted-2
+    online: true
+    storage:
+      blobStoreName: default
+      strictContentTypeValidation: false
+  - name: npm-hosted-offline
+    online: false
+    storage:
+      blobStoreName: default
+      strictContentTypeValidation: false
+
+nexus_repos_npm_proxy:
+  - name: npm-proxy-1
+    proxy:
+      remoteUrl: https://registry.npmjs.org/
+      contentMaxAge: 1440
+      metadataMaxAge: 1440
+    negativeCache:
+      enabled: true
+      timeToLive: 1440
+    httpClient:
+      blocked: false
+      autoBlock: true
+      connection:
+        useTrustStore: true
+    npm:
+      removeQuarantined: false
+  - name: npm-proxy-2
+    proxy:
+      remoteUrl: https://registry.npmjs.org/
+      contentMaxAge: 1440
+      metadataMaxAge: 1440
+    routingRule: routing-rule-allow-all
+    npm:
+      removeQuarantined: true
+  - name: npm-proxy-3
+    proxy:
+      remoteUrl: https://registry.npmjs.org/
+      contentMaxAge: 1440
+      metadataMaxAge: 1440
+    negativeCache:
+      enabled: true
+      timeToLive: 1440
+
+nexus_repos_npm_group:
+  - name: npm-group
+    online: true
+    storage:
+      blobStoreName: default
+      strictContentTypeValidation: true
+    group:
+      memberNames:
+        - npm-proxy-1
+        - npm-proxy-2
+        - npm-proxy-3
+        - npm-hosted-1
+      writableMember: npm-hosted-1
+  - name: npm-group-reverse-group-order
+    online: false
+    storage:
+      blobStoreName: default
+      strictContentTypeValidation: false
+    group:
+      memberNames:
+        - npm-proxy-3
+        - npm-proxy-2
+        - npm-proxy-1
+        - npm-hosted-1
+      writableMember: npm-hosted-1
+
 nexus_repos_gitlfs_hosted:
   - name: gitlfs-hosted-1
     online: true
