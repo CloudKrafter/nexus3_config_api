@@ -841,7 +841,7 @@ nexus_repos_pypi_proxy:
       enabled: true
       timeToLive: 1440
     pypi:
-      removeQuarantined: true
+      removeQuarantined: false
 
 nexus_repos_pypi_group:
   - name: pypi-group
@@ -907,7 +907,7 @@ nexus_repos_npm_proxy:
       metadataMaxAge: 1440
     routingRule: routing-rule-allow-all
     npm:
-      removeQuarantined: true
+      removeQuarantined: false
   - name: npm-proxy-3
     proxy:
       remoteUrl: https://registry.npmjs.org/
