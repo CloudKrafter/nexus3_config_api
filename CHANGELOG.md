@@ -4,6 +4,7 @@
 - Creating, updating and deleting Conda proxy repos
 - Creating, updating and deleting Helm hosted and proxy repos
 - Creating, updating and deleting R hosted, proxy and group repos
+- Creating, updating and deleting NuGet hosted, proxy and group repos
 
 ## [v1.6.0] - 2024-11-16
 ### Added
