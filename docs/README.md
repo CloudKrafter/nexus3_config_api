@@ -18,12 +18,22 @@ if the order of the roles/privileges changes, it will not be updated, but it wil
 - create cleanup policy for format 'all'
 - allow anonymous docker pull
 - useTrustStoreForIndexAccess docker proxy
+- yumsigning cant be fetched through the API
+- raw.contentdisposition cant be fetched through api
+- aptSigning cant be fetched through api
 
 
 # TODO:
-- ALL repository endpoints
+- p2 proxy repo endpoints
+- cocoa proxy repo endpoints
+- conan hosted and proxy repo endpoints
+- go proxy and group repo endpoints
+- cargo repo endpoints
+- rubygems repo endpoints
+
 - S3 Blob store endpoint
 - Group Blob store endpoit
+
 - HTTPS System settings
 - IQ Repo Firewall
 - Security Management LDAP

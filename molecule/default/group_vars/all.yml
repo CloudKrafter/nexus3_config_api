@@ -296,6 +296,172 @@ nexus_repos_cleanup_policies:
     criteriaLastDownloaded: 120
     criteriaAssetRegex: "your-regex*"
 
+nexus_repos_raw_hosted:
+  - name: raw-hosted-1
+    online: true
+    storage:
+      blobStoreName: default
+      strictContentTypeValidation: true
+    cleanup:
+      policyNames: []
+  - name: raw-hosted-2
+    online: true
+    storage:
+      blobStoreName: default
+      strictContentTypeValidation: false
+    cleanup:
+      policyNames: []
+  - name: raw-hosted-offline
+    online: false
+    storage:
+      blobStoreName: default
+      strictContentTypeValidation: false
+    cleanup:
+      policyNames:
+        - raw_cleanup
+    raw:
+      contentDisposition: INLINE
+
+nexus_repos_raw_proxy:
+  - name: raw-proxy-1
+    proxy:
+      remoteUrl: http://example.com
+      contentMaxAge: 1440
+      metadataMaxAge: 1440
+    negativeCache:
+      enabled: true
+      timeToLive: 1440
+    httpClient:
+      blocked: false
+      autoBlock: true
+      connection:
+        useTrustStore: false
+  - name: raw-proxy-2
+    proxy:
+      remoteUrl: http://example.com
+      contentMaxAge: 1440
+      metadataMaxAge: 1440
+    routingRule: routing-rule-allow-all
+  - name: raw-proxy-3
+    proxy:
+      remoteUrl: http://example.com
+      contentMaxAge: 1440
+      metadataMaxAge: 1440
+    negativeCache:
+      enabled: true
+      timeToLive: 1440
+    raw:
+      contentDisposition: INLINE
+
+nexus_repos_raw_group:
+  - name: raw-group
+    online: true
+    storage:
+      blobStoreName: default
+      strictContentTypeValidation: true
+    group:
+      memberNames:
+        - raw-proxy-1
+        - raw-proxy-2
+        - raw-proxy-3
+        - raw-hosted-1
+  - name: raw-group-reverse-group-order
+    online: false
+    storage:
+      blobStoreName: default
+      strictContentTypeValidation: false
+    group:
+      memberNames:
+        - raw-proxy-3
+        - raw-proxy-2
+        - raw-proxy-1
+        - raw-hosted-1
+    raw:
+      contentDisposition: INLINE
+
+nexus_repos_yum_hosted:
+  - name: yum-hosted-1
+    online: true
+    storage:
+      blobStoreName: default
+      strictContentTypeValidation: true
+    cleanup:
+      policyNames: []
+    yum:
+      repoDataDepth: 1
+  - name: yum-hosted-2
+    online: true
+    storage:
+      blobStoreName: default
+      strictContentTypeValidation: false
+    cleanup:
+      policyNames: []
+    yum:
+      repoDataDepth: 1
+  - name: yum-hosted-offline
+    online: false
+    storage:
+      blobStoreName: default
+      strictContentTypeValidation: false
+    cleanup:
+      policyNames:
+        - yum_cleanup
+    yum:
+      repoDataDepth: 1
+
+nexus_repos_yum_proxy:
+  - name: yum-proxy-1
+    proxy:
+      remoteUrl: http://mirror.centos.org/centos/
+      contentMaxAge: 1440
+      metadataMaxAge: 1440
+    negativeCache:
+      enabled: true
+      timeToLive: 1440
+    httpClient:
+      blocked: false
+      autoBlock: true
+      connection:
+        useTrustStore: false
+  - name: yum-proxy-2
+    proxy:
+      remoteUrl: http://mirror.centos.org/centos/
+      contentMaxAge: 1440
+      metadataMaxAge: 1440
+    routingRule: routing-rule-allow-all
+  - name: yum-proxy-3
+    proxy:
+      remoteUrl: http://mirror.centos.org/centos/
+      contentMaxAge: 1440
+      metadataMaxAge: 1440
+    negativeCache:
+      enabled: true
+      timeToLive: 1440
+
+nexus_repos_yum_group:
+  - name: yum-group
+    online: true
+    storage:
+      blobStoreName: default
+      strictContentTypeValidation: true
+    group:
+      memberNames:
+        - yum-proxy-1
+        - yum-proxy-2
+        - yum-proxy-3
+        - yum-hosted-1
+  - name: yum-group-reverse-group-order
+    online: false
+    storage:
+      blobStoreName: default
+      strictContentTypeValidation: false
+    group:
+      memberNames:
+        - yum-proxy-3
+        - yum-proxy-2
+        - yum-proxy-1
+        - yum-hosted-1
+
 nexus_repos_apt_hosted:
   - name: apt-hosted-1
     online: true

@@ -5,6 +5,8 @@
 - Creating, updating and deleting Helm hosted and proxy repos
 - Creating, updating and deleting R hosted, proxy and group repos
 - Creating, updating and deleting NuGet hosted, proxy and group repos
+- Creating, updating and deleting Yum hosted, proxy and group repos
+- Creating, updating and deleting Raw hosted, proxy and group repos
 - Creating, updating and deleting APT hosted and proxy repos
 
 ## [v1.6.0] - 2024-11-16

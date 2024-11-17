@@ -26,6 +26,115 @@ nexus_config_helm: true
 nexus_config_r: true
 nexus_config_nuget: true
 nexus_config_apt: true
+nexus_config_yum: true
+nexus_config_raw: true
+
+__nexus_repos_raw_hosted_defaults:
+  online: true
+  format: raw
+  type: hosted
+  storage:
+    blobStoreName: default
+    strictContentTypeValidation: false
+    writePolicy: allow_once
+  cleanup:
+    policyNames: []
+  component:
+    proprietaryComponents: false
+
+__nexus_repos_raw_proxy_defaults:
+  format: raw
+  type: proxy
+  online: true
+  storage:
+    blobStoreName: default
+    strictContentTypeValidation: true
+  cleanup:
+    policyNames: []
+  proxy:
+    remoteUrl: https://remote.repository.com
+    contentMaxAge: 1440
+    metadataMaxAge: 1440
+  negativeCache:
+    enabled: true
+    timeToLive: 1440
+  httpClient:
+    blocked: false
+    autoBlock: true
+    connection:
+      retries: 0
+      userAgentSuffix: string
+      timeout: 60
+      enableCircularRedirects: false
+      enableCookies: false
+      useTrustStore: false
+
+__nexus_repos_raw_group_defaults:
+  online: true
+  format: raw
+  type: group
+  storage:
+    blobStoreName: default
+    strictContentTypeValidation: false
+  group:
+    memberNames: []
+
+__nexus_repos_yum_hosted_defaults:
+  online: true
+  format: yum
+  type: hosted
+  storage:
+    blobStoreName: default
+    strictContentTypeValidation: false
+    writePolicy: allow_once
+  cleanup:
+    policyNames: []
+  component:
+    proprietaryComponents: false
+  yum:
+    repodataDepth: 5
+    deployPolicy: STRICT
+
+__nexus_repos_yum_proxy_defaults:
+  format: yum
+  type: proxy
+  online: true
+  storage:
+    blobStoreName: default
+    strictContentTypeValidation: true
+  cleanup:
+    policyNames: []
+  proxy:
+    remoteUrl: https://remote.repository.com
+    contentMaxAge: 1440
+    metadataMaxAge: 1440
+  negativeCache:
+    enabled: true
+    timeToLive: 1440
+  httpClient:
+    blocked: false
+    autoBlock: true
+    connection:
+      retries: 0
+      userAgentSuffix: string
+      timeout: 60
+      enableCircularRedirects: false
+      enableCookies: false
+      useTrustStore: false
+  yumSigning:
+    keypair: default
+
+__nexus_repos_yum_group_defaults:
+  online: true
+  format: yum
+  type: group
+  storage:
+    blobStoreName: default
+    strictContentTypeValidation: false
+  group:
+    memberNames: []
+  yumSigning:
+    keypair: default
 
 __nexus_repos_apt_hosted_defaults:
   online: true
@@ -495,6 +604,18 @@ __nexus_repos_maven_proxy_defaults:
     versionPolicy: MIXED
     layoutPolicy: STRICT
     contentDisposition: ATTACHMENT
+
+nexus_repos_raw_hosted: []
+
+nexus_repos_raw_proxy: []
+
+nexus_repos_raw_group: []
+
+nexus_repos_yum_hosted: []
+
+nexus_repos_yum_proxy: []
+
+nexus_repos_yum_group: []
 
 nexus_repos_apt_hosted: []
 
