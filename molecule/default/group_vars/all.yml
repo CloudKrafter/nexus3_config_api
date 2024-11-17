@@ -331,6 +331,71 @@ nexus_repos_docker_hosted:
       httpsPort: 10003
       subdomain: docker-hosted-offline
 
+nexus_repos_docker_proxy:
+  - name: docker-proxy-1
+    proxy:
+      remoteUrl: https://remote.repository.com
+      contentMaxAge: 1440
+      metadataMaxAge: 1440
+    negativeCache:
+      enabled: true
+      timeToLive: 1440
+    httpClient:
+      blocked: false
+      autoBlock: true
+      connection:
+        useTrustStore: true
+  - name: docker-proxy-2
+    proxy:
+      remoteUrl: https://remote.repository.com
+      contentMaxAge: 1440
+      metadataMaxAge: 1440
+    routingRule: routing-rule-allow-all
+  - name: docker-proxy-3
+    proxy:
+      remoteUrl: https://remote.repository.com
+      contentMaxAge: 1440
+      metadataMaxAge: 1440
+    negativeCache:
+      enabled: true
+      timeToLive: 1440
+
+nexus_repos_docker_group:
+  - name: docker-group
+    online: true
+    storage:
+      blobStoreName: default
+      strictContentTypeValidation: true
+    group:
+      memberNames:
+        - docker-hosted-1
+        - docker-proxy-1
+        - docker-proxy-2
+        - docker-proxy-3
+      writableMember: docker-hosted-1
+    docker:
+      v1Enabled: false
+      forceBasicAuth: false
+      httpPort: 10300
+      httpsPort: 10301
+  - name: docker-group-reverse-group-order
+    online: false
+    storage:
+      blobStoreName: default
+      strictContentTypeValidation: false
+    group:
+      memberNames:
+        - docker-proxy-3
+        - docker-proxy-2
+        - docker-proxy-1
+        - docker-hosted-1
+      writableMember: docker-hosted-1
+    docker:
+      v1Enabled: false
+      forceBasicAuth: false
+      httpPort: 10400
+      httpsPort: 10401
+
 nexus_repos_maven_hosted:
   - name: repo-1
     online: true
@@ -430,6 +495,8 @@ nexus_repos_maven_proxy:
     httpClient:
       blocked: false
       autoBlock: true
+      connection:
+        useTrustStore: true
   - name: maven-proxy-2
     proxy:
       remoteUrl: https://repo1.maven.org/maven2/

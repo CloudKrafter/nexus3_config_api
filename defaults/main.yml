@@ -28,6 +28,10 @@ __nexus_repos_docker_group_defaults:
     strictContentTypeValidation: false
   group:
     memberNames: []
+    writableMember:
+  docker:
+    v1Enabled: false
+    forceBasicAuth: false
 
 __nexus_repos_docker_hosted_defaults:
   online: true
@@ -75,24 +79,14 @@ __nexus_repos_docker_proxy_defaults:
       enableCircularRedirects: false
       enableCookies: false
       useTrustStore: false
-    # authentication:
-    #   type:
-    #   username:
-    #   preemptive:
-    #   ntlmHost:
-    #   ntlmDomain:
-  routingRule:
-  replication:
   docker:
     v1Enabled: false
     forceBasicAuth: false
-    httpPort: 10000
-    httpsPort: 10001
-    dockerAttrs:
-      docker.version: v1
-      docker.token: true
-      docker.schemaV1: true
-      docker.forceBasicAuth: false
+  dockerProxy:
+    indexType: HUB # HUB, REGISTRY or CUSTOM
+    indexUrl: https://index.docker.io
+    cacheForeignLayers: false
+    foreignLayerUrlWhitelist: []
 
 __nexus_repos_maven_group_defaults:
   online: true
