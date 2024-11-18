@@ -1,0 +1,33 @@
+- name: Construct API url
+  ansible.builtin.set_fact:
+    api_url: >
+      {% if method in ['POST'] %}
+        {{ nexus_protocol }}://{{ nexus_hostname }}:{{ nexus_port }}/service/rest/v1/blobstores/{{ item.type | lower }}
+      {% elif method in ['PUT'] %}
+        {{ nexus_protocol }}://{{ nexus_hostname }}:{{ nexus_port }}/service/rest/v1/blobstores/{{ item.type | lower }}/{{ item.name}}
+      {% elif method in ['DELETE'] %}
+        {{ nexus_protocol }}://{{ nexus_hostname }}:{{ nexus_port }}/service/rest/v1/blobstores/{{ item.name }}
+      {% endif %}
+  tags: blobstores
+
+- name: "{{ method }} {{ item.name }} blobstore"
+  ansible.builtin.uri:
+    url: "{{ api_url }}"
+    method: "{{ method }}"
+    validate_certs: false
+    status_code: >
+      {% if method == 'POST' and item.type == 'S3' %}
+        201
+      {% elif method == 'POST' and item.type in ['Group', 'File'] %}
+        204
+      {% elif method == 'DELETE' %}
+        204
+      {% endif %}
+    user: "{{ nexus_admin_username }}"
+    password: "{{ nexus_admin_password }}"
+    force_basic_auth: true
+    body: "{{ item | to_json }}"
+    headers:
+      Content-Type: "application/json"
+  changed_when: true
+  tags: blobstores

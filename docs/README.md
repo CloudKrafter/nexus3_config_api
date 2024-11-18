@@ -11,6 +11,10 @@ Take away: when not all attributes for PUT are passed through the API, the role 
 
 if the order of the roles/privileges changes, it will not be updated, but it will try to PUT all the changes to the api
 
+Q: I can not delete a blobstore BlobStore is in use and cannot be deleted
+A: Make sure you have removed the blobstore from the all blobstore groups first
+The order of the group_vars is important since the dictionaries will be passed through as-is to the Nexus API.
+
 ## Missing support on API
 - setting content disposition on maven groups
 - setting layout policy on maven groups
@@ -31,8 +35,8 @@ if the order of the roles/privileges changes, it will not be updated, but it wil
 - cargo repo endpoints
 - rubygems repo endpoints
 
-- S3 Blob store endpoint
-- Group Blob store endpoit
+- S3 Blob store PUT endpoint
+- Group Blob store PUT endpoit
 
 - HTTPS System settings
 - IQ Repo Firewall
