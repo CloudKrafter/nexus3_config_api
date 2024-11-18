@@ -1,6 +1,7 @@
 # Changelog
 ## [v1.7.0] - 2024-11-17
 ### Added
+- Creating and deleting S3, File and Group blob stores. Might work with Azure and Google too, not tested.
 - Creating, updating and deleting Conda proxy repos
 - Creating, updating and deleting Helm hosted and proxy repos
 - Creating, updating and deleting R hosted, proxy and group repos
