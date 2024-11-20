@@ -6,6 +6,8 @@ nexus_admin_username: admin
 nexus_admin_password: changeme
 nexus_enable_pro: false
 
+nexus_ssl_truststore: []
+
 # Nexus Security Realms
 #
 # Each realm will be activated and configured in the same order as you listed.
