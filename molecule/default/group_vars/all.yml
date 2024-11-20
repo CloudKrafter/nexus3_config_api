@@ -1,6 +1,7 @@
 # defaults file for nexus3-config-as-code
 nexus_protocol: http
-nexus_hostname: 172.17.0.3
+nexus_hostname: host.docker.internal
+nexus_s3_endpoint: "http://{{ nexus_hostname }}:9000"
 nexus_port: 8081
 nexus_admin_username: admin
 nexus_admin_password: changeme
@@ -48,7 +49,7 @@ nexus_blobstores:
         accessKeyId: nexus-access-key
         secretAccessKey: nexus-secret-key
       advancedBucketConnection:
-        endpoint: "http://172.17.0.4:9000"
+        endpoint: "{{ nexus_s3_endpoint }}"
         forcePathStyle: true
   - name: s3-blob-2
     type: S3
@@ -64,7 +65,7 @@ nexus_blobstores:
         accessKeyId: nexus-access-key
         secretAccessKey: nexus-secret-key
       advancedBucketConnection:
-        endpoint: "http://172.17.0.4:9000"
+        endpoint: "{{ nexus_s3_endpoint }}"
         forcePathStyle: true
   - name: s3-blob-3
     type: S3
@@ -80,7 +81,7 @@ nexus_blobstores:
         accessKeyId: nexus-access-key
         secretAccessKey: nexus-secret-key
       advancedBucketConnection:
-        endpoint: "http://172.17.0.4:9000"
+        endpoint: "{{ nexus_s3_endpoint }}"
         forcePathStyle: true
   - name: s3-blob-4
     type: S3
@@ -96,7 +97,7 @@ nexus_blobstores:
         accessKeyId: nexus-access-key
         secretAccessKey: nexus-secret-key
       advancedBucketConnection:
-        endpoint: "http://172.17.0.4:9000"
+        endpoint: "{{ nexus_s3_endpoint }}"
         forcePathStyle: true
   - name: s3-blob-5
     type: S3
@@ -112,7 +113,7 @@ nexus_blobstores:
         accessKeyId: nexus-access-key
         secretAccessKey: nexus-secret-key
       advancedBucketConnection:
-        endpoint: "http://172.17.0.4:9000"
+        endpoint: "{{ nexus_s3_endpoint }}"
         forcePathStyle: true
   - name: s3-grp
     type: Group
