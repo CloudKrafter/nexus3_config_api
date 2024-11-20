@@ -7,6 +7,7 @@
 - Creating, updating and deleting Conda proxy repos
 - Creating, updating and deleting Helm hosted and proxy repos
 - Creating, updating and deleting Conan hosted and proxy repos
+- Creating, updating and deleting Go group and proxy repos
 - Creating, updating and deleting R hosted, proxy and group repos
 - Creating, updating and deleting NuGet hosted, proxy and group repos
 - Creating, updating and deleting Yum hosted, proxy and group repos
