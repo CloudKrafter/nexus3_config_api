@@ -403,6 +403,35 @@ nexus_repos_cleanup_policies:
     criteriaLastDownloaded: 120
     criteriaAssetRegex: "your-regex*"
 
+nexus_repos_cocoapods_proxy:
+  - name: cocoa-proxy-1
+    proxy:
+      remoteUrl: https://cocoapods-specs
+      contentMaxAge: 1440
+      metadataMaxAge: 1440
+    negativeCache:
+      enabled: true
+      timeToLive: 1440
+    httpClient:
+      blocked: false
+      autoBlock: true
+      connection:
+        useTrustStore: true
+  - name: cocoa-proxy-2
+    proxy:
+      remoteUrl: https://cocoapods-specs
+      contentMaxAge: 1440
+      metadataMaxAge: 1440
+    routingRule: routing-rule-allow-all
+  - name: cocoa-proxy-3
+    proxy:
+      remoteUrl: https://cocoapods-specs
+      contentMaxAge: 1440
+      metadataMaxAge: 1440
+    negativeCache:
+      enabled: true
+      timeToLive: 1440
+
 nexus_repos_p2_proxy:
   - name: p2-proxy-1
     proxy:
