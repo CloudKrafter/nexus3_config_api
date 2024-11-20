@@ -29,7 +29,6 @@ The order of the group_vars is important since the dictionaries will be passed t
 
 
 # TODO:
-- go proxy and group repo endpoints
 - cargo repo endpoints
 - rubygems repo endpoints
 

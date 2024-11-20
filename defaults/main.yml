@@ -31,6 +31,44 @@ nexus_config_raw: true
 nexus_config_p2: true
 nexus_config_cocoapods: true
 nexus_config_conan: true
+nexus_config_go: true
+
+__nexus_repos_go_proxy_defaults:
+  format: go
+  type: proxy
+  online: true
+  storage:
+    blobStoreName: default
+    strictContentTypeValidation: true
+  cleanup:
+    policyNames: []
+  proxy:
+    remoteUrl: https://remote.repository.com
+    contentMaxAge: 1440
+    metadataMaxAge: 1440
+  negativeCache:
+    enabled: true
+    timeToLive: 1440
+  httpClient:
+    blocked: false
+    autoBlock: true
+    connection:
+      retries: 0
+      userAgentSuffix: string
+      timeout: 60
+      enableCircularRedirects: false
+      enableCookies: false
+      useTrustStore: false
+
+__nexus_repos_go_group_defaults:
+  online: true
+  format: go
+  type: group
+  storage:
+    blobStoreName: default
+    strictContentTypeValidation: false
+  group:
+    memberNames: []
 
 __nexus_repos_cocoapods_proxy_defaults:
   format: cocoapods
@@ -703,6 +741,10 @@ __nexus_repos_maven_proxy_defaults:
     versionPolicy: MIXED
     layoutPolicy: STRICT
     contentDisposition: ATTACHMENT
+
+nexus_repos_go_proxy: []
+
+nexus_repos_go_group: []
 
 nexus_repos_conan_hosted: []
 
