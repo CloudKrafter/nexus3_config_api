@@ -11,6 +11,10 @@
 - Creating, updating and deleting Raw hosted, proxy and group repos
 - Creating, updating and deleting APT hosted and proxy repos
 
+### Changed
+- **Breaking!** PUT requests to file blobstores are currently not supported, until a better implementation is available
+
+
 ## [v1.6.0] - 2024-11-16
 ### Added
 - Creating, updating and deleting Docker hosted, proxy and group repos
