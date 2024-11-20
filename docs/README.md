@@ -28,7 +28,6 @@ The order of the group_vars is important since the dictionaries will be passed t
 
 
 # TODO:
-- p2 proxy repo endpoints
 - cocoa proxy repo endpoints
 - conan hosted and proxy repo endpoints
 - go proxy and group repo endpoints
