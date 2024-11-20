@@ -7,6 +7,19 @@ nexus_admin_username: admin
 nexus_admin_password: changeme
 nexus_enable_pro: true
 
+nexus_security_realms:
+  - NexusAuthenticatingRealm
+  - User-Token-Realm
+  - NuGetApiKey
+  - ConanToken
+  - Crowd
+  - DefaultRole
+  - DockerToken
+  - LdapRealm
+  - NpmToken
+  - rutauth-realm
+  - SamlRealm
+
 nexus_blobstores:
   - name: default
     type: File
