@@ -1,0 +1,103 @@
+- name: Get current HTTP system settings
+  ansible.builtin.uri:
+    url: "{{ nexus_protocol }}://{{ nexus_hostname }}:{{ nexus_port }}/service/rest/v1/http"
+    method: GET
+    validate_certs: false
+    user: "{{ nexus_admin_username }}"
+    password: "{{ nexus_admin_password }}"
+    force_basic_auth: true
+    headers:
+      Accept: "application/json"
+    status_code: 200
+  register: current_http_system_settings
+  tags: http-system-settings
+
+- name: Set fact for current HTTP system settings
+  ansible.builtin.set_fact:
+    current_nexus_http_system_config: "{{ current_http_system_settings.json }}"
+  when: current_http_system_settings.status == 200
+  tags: http-system-settings
+
+- name: Show current HTTP system settings
+  ansible.builtin.debug:
+    var: current_nexus_http_system_config
+  when: current_http_system_settings.status == 200
+  tags: http-system-settings
+
+- name: Set fact for desired HTTP system settings
+  ansible.builtin.set_fact:
+    desired_nexus_http_system_config: >
+      {{
+        {
+          "nonProxyHosts": nexus_http_system_settings.nonProxyHosts | default([]),
+          "userAgent": nexus_http_system_settings.userAgent | default("default-user-agent"),
+          "timeout": nexus_http_system_settings.timeout | default(3600),
+          "retries": nexus_http_system_settings.retries | default(10),
+          "httpProxy": nexus_http_system_settings.httpProxy.enabled | default(false) | ternary(
+            {
+              "enabled": nexus_http_system_settings.httpProxy.enabled,
+              "host": nexus_http_system_settings.httpProxy.host | default(omit),
+              "port": nexus_http_system_settings.httpProxy.port | default(omit),
+              "authInfo": {
+                "enabled": nexus_http_system_settings.httpProxy.authInfo.enabled | default(false),
+                "username": nexus_http_system_settings.httpProxy.authInfo.username | default(omit),
+                "password": nexus_http_system_settings.httpProxy.authInfo.password | default(omit),
+                "ntlmHost": nexus_http_system_settings.httpProxy.authInfo.ntlmHost | default(omit),
+                "ntlmDomain": nexus_http_system_settings.httpProxy.authInfo.ntlmDomain | default(omit)
+              }
+            },
+            omit
+          ),
+          "httpsProxy": nexus_http_system_settings.httpsProxy.enabled | default(false) | ternary(
+            {
+              "enabled": nexus_http_system_settings.httpsProxy.enabled,
+              "host": nexus_http_system_settings.httpsProxy.host | default(omit),
+              "port": nexus_http_system_settings.httpsProxy.port | default(omit),
+              "authInfo": {
+                "enabled": nexus_http_system_settings.httpsProxy.authInfo.enabled | default(false),
+                "username": nexus_http_system_settings.httpsProxy.authInfo.username | default(omit),
+                "password": nexus_http_system_settings.httpsProxy.authInfo.password | default(omit),
+                "ntlmHost": nexus_http_system_settings.httpsProxy.authInfo.ntlmHost | default(omit),
+                "ntlmDomain": nexus_http_system_settings.httpsProxy.authInfo.ntlmDomain | default(omit)
+              }
+            },
+            omit
+          )
+        }
+      }}
+  tags: http-system-settings
+
+- name: Show desired HTTP system settings
+  ansible.builtin.debug:
+    var: desired_nexus_http_system_config
+  tags: http-system-settings
+
+- name: Configure HTTP system settings
+  ansible.builtin.uri:
+    url: "{{ nexus_protocol }}://{{ nexus_hostname }}:{{ nexus_port }}/service/rest/v1/http"
+    method: PUT
+    validate_certs: false
+    user: "{{ nexus_admin_username }}"
+    password: "{{ nexus_admin_password }}"
+    force_basic_auth: true
+    headers:
+      Accept: "application/json"
+      Content-Type: "application/json"
+    body: "{{ desired_nexus_http_system_config | to_json }}"
+    status_code: 204
+  register: __nexus_http_system_config_update__
+  tags: http-system-settings
+
+# Delete HTTP system settings
+- name: Delete HTTP system settings
+  ansible.builtin.uri:
+    url: "{{ nexus_protocol }}://{{ nexus_hostname }}:{{ nexus_port }}/service/rest/v1/http"
+    method: DELETE
+    validate_certs: false
+    user: "{{ nexus_admin_username }}"
+    password: "{{ nexus_admin_password }}"
+    force_basic_auth: true
+    headers:
+      Accept: "application/json"
+    status_code: 204
+  tags: http-system-settings

@@ -7,6 +7,14 @@ nexus_admin_username: admin
 nexus_admin_password: changeme
 nexus_enable_pro: true
 
+# nexus_http_system_settings:
+#   nonProxyHosts: []
+#   timeout: 3600
+#   retries: 10
+#   httpProxy: null
+#   httpsProxy: null
+#   userAgent: null
+
 nexus_security_realms:
   - NexusAuthenticatingRealm
   - User-Token-Realm

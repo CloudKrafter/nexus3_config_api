@@ -6,6 +6,19 @@ nexus_admin_username: admin
 nexus_admin_password: changeme
 nexus_enable_pro: false
 
+nexus_http_system_settings:
+  nonProxyHosts: []
+  timeout: 3600
+  retries: 6
+  httpProxy:
+    enabled: true
+    host: "proxy.local"
+    port: 8085
+  httpsProxy:
+    enabled: true
+    host: "proxy.local"
+    port: 8086
+
 # Nexus Security Realms
 #
 # Each realm will be activated and configured in the same order as you listed.

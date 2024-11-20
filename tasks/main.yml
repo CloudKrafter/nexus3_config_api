@@ -17,6 +17,10 @@
   ansible.builtin.include_tasks: security-realms-api.yml
   tags: security-realms
 
+- name: Include http-system-settings-api
+  ansible.builtin.include_tasks: http-system-settings-api.yml
+  tags: http-system-settings
+
 ########### Blobstores ###########
 
 - name: Get all blobstores

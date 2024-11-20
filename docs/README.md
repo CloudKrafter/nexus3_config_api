@@ -39,13 +39,12 @@ The order of the group_vars is important since the dictionaries will be passed t
 - HTTPS System settings
 - IQ Repo Firewall
 - Security Management LDAP
-- Security Management REALMS
 - Security Certificates
 - Tasks
+- Tags
 - Security Management SAML
 - Email endpoint
 - Security Atlassian Cloud
 - Security Management Privileges
-- Tags
 - Azure Blob store endpoint
 - Google Blob store endpoint
