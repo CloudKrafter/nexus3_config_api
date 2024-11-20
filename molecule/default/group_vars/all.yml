@@ -403,6 +403,59 @@ nexus_repos_cleanup_policies:
     criteriaLastDownloaded: 120
     criteriaAssetRegex: "your-regex*"
 
+nexus_repos_conan_hosted:
+  - name: conan-hosted-1
+    online: true
+    storage:
+      blobStoreName: default
+      strictContentTypeValidation: true
+    cleanup:
+      policyNames: []
+  - name: conan-hosted-2
+    online: true
+    storage:
+      blobStoreName: default
+      strictContentTypeValidation: false
+    cleanup:
+      policyNames: []
+  - name: conan-hosted-offline
+    online: false
+    storage:
+      blobStoreName: default
+      strictContentTypeValidation: false
+    cleanup:
+      policyNames:
+        - conan_cleanup
+
+nexus_repos_conan_proxy:
+  - name: conan-proxy-1
+    proxy:
+      remoteUrl: https://conan.bintray.com
+      contentMaxAge: 1440
+      metadataMaxAge: 1440
+    negativeCache:
+      enabled: true
+      timeToLive: 1440
+    httpClient:
+      blocked: false
+      autoBlock: true
+      connection:
+        useTrustStore: true
+  - name: conan-proxy-2
+    proxy:
+      remoteUrl: https://conan.bintray.com
+      contentMaxAge: 1440
+      metadataMaxAge: 1440
+    routingRule: routing-rule-allow-all
+  - name: conan-proxy-3
+    proxy:
+      remoteUrl: https://conan.bintray.com
+      contentMaxAge: 1440
+      metadataMaxAge: 1440
+    negativeCache:
+      enabled: true
+      timeToLive: 1440
+
 nexus_repos_cocoapods_proxy:
   - name: cocoa-proxy-1
     proxy:

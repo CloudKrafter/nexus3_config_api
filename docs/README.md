@@ -25,10 +25,10 @@ The order of the group_vars is important since the dictionaries will be passed t
 - yumsigning cant be fetched through the API
 - raw.contentdisposition cant be fetched through api
 - aptSigning cant be fetched through api
+- conanProxy.conanVersion cant be fetched through API
 
 
 # TODO:
-- conan hosted and proxy repo endpoints
 - go proxy and group repo endpoints
 - cargo repo endpoints
 - rubygems repo endpoints

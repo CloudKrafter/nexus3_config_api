@@ -30,6 +30,7 @@ nexus_config_yum: true
 nexus_config_raw: true
 nexus_config_p2: true
 nexus_config_cocoapods: true
+nexus_config_conan: true
 
 __nexus_repos_cocoapods_proxy_defaults:
   format: cocoapods
@@ -382,6 +383,48 @@ __nexus_repos_helm_proxy_defaults:
       enableCookies: false
       useTrustStore: false
 
+__nexus_repos_conan_hosted_defaults:
+  online: true
+  format: conan
+  type: hosted
+  storage:
+    blobStoreName: default
+    strictContentTypeValidation: false
+    writePolicy: allow_once
+  cleanup:
+    policyNames: []
+  component:
+    proprietaryComponents: false
+
+__nexus_repos_conan_proxy_defaults:
+  format: conan
+  type: proxy
+  online: true
+  storage:
+    blobStoreName: default
+    strictContentTypeValidation: true
+  cleanup:
+    policyNames: []
+  proxy:
+    remoteUrl: https://remote.repository.com
+    contentMaxAge: 1440
+    metadataMaxAge: 1440
+  negativeCache:
+    enabled: true
+    timeToLive: 1440
+  httpClient:
+    blocked: false
+    autoBlock: true
+    connection:
+      retries: 0
+      userAgentSuffix: string
+      timeout: 60
+      enableCircularRedirects: false
+      enableCookies: false
+      useTrustStore: false
+  conanProxy:
+    conanVersion: V1
+
 __nexus_repos_conda_proxy_defaults:
   format: conda
   type: proxy
@@ -660,6 +703,10 @@ __nexus_repos_maven_proxy_defaults:
     versionPolicy: MIXED
     layoutPolicy: STRICT
     contentDisposition: ATTACHMENT
+
+nexus_repos_conan_hosted: []
+
+nexus_repos_conan_proxy: []
 
 nexus_repos_cocoapods_proxy: []
 
