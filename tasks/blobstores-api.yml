@@ -3,7 +3,7 @@
     api_url: >
       {% if method in ['POST'] %}
         {{ nexus_protocol }}://{{ nexus_hostname }}:{{ nexus_port }}/service/rest/v1/blobstores/{{ item.type | lower }}
-      {% elif method in ['PUT'] %}
+      {% elif method in ['PUT', 'GET'] %}
         {{ nexus_protocol }}://{{ nexus_hostname }}:{{ nexus_port }}/service/rest/v1/blobstores/{{ item.type | lower }}/{{ item.name}}
       {% elif method in ['DELETE'] %}
         {{ nexus_protocol }}://{{ nexus_hostname }}:{{ nexus_port }}/service/rest/v1/blobstores/{{ item.name }}
@@ -22,6 +22,8 @@
         204
       {% elif method == 'DELETE' %}
         204
+      {% else %}
+        200
       {% endif %}
     user: "{{ nexus_admin_username }}"
     password: "{{ nexus_admin_password }}"
