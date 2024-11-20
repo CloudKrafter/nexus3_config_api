@@ -6,6 +6,25 @@ nexus_admin_username: admin
 nexus_admin_password: changeme
 nexus_enable_pro: false
 
+# Nexus Security Realms
+#
+# Each realm will be activated and configured in the same order as you listed.
+#
+# Available security realms:
+# - User-Token-Realm
+# - NexusAuthenticatingRealm
+# - NuGetApiKey
+# - ConanToken
+# - Crowd
+# - DefaultRole
+# - DockerToken
+# - LdapRealm
+# - NpmToken
+# - rutauth-realm
+# - SamlRealm
+nexus_security_realms:
+  - NexusAuthenticatingRealm
+
 nexus_blobstores:
   - name: default
     type: File
