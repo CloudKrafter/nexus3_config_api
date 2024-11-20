@@ -1,5 +1,5 @@
 # Changelog
-## [v1.7.0] - 2024-11-17
+## [v1.7.0] - 2024-11-19
 ### Added
 - Creating and deleting S3, File and Group blob stores. Might work with Azure and Google too, not tested.
 - Creating, updating and deleting P2 proxy repos
