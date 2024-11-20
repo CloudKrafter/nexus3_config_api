@@ -40,7 +40,6 @@ The order of the group_vars is important since the dictionaries will be passed t
 - IQ Repo Firewall
 - Security Management LDAP
 - Security Management REALMS
-- Security Certificates
 - Tasks
 - Security Management SAML
 - Email endpoint

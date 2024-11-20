@@ -13,6 +13,10 @@
   when: nexus_enable_pro | bool
   tags: user-tokens
 
+- name: Include ssl-truststore-api
+  ansible.builtin.include_tasks: ssl-truststore-api.yml
+  tags: ssl-truststore
+
 - name: Include security-realms-api
   ansible.builtin.include_tasks: security-realms-api.yml
   tags: security-realms
