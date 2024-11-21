@@ -47,6 +47,18 @@ platforms:
       - nexus
     networks: *nexus_networks
 
+  - name: slapd-server-mock
+    hostname: slapd-server-mock
+    image: thoteam/slapd-server-mock:latest
+    override_command: false
+    pull: true
+    pre_build_image: true
+    env:
+      LDAP_DOMAIN: slapd-server-mock
+    groups:
+      - mockldap
+    networks: *nexus_networks
+
 provisioner:
   name: ansible
   options:
