@@ -29,7 +29,6 @@ The order of the group_vars is important since the dictionaries will be passed t
 
 
 # TODO:
-- cargo repo endpoints
 - rubygems repo endpoints
 
 - File blob store PUT endpoint
