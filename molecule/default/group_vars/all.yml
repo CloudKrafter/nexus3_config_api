@@ -566,6 +566,82 @@ nexus_repos_cleanup_policies:
     criteriaLastDownloaded: 120
     criteriaAssetRegex: "your-regex*"
 
+nexus_repos_rubygems_hosted:
+  - name: rubygems-hosted-1
+    online: true
+    storage:
+      blobStoreName: default
+      strictContentTypeValidation: true
+    cleanup:
+      policyNames: []
+  - name: rubygems-hosted-2
+    online: true
+    storage:
+      blobStoreName: default
+      strictContentTypeValidation: false
+    cleanup:
+      policyNames: []
+  - name: rubygems-hosted-offline
+    online: false
+    storage:
+      blobStoreName: default
+      strictContentTypeValidation: false
+    cleanup:
+      policyNames:
+        - rubygems_cleanup
+
+nexus_repos_rubygems_proxy:
+  - name: rubygems-proxy-1
+    proxy:
+      remoteUrl: https://rubygems.org
+      contentMaxAge: 1440
+      metadataMaxAge: 1440
+    negativeCache:
+      enabled: true
+      timeToLive: 1440
+    httpClient:
+      blocked: false
+      autoBlock: true
+      connection:
+        useTrustStore: true
+  - name: rubygems-proxy-2
+    proxy:
+      remoteUrl: https://rubygems.org
+      contentMaxAge: 1440
+      metadataMaxAge: 1440
+    routingRule: routing-rule-allow-all
+  - name: rubygems-proxy-3
+    proxy:
+      remoteUrl: https://rubygems.org
+      contentMaxAge: 1440
+      metadataMaxAge: 1440
+    negativeCache:
+      enabled: true
+      timeToLive: 1440
+
+nexus_repos_rubygems_group:
+  - name: rubygems-group
+    online: true
+    storage:
+      blobStoreName: default
+      strictContentTypeValidation: true
+    group:
+      memberNames:
+        - rubygems-proxy-1
+        - rubygems-proxy-2
+        - rubygems-proxy-3
+    routingRule: routing-rule-allow-all
+  - name: rubygems-group-reverse-group-order
+    online: false
+    storage:
+      blobStoreName: default
+      strictContentTypeValidation: false
+    group:
+      memberNames:
+        - rubygems-proxy-3
+        - rubygems-proxy-2
+        - rubygems-proxy-1
+
 nexus_repos_cargo_hosted:
   - name: cargo-hosted-1
     online: true
