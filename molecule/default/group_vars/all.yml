@@ -344,7 +344,7 @@ nexus_roles:
 
 nexus_anonymous_access:
   enabled: true
-  userId: anonymouse
+  userId: anonymous
   realmName: NexusAuthorizingRealm
 
 nexus_content_selectors:
