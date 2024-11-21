@@ -1,0 +1,27 @@
+---
+- name: Construct API url
+  ansible.builtin.set_fact:
+    api_url: >
+      {% if method in ['POST'] %}
+        {{ nexus_protocol }}://{{ nexus_hostname }}:{{ nexus_port }}/service/rest/v1/security/ldap
+      {% elif method in ['PUT', 'DELETE'] %}
+        {{ nexus_protocol }}://{{ nexus_hostname }}:{{ nexus_port }}/service/rest/v1/security/ldap/{{ item.name | urlencode }}
+      {% endif %}
+  tags: ldap
+
+- name: "{{ method }} {{ item.name }} LDAP connection"
+  ansible.builtin.uri:
+    url: "{{ api_url }}"
+    method: "{{ method }}"
+    validate_certs: false
+    user: "{{ nexus_admin_username }}"
+    password: "{{ nexus_admin_password }}"
+    force_basic_auth: true
+    body: "{{ item | combine({'id': item.id}) | to_json if method == 'PUT' else item | to_json }}"
+    status_code: "{{ '201' if method == 'POST' else '204' if method in ['PUT', 'DELETE'] else '200' }}"
+    headers:
+      Accept: "application/json"
+      Content-Type: "application/json"
+  register: __nexus_ldap_config_update__
+  changed_when: true
+  tags: ldap

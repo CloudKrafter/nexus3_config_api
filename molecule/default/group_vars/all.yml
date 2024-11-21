@@ -7,6 +7,68 @@ nexus_admin_username: admin
 nexus_admin_password: changeme
 nexus_enable_pro: true
 
+ldap_connections:
+  - name: Mock ldap server STATIC # Required
+    protocol: LDAPS # Required. Values: "LDAP" or "LDAPS"
+    host: "{{ nexus_hostname }}" # Required
+    searchBase: dc=slapd-server-mock # Required
+    port: 389 # Required
+    groupType: STATIC # Required if ldapGroupsAsRoles is true. Values: "DYNAMIC" or "STATIC"
+    groupObjectClass: posixGroup # Required if groupType is static
+    groupIdAttribute: cn # Required if groupType is static
+    groupMemberAttribute: memberUID # Required if groupType is static
+    groupMemberFormat: ${username} # Required if groupType is static
+    #userMemberOfAttribute: memberOf # Required if groupType is dynamic
+    authScheme: "NONE" # Required. Values: "NONE","SIMPLE","DIGEST_MD5" or "CRAM_MD5"
+    #authRealm: # Required if authScheme is CRAM_MD5 or DIGEST_MD5
+    #authUsername: # Required if authScheme other than NONE
+    #authPassword: # Required if authScheme other than NONE
+    connectionTimeoutSeconds: 30 # Required
+    connectionRetryDelaySeconds: 300 # Required
+    maxIncidentsCount: 3 # Required
+    useTrustStore: true
+    userBaseDn: ou=people
+    userLdapFilter: (|(mail=*@example.com)(uid=dom*))
+    userIdAttribute: guid
+    userRealNameAttribute: usrPrincipalName
+    userEmailAddressAttribute: email
+    userPasswordAttribute: pswd
+    userObjectClass: person
+    ldapGroupsAsRoles: true
+    groupBaseDn: ou=groups
+    userSubtree: false
+    groupSubtree: false
+  - name: Mock ldap server DYNAMIC # Required
+    protocol: LDAP # Required. Values: "LDAP" or "LDAPS"
+    host: "{{ nexus_hostname }}" # Required
+    searchBase: dc=slapd-server-mock # Required
+    port: 389 # Required
+    groupType: DYNAMIC # Required if ldapGroupsAsRoles is true. Values: "DYNAMIC" or "STATIC"
+    #groupObjectClass: posixGroup # Required if groupType is static
+    #groupIdAttribute: cn # Required if groupType is static
+    #groupMemberAttribute: memberUID # Required if groupType is static
+    #groupMemberFormat: ${username} # Required if groupType is static
+    userMemberOfAttribute: memberOf # Required if groupType is dynamic
+    authScheme: "NONE" # Required. Values: "NONE","SIMPLE","DIGEST_MD5" or "CRAM_MD5"
+    #authRealm: # Required if authScheme is CRAM_MD5 or DIGEST_MD5
+    #authUsername: # Required if authScheme other than NONE
+    #authPassword: # Required if authScheme other than NONE
+    connectionTimeoutSeconds: 30 # Required
+    connectionRetryDelaySeconds: 300 # Required
+    maxIncidentsCount: 3 # Required
+    # useTrustStore: false
+    #userBaseDn: ou=people
+    #userLdapFilter: (|(mail=*@example.com)(uid=dom*))
+    userIdAttribute: guid # Required
+    userRealNameAttribute: usrPrincipalName # Required
+    userEmailAddressAttribute: email # Required
+    #userPasswordAttribute: pswd
+    userObjectClass: person # Required
+    ldapGroupsAsRoles: true
+    #groupBaseDn: "ou=devs"
+    #userSubtree: false
+    #groupSubtree: false
+
 nexus_ssl_truststore:
   certificates:
     - name: |
