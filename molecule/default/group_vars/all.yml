@@ -422,6 +422,12 @@ nexus_users:
     externalRoles: []
 
 nexus_repos_cleanup_policies:
+  - name: cargo_cleanup
+    format: cargo
+    notes: "cargo"
+    criteriaLastBlobUpdated: 60
+    criteriaLastDownloaded: 120
+    criteriaAssetRegex: "your-regex*"
   - name: maven_cleanup
     format: maven2
     notes: "maven"
@@ -559,6 +565,82 @@ nexus_repos_cleanup_policies:
     criteriaLastBlobUpdated: 60
     criteriaLastDownloaded: 120
     criteriaAssetRegex: "your-regex*"
+
+nexus_repos_cargo_hosted:
+  - name: cargo-hosted-1
+    online: true
+    storage:
+      blobStoreName: default
+      strictContentTypeValidation: true
+    cleanup:
+      policyNames: []
+  - name: cargo-hosted-2
+    online: true
+    storage:
+      blobStoreName: default
+      strictContentTypeValidation: false
+    cleanup:
+      policyNames: []
+  - name: cargo-hosted-offline
+    online: false
+    storage:
+      blobStoreName: default
+      strictContentTypeValidation: false
+    cleanup:
+      policyNames:
+        - cargo_cleanup
+
+nexus_repos_cargo_proxy:
+  - name: cargo-proxy-1
+    proxy:
+      remoteUrl: https://maven-central.storage.googleapis.com
+      contentMaxAge: 1440
+      metadataMaxAge: 1440
+    negativeCache:
+      enabled: true
+      timeToLive: 1440
+    httpClient:
+      blocked: false
+      autoBlock: true
+      connection:
+        useTrustStore: true
+  - name: cargo-proxy-2
+    proxy:
+      remoteUrl: https://maven-central.storage.googleapis.com
+      contentMaxAge: 1440
+      metadataMaxAge: 1440
+    routingRule: routing-rule-allow-all
+  - name: cargo-proxy-3
+    proxy:
+      remoteUrl: https://maven-central.storage.googleapis.com
+      contentMaxAge: 1440
+      metadataMaxAge: 1440
+    negativeCache:
+      enabled: true
+      timeToLive: 1440
+
+nexus_repos_cargo_group:
+  - name: cargo-group
+    online: true
+    storage:
+      blobStoreName: default
+      strictContentTypeValidation: true
+    group:
+      memberNames:
+        - cargo-proxy-1
+        - cargo-proxy-2
+        - cargo-proxy-3
+    routingRule: routing-rule-allow-all
+  - name: cargo-group-reverse-group-order
+    online: false
+    storage:
+      blobStoreName: default
+      strictContentTypeValidation: false
+    group:
+      memberNames:
+        - cargo-proxy-3
+        - cargo-proxy-2
+        - cargo-proxy-1
 
 nexus_repos_go_proxy:
   - name: go-proxy-1
