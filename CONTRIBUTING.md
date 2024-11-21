@@ -71,3 +71,28 @@ password; nexus-password
 
 --access-key nexus-access-key
 --secret-key nexus-secret-key
+
+## Some guidelines to comply with desired-state-config principles
+
+This role aims to identify changes to singular items. That can be a single repository, LDAP server, routing rule, cleanup policy etc..
+
+In order to do that each item need to be compared against its current state, then for each difference we either create, update or delete the item.
+
+To show every create, update or delete action as 'changed' in the ansible output, we're looping over each item when executing the API call, rather than constructing one big massive api call that contains all changed items. This way when we create, update or delete 2 repositories, Ansible will return changed=2 (rather than changed=1 if we would combine the changes).
+
+This means that for every API call we use the `*-api.yml` file that accepts a list of items with the `with_items:` or `loop:` directive.
+
+### Examples
+
+#### Identify differences (*-tasks.yml)
+
+Each resource uses their corresponding `*-tasks.yml` this file contains the logic to determine if an item needs to be created, updated or deleted and will set the facts for it.
+
+The structure of the tasks are:
+- Get all items of the specific configuration
+- Set fact for the current config
+- Determine if the item needs to be created, comparing desired state (YAML definition) with the current state (API response).
+- Determine if the item config needs to be deleted, comparing current state (API response) with desired state (YAML definition).
+- Determine if the item config needs to be updated, comparing all item attributes returned from API with attributes of desired item config
+- Show the number of changes
+- Call the `*-api.yml` task with the POST, PUT or DELTE method.
