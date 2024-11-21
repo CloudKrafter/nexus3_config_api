@@ -7,24 +7,24 @@ nexus_admin_password: changeme
 nexus_enable_pro: false
 
 nexus_blobstores:
-- name: default
-  type: File
-  path: default
-  softQuota:
-    type: spaceRemainingQuota
-    limit: 104857600 #100Mb
-- name: file-quota-100-remaining
-  type: File
-  path: default-quota-100-remaining
-  softQuota:
-    type: spaceRemainingQuota
-    limit: 104857600 #100Mb
-- name: file-quota-100-used
-  type: File
-  path: default-quota-100-used
-  softQuota:
-    type: spaceUsedQuota
-    limit: 104857600 #100Mb
+  - name: default
+    type: File
+    path: default
+    softQuota:
+      type: spaceRemainingQuota
+      limit: 104857600 #100Mb
+  - name: file-quota-100-remaining
+    type: File
+    path: default-quota-100-remaining
+    softQuota:
+      type: spaceRemainingQuota
+      limit: 104857600 #100Mb
+  - name: file-quota-100-used
+    type: File
+    path: default-quota-100-used
+    softQuota:
+      type: spaceUsedQuota
+      limit: 104857600 #100Mb
 
 nexus_roles:
   - id: "nx-admin"
@@ -61,7 +61,7 @@ nexus_roles:
 
 nexus_anonymous_access:
   enabled: true
-  userId: anonymouse
+  userId: anonymous
   realmName: NexusAuthorizingRealm
 
 nexus_content_selectors:
