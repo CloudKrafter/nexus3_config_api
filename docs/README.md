@@ -29,8 +29,6 @@ The order of the group_vars is important since the dictionaries will be passed t
 
 
 # TODO:
-- rubygems repo endpoints
-
 - File blob store PUT endpoint
 - S3 Blob store PUT endpoint
 - Group Blob store PUT endpoit

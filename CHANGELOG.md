@@ -3,6 +3,7 @@
 ## [v1.9.0] - 2024-11-22
 ### Added
 - Creating, updating and deleting Cargo hosted, proxy and group repos
+- Creating, updating and deleting RubyGems hosted, proxy and group repos
 
 ## [v1.8.0] - 2024-11-21
 ### Added
