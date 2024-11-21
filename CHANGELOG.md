@@ -1,9 +1,10 @@
 # Changelog
 
-## [v1.8.0] - 2024-11-20
+## [v1.8.0] - 2024-11-21
 ### Added
 - Configuring realms is now available through the `nexus_security_realms` variable. By default only NexusAuthenticatingRealm is enabled.
 - Ability to manage SSL certificates in trust store (Adding and deleting)
+- Create, update and delete LDAP conigurations
 
 
 ## [v1.7.0] - 2024-11-19

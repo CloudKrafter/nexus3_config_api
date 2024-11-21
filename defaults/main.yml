@@ -8,6 +8,8 @@ nexus_enable_pro: false
 
 nexus_ssl_truststore: []
 
+ldap_connections: []
+
 # Nexus Security Realms
 #
 # Each realm will be activated and configured in the same order as you listed.

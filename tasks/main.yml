@@ -17,6 +17,10 @@
   ansible.builtin.include_tasks: ssl-truststore-api.yml
   tags: ssl-truststore
 
+- name: Include LDAP configuration
+  ansible.builtin.include_tasks: ldap-tasks.yml
+  tags: ldap
+
 - name: Include security-realms-api
   ansible.builtin.include_tasks: security-realms-api.yml
   tags: security-realms
