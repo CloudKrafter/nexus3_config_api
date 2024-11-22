@@ -4299,3 +4299,8 @@
   when: nxs_delete_rubygems_group_repos | length > 0
 ############ End Rubygems Repositories ############
 
+############ Tasks ############
+
+- name: Include tasks-tasks.yml
+  ansible.builtin.include_tasks: tasks-tasks.yml
+  tags: tasks

@@ -1,0 +1,105 @@
+---
+- name: Get all Tasks
+  ansible.builtin.uri:
+    url: "{{ nexus_protocol }}://{{ nexus_hostname }}:{{ nexus_port }}/service/rest/v1/tasks"
+    method: GET
+    validate_certs: false
+    user: "{{ nexus_admin_username }}"
+    password: "{{ nexus_admin_password }}"
+    force_basic_auth: true
+    headers:
+      Accept: "application/json"
+    status_code: 200
+  register: __nexus_all_tasks__
+  tags: tasks
+
+- name: Set fact for current tasks
+  ansible.builtin.set_fact:
+    current_nexus_tasks: "{{ __nexus_all_tasks__.json }}"
+  when: __nexus_all_tasks__.status == 200
+  tags: tasks
+
+- name: Show current tasks
+  debug:
+    var: current_nexus_tasks
+  when: current_nexus_tasks | length > 0
+  tags: tasks
+
+- name: Set fact for desired tasks
+  ansible.builtin.set_fact:
+    desired_nexus_tasks: "{{ nexus_scheduled_tasks }}"
+  tags: tasks
+
+- name: Show desired tasks
+  debug:
+    var: desired_nexus_tasks
+  when: desired_nexus_tasks | length > 0
+  tags: tasks
+
+- name: Determine tasks to be created
+  ansible.builtin.set_fact:
+    nxs_create_tasks: "{{ desired_nexus_tasks | rejectattr('name', 'in', current_nexus_tasks['items'] | map(attribute='name') | list) | list }}"
+  tags: tasks
+
+- name: Determine tasks to be deleted
+  ansible.builtin.set_fact:
+    nxs_delete_tasks: "{{ current_nexus_tasks['items'] | rejectattr('name', 'in', desired_nexus_tasks | map(attribute='name') | list) | list }}"
+  tags: tasks
+
+# - name: Compare tasks for changes if nexus_scheduled_tasks is not empty
+#   when: current_nexus_tasks | length > 0
+#   block:
+#     - name: Compare tasks for changes
+#       ansible.builtin.set_fact:
+#         nxs_update_tasks: "{{ nxs_update_tasks + [item | combine({'id': (current_nexus_tasks | selectattr('name', 'equalto', item.name) | first).id})] }}"
+#       loop: "{{ nexus_scheduled_tasks | list }}"
+#       when: >
+#         ( current_nexus_tasks | selectattr('name', 'equalto', item.name) | first) is not defined or
+#         ( current_nexus_tasks | selectattr('name', 'equalto', item.name) | first).enabled | default(omit) != item.enabled | default(None) or
+#         ( current_nexus_tasks | selectattr('name', 'equalto', item.name) | first).type | default(omit) != item.type | default(None) or
+#         ( current_nexus_tasks | selectattr('name', 'equalto', item.name) | first).schedule | default(omit) != item.schedule | default(None) or
+#         ( current_nexus_tasks | selectattr('name', 'equalto', item.name) | first).properties | default(omit) != item.properties | default(None) or
+#         ( current_nexus_tasks | selectattr('name', 'equalto', item.name) | first).alertEmail | default(omit) != item.alertEmail | default(None) or
+#         ( current_nexus_tasks | selectattr('name', 'equalto', item.name) | first).status | default(omit) != item.status | default(None) or
+#         ( current_nexus_tasks | selectattr('name', 'equalto', item.name) | first).lastRunResult | default(omit) != item.lastRunResult | default(None) or
+#         ( current_nexus_tasks | selectattr('name', 'equalto', item.name) | first).nextRun | default(omit) != item.nextRun | default(None) or
+#         ( current_nexus_tasks | selectattr('name', 'equalto', item.name) | first).message | default(omit) != item.message | default(None) or
+#         ( current_nexus_tasks | selectattr('name', 'equalto', item.name) | first).taskState | default(omit) != item.taskState | default(None) or
+#         ( current_nexus_tasks | selectattr('name', 'equal
+
+- name: Show tasks to be created
+  debug:
+    var: nxs_create_tasks | length
+  when: nxs_create_tasks | length > 0
+  tags: tasks
+
+- name: Show tasks to be deleted
+  debug:
+    var: nxs_delete_tasks | length
+  when: nxs_delete_tasks | length > 0
+  tags: tasks
+# - name: Show tasks to be updated
+#   debug:
+#     var: nxs_update_tasks
+#   when: nxs_update_tasks | length > 0
+#   tags: tasks
+
+- name: Create Scheduled Tasks using Nexus API
+  ansible.builtin.include_tasks: tasks-api.yml
+  vars:
+    scheduled_task: "{{ item | default([]) }}"
+    method: POST
+  with_items:
+    - "{{ nxs_create_tasks | default([]) }}"
+  when: nxs_create_tasks | length > 0
+  tags: tasks
+
+- name: Delete Scheduled Tasks using Nexus API
+  ansible.builtin.include_tasks: tasks-api.yml
+  vars:
+    scheduled_task: "{{ item | default([]) }}"
+    method: DELETE
+  with_items:
+    - "{{ nxs_delete_tasks | default([]) }}"
+  when: nxs_delete_tasks | length > 0
+  tags: tasks

@@ -867,6 +867,8 @@ __nexus_repos_maven_proxy_defaults:
     layoutPolicy: STRICT
     contentDisposition: ATTACHMENT
 
+nexus_scheduled_tasks: []
+
 nexus_repos_rubygems_hosted: []
 
 nexus_repos_rubygems_proxy: []

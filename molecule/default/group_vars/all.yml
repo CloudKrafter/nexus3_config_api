@@ -566,6 +566,43 @@ nexus_repos_cleanup_policies:
     criteriaLastDownloaded: 120
     criteriaAssetRegex: "your-regex*"
 
+nexus_scheduled_tasks:
+  - name: cleanup-tags # Required
+    type: tags.cleanup # Required.
+    #Values:
+    # assetBlob.cleanup
+    # healthcheck
+    # malicious-risk-on-disk-auto-enable-rhc
+    # usertoken.cleanup
+    # repository.cleanup
+    enabled: true # Required. Values: true or false
+    notificationCondition: FAILURE # Required. Values: FAILURE or SUCCESS_FAILURE
+    frequency: # Required
+      schedule: manual # Required. Values: manual, once, hourly, daily, weekly, monthly or cron
+      # startDate: 0 # Required when schedule is not manual
+      # timeZoneOffset: "-05:00"
+      # recurringDays: # Required when schedule is weekly (1-7) or monthly (1-31)
+      #   - 0
+      # cronExpression: "0 1 2 * * ?" # Required when schedule is cron
+  - name: compact-default-blobstore
+    type: blobstore.compact
+    enabled: true
+    notificationCondition: FAILURE
+    frequency:
+      schedule: weekly
+      recurringDays:
+        - 1
+        - 4
+    properties:
+      blobstoreName: default
+  - name: backup-h2
+    type: h2.backup.task
+    enabled: true
+    notificationCondition: FAILURE
+    frequency:
+      schedule: daily
+      startDate: 0
+
 nexus_repos_rubygems_hosted:
   - name: rubygems-hosted-1
     online: true
