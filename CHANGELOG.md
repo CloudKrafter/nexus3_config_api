@@ -1,9 +1,26 @@
 # Changelog
 
-## [v1.9.0] - 2024-11-22
+## [v1.9.0] - 2024-11-24
 ### Added
 - Creating, updating and deleting Cargo hosted, proxy and group repos
 - Creating, updating and deleting RubyGems hosted, proxy and group repos
+
+**Important:** Role has been migrated to a collection.
+`ansible-galaxy collection install cloudkrafter.nexus`
+
+Example how to add it to your playboks:
+
+```yaml
+---
+- name: Playbook
+  hosts: localhost
+  gather_facts: true
+  collections:
+    - cloudkrafter.nexus
+
+  roles:
+    - role: cloudkrafter.nexus.config_api
+```
 
 ## [v1.8.0] - 2024-11-21
 ### Added
