@@ -8,7 +8,7 @@ namespace: cloudkrafter
 name: nexus
 
 # The version of the collection. Must be compatible with semantic versioning
-version: 0.9.0
+version: 0.9.1
 
 # The path to the Markdown (.md) readme file. This path is relative to the root of the collection
 readme: README.md
@@ -49,7 +49,7 @@ tags:
 dependencies: {}
 
 # The URL of the originating SCM repository
-repository: https://github.com/CloudKrafter/nexus3_config_api
+repository: https://github.com/CloudKrafter/nexus-ansible-collection
 
 # The URL to any online docs
 documentation: https://ansible-nexus.cloudkrafter.org
@@ -58,7 +58,7 @@ documentation: https://ansible-nexus.cloudkrafter.org
 homepage: https://cloudkrafter.org
 
 # The URL to the collection issue tracker
-#issues: http://example.com/issue/tracker
+issues: https://github.com/CloudKrafter/nexus-ansible-collection/issues
 
 # A list of file glob-like patterns used to filter any files or directories that should not be included in the build
 # artifact. A pattern is matched from the relative path of the file or directory of the collection directory. This
