@@ -39,6 +39,9 @@
 	"remoteEnv": {
 		"NEXUS_LICENSE_B64": "${localEnv:NEXUS_LICENSE_B64}"
 	},
+	"runArgs": [
+		"--network=nexus"
+	],
 	// Configure tool-specific properties.
 	"customizations": {
 		"vscode": {
