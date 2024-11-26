@@ -11,11 +11,6 @@
   register: __nexus_license_info__
   tags: license
 
-- name: Show __nexus_license_info__
-  ansible.builtin.debug:
-    var: __nexus_license_info__
-  tags: license
-
 # Nexus API expects a license file in binary format to be uploaded
 # So we need to decode the base64 encoded license string into a file
 - name: Create license file

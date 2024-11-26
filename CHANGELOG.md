@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.10.0] - 2024-11-25
+### Added
+- Molecule Nexus Pro scenario
+
+### Changed
+- Removed various debug tasks to clean logging output.
+
 ## [v1.9.0] - 2024-11-24
 ### Added
 - Creating, updating and deleting Cargo hosted, proxy and group repos

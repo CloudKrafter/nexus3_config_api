@@ -35,19 +35,9 @@
     loop_var: result
   tags: blobstores
 
-- name: Debug full existing {{ type }} blobstores
-  ansible.builtin.debug:
-    var: full_existing_blobstores
-  tags: blobstores
-
 - name: Set fact for desired {{ type }} blobstores
   ansible.builtin.set_fact:
     desired_blobstores: "{{ nexus_blobstores | selectattr('type', 'equalto', type) | list }}"
-  tags: blobstores
-
-- name: Debug desired {{ type }} blobstores
-  ansible.builtin.debug:
-    var: desired_blobstores
   tags: blobstores
 
 - name: Determine {{ type }} blobstores to create

@@ -584,18 +584,6 @@
     __nxs_crnt_mvn_prxy__: "{{ __nxs_all_repos__.json | selectattr('format', 'equalto', 'maven2') | selectattr('type', 'equalto', 'proxy') | list }}"
     __nxs_crnt_mvn_grp__: "{{ __nxs_all_repos__.json | selectattr('format', 'equalto', 'maven2') | selectattr('type', 'equalto', 'group') | list }}"
 
-- name: Show __nxs_crnt_mvn_hstd__
-  ansible.builtin.debug:
-    var: __nxs_crnt_mvn_hstd__
-
-- name: Show __nxs_crnt_mvn_prxy__
-  ansible.builtin.debug:
-    var: __nxs_crnt_mvn_prxy__
-
-- name: Show __nxs_crnt_mvn_grp__
-  ansible.builtin.debug:
-    var: __nxs_crnt_mvn_grp__
-
 - name: Determine repositories to create
   ansible.builtin.set_fact:
     nxs_create_mvn_hosted_repos: "{{ nxs_desired_mvn_hosted_repos | rejectattr('name', 'in', __nxs_crnt_mvn_hstd__ | map(attribute='name') | list) | list }}"
@@ -850,18 +838,6 @@
     __nxs_crnt_docker_prxy__: "{{ __nxs_all_repos__.json | selectattr('format', 'equalto', 'docker') | selectattr('type', 'equalto', 'proxy') | list }}"
     __nxs_crnt_docker_grp__: "{{ __nxs_all_repos__.json | selectattr('format', 'equalto', 'docker') | selectattr('type', 'equalto', 'group') | list }}"
 
-- name: Show __nxs_crnt_docker_hstd__
-  ansible.builtin.debug:
-    var: __nxs_crnt_docker_hstd__
-
-- name: Show __nxs_crnt_docker_prxy__
-  ansible.builtin.debug:
-    var: __nxs_crnt_docker_prxy__
-
-- name: Show __nxs_crnt_docker_grp__
-  ansible.builtin.debug:
-    var: __nxs_crnt_docker_grp__
-
 - name: Determine Docker repositories to create
   ansible.builtin.set_fact:
     nxs_create_docker_hosted_repos: "{{ nxs_desired_docker_hosted_repos | rejectattr('name', 'in', __nxs_crnt_docker_hstd__ | map(attribute='name') | list) | list }}"
@@ -1108,10 +1084,6 @@
   ansible.builtin.set_fact:
     __nxs_crnt_gitlfs_hstd__: "{{ __nxs_all_repos__.json | selectattr('format', 'equalto', 'gitlfs') | selectattr('type', 'equalto', 'hosted') | list }}"
 
-- name: Show __nxs_crnt_gitlfs_hstd__
-  ansible.builtin.debug:
-    var: __nxs_crnt_gitlfs_hstd__
-
 - name: Determine GitLFS repositories to create
   ansible.builtin.set_fact:
     nxs_create_gitlfs_hosted_repos: "{{ nxs_desired_gitlfs_hosted_repos | rejectattr('name', 'in', __nxs_crnt_gitlfs_hstd__ | map(attribute='name') | list) | list }}"
@@ -1223,18 +1195,6 @@
     __nxs_crnt_npm_hstd__: "{{ __nxs_all_repos__.json | selectattr('format', 'equalto', 'npm') | selectattr('type', 'equalto', 'hosted') | list }}"
     __nxs_crnt_npm_prxy__: "{{ __nxs_all_repos__.json | selectattr('format', 'equalto', 'npm') | selectattr('type', 'equalto', 'proxy') | list }}"
     __nxs_crnt_npm_grp__: "{{ __nxs_all_repos__.json | selectattr('format', 'equalto', 'npm') | selectattr('type', 'equalto', 'group') | list }}"
-
-- name: Show __nxs_crnt_npm_hstd__
-  ansible.builtin.debug:
-    var: __nxs_crnt_npm_hstd__
-
-- name: Show __nxs_crnt_npm_prxy__
-  ansible.builtin.debug:
-    var: __nxs_crnt_npm_prxy__
-
-- name: Show __nxs_crnt_npm_grp__
-  ansible.builtin.debug:
-    var: __nxs_crnt_npm_grp__
 
 - name: Determine NPM repositories to create
   ansible.builtin.set_fact:
@@ -1485,18 +1445,6 @@
     __nxs_crnt_pypi_prxy__: "{{ __nxs_all_repos__.json | selectattr('format', 'equalto', 'pypi') | selectattr('type', 'equalto', 'proxy') | list }}"
     __nxs_crnt_pypi_grp__: "{{ __nxs_all_repos__.json | selectattr('format', 'equalto', 'pypi') | selectattr('type', 'equalto', 'group') | list }}"
 
-- name: Show __nxs_crnt_pypi_hstd__
-  ansible.builtin.debug:
-    var: __nxs_crnt_pypi_hstd__
-
-- name: Show __nxs_crnt_pypi_prxy__
-  ansible.builtin.debug:
-    var: __nxs_crnt_pypi_prxy__
-
-- name: Show __nxs_crnt_pypi_grp__
-  ansible.builtin.debug:
-    var: __nxs_crnt_pypi_grp__
-
 - name: Determine PyPi repositories to create
   ansible.builtin.set_fact:
     nxs_create_pypi_hosted_repos: "{{ nxs_desired_pypi_hosted_repos | rejectattr('name', 'in', __nxs_crnt_pypi_hstd__ | map(attribute='name') | list) | list }}"
@@ -1722,10 +1670,6 @@
   ansible.builtin.set_fact:
     __nxs_crnt_conda_prxy__: "{{ __nxs_all_repos__.json | selectattr('format', 'equalto', 'conda') | selectattr('type', 'equalto', 'proxy') | list }}"
 
-- name: Show __nxs_crnt_conda_prxy__
-  ansible.builtin.debug:
-    var: __nxs_crnt_conda_prxy__
-
 - name: Determine Conda repositories to create
   ansible.builtin.set_fact:
     nxs_create_conda_proxy_repos: "{{ nxs_desired_conda_proxy_repos | rejectattr('name', 'in', __nxs_crnt_conda_prxy__ | map(attribute='name') | list) | list }}"
@@ -1838,14 +1782,6 @@
   ansible.builtin.set_fact:
     __nxs_crnt_helm_hstd__: "{{ __nxs_all_repos__.json | selectattr('format', 'equalto', 'helm') | selectattr('type', 'equalto', 'hosted') | list }}"
     __nxs_crnt_helm_prxy__: "{{ __nxs_all_repos__.json | selectattr('format', 'equalto', 'helm') | selectattr('type', 'equalto', 'proxy') | list }}"
-
-- name: Show __nxs_crnt_helm_hstd__
-  ansible.builtin.debug:
-    var: __nxs_crnt_helm_hstd__
-
-- name: Show __nxs_crnt_helm_prxy__
-  ansible.builtin.debug:
-    var: __nxs_crnt_helm_prxy__
 
 - name: Determine Helm repositories to create
   ansible.builtin.set_fact:
@@ -2032,18 +1968,6 @@
     __nxs_crnt_r_hstd__: "{{ __nxs_all_repos__.json | selectattr('format', 'equalto', 'r') | selectattr('type', 'equalto', 'hosted') | list }}"
     __nxs_crnt_r_prxy__: "{{ __nxs_all_repos__.json | selectattr('format', 'equalto', 'r') | selectattr('type', 'equalto', 'proxy') | list }}"
     __nxs_crnt_r_grp__: "{{ __nxs_all_repos__.json | selectattr('format', 'equalto', 'r') | selectattr('type', 'equalto', 'group') | list }}"
-
-- name: Show __nxs_crnt_r_hstd__
-  ansible.builtin.debug:
-    var: __nxs_crnt_r_hstd__
-
-- name: Show __nxs_crnt_r_prxy__
-  ansible.builtin.debug:
-    var: __nxs_crnt_r_prxy__
-
-- name: Show __nxs_crnt_r_grp__
-  ansible.builtin.debug:
-    var: __nxs_crnt_r_grp__
 
 - name: Determine R repositories to create
   ansible.builtin.set_fact:
@@ -2291,18 +2215,6 @@
     __nxs_crnt_nuget_prxy__: "{{ __nxs_all_repos__.json | selectattr('format', 'equalto', 'nuget') | selectattr('type', 'equalto', 'proxy') | list }}"
     __nxs_crnt_nuget_grp__: "{{ __nxs_all_repos__.json | selectattr('format', 'equalto', 'nuget') | selectattr('type', 'equalto', 'group') | list }}"
 
-- name: Show __nxs_crnt_nuget_hstd__
-  ansible.builtin.debug:
-    var: __nxs_crnt_nuget_hstd__
-
-- name: Show __nxs_crnt_nuget_prxy__
-  ansible.builtin.debug:
-    var: __nxs_crnt_nuget_prxy__
-
-- name: Show __nxs_crnt_nuget_grp__
-  ansible.builtin.debug:
-    var: __nxs_crnt_nuget_grp__
-
 - name: Determine NuGet repositories to create
   ansible.builtin.set_fact:
     nxs_create_nuget_hosted_repos: "{{ nxs_desired_nuget_hosted_repos | rejectattr('name', 'in', __nxs_crnt_nuget_hstd__ | map(attribute='name') | list) | list }}"
@@ -2540,14 +2452,6 @@
     __nxs_crnt_apt_hstd__: "{{ __nxs_all_repos__.json | selectattr('format', 'equalto', 'apt') | selectattr('type', 'equalto', 'hosted') | list }}"
     __nxs_crnt_apt_prxy__: "{{ __nxs_all_repos__.json | selectattr('format', 'equalto', 'apt') | selectattr('type', 'equalto', 'proxy') | list }}"
 
-- name: Show __nxs_crnt_apt_hstd__
-  ansible.builtin.debug:
-    var: __nxs_crnt_apt_hstd__
-
-- name: Show __nxs_crnt_apt_prxy__
-  ansible.builtin.debug:
-    var: __nxs_crnt_apt_prxy__
-
 - name: Determine APT repositories to create
   ansible.builtin.set_fact:
     nxs_create_apt_hosted_repos: "{{ nxs_desired_apt_hosted_repos | rejectattr('name', 'in', __nxs_crnt_apt_hstd__ | map(attribute='name') | list) | list }}"
@@ -2736,18 +2640,6 @@
     __nxs_crnt_yum_hstd__: "{{ __nxs_all_repos__.json | selectattr('format', 'equalto', 'yum') | selectattr('type', 'equalto', 'hosted') | list }}"
     __nxs_crnt_yum_prxy__: "{{ __nxs_all_repos__.json | selectattr('format', 'equalto', 'yum') | selectattr('type', 'equalto', 'proxy') | list }}"
     __nxs_crnt_yum_grp__: "{{ __nxs_all_repos__.json | selectattr('format', 'equalto', 'yum') | selectattr('type', 'equalto', 'group') | list }}"
-
-- name: Show __nxs_crnt_yum_hstd__
-  ansible.builtin.debug:
-    var: __nxs_crnt_yum_hstd__
-
-- name: Show __nxs_crnt_yum_prxy__
-  ansible.builtin.debug:
-    var: __nxs_crnt_yum_prxy__
-
-- name: Show __nxs_crnt_yum_grp__
-  ansible.builtin.debug:
-    var: __nxs_crnt_yum_grp__
 
 - name: Determine Yum repositories to create
   ansible.builtin.set_fact:
@@ -2997,18 +2889,6 @@
     __nxs_crnt_raw_prxy__: "{{ __nxs_all_repos__.json | selectattr('format', 'equalto', 'raw') | selectattr('type', 'equalto', 'proxy') | list }}"
     __nxs_crnt_raw_grp__: "{{ __nxs_all_repos__.json | selectattr('format', 'equalto', 'raw') | selectattr('type', 'equalto', 'group') | list }}"
 
-- name: Show __nxs_crnt_raw_hstd__
-  ansible.builtin.debug:
-    var: __nxs_crnt_raw_hstd__
-
-- name: Show __nxs_crnt_raw_prxy__
-  ansible.builtin.debug:
-    var: __nxs_crnt_raw_prxy__
-
-- name: Show __nxs_crnt_raw_grp__
-  ansible.builtin.debug:
-    var: __nxs_crnt_raw_grp__
-
 - name: Determine raw repositories to create
   ansible.builtin.set_fact:
     nxs_create_raw_hosted_repos: "{{ nxs_desired_raw_hosted_repos | rejectattr('name', 'in', __nxs_crnt_raw_hstd__ | map(attribute='name') | list) | list }}"
@@ -3233,10 +3113,6 @@
   ansible.builtin.set_fact:
     __nxs_crnt_p2_prxy__: "{{ __nxs_all_repos__.json | selectattr('format', 'equalto', 'p2') | selectattr('type', 'equalto', 'proxy') | list }}"
 
-- name: Show __nxs_crnt_p2_prxy__
-  ansible.builtin.debug:
-    var: __nxs_crnt_p2_prxy__
-
 - name: Determine p2 repositories to create
   ansible.builtin.set_fact:
     nxs_create_p2_proxy_repos: "{{ nxs_desired_p2_proxy_repos | rejectattr('name', 'in', __nxs_crnt_p2_prxy__ | map(attribute='name') | list) | list }}"
@@ -3338,10 +3214,6 @@
 - name: Filter existing cocoapods repositories
   ansible.builtin.set_fact:
     __nxs_crnt_cocoapods_prxy__: "{{ __nxs_all_repos__.json | selectattr('format', 'equalto', 'cocoapods') | selectattr('type', 'equalto', 'proxy') | list }}"
-
-- name: Show __nxs_crnt_cocoapods_prxy__
-  ansible.builtin.debug:
-    var: __nxs_crnt_cocoapods_prxy__
 
 - name: Determine cocoapods repositories to create
   ansible.builtin.set_fact:
@@ -3455,14 +3327,6 @@
   ansible.builtin.set_fact:
     __nxs_crnt_conan_hstd__: "{{ __nxs_all_repos__.json | selectattr('format', 'equalto', 'conan') | selectattr('type', 'equalto', 'hosted') | list }}"
     __nxs_crnt_conan_prxy__: "{{ __nxs_all_repos__.json | selectattr('format', 'equalto', 'conan') | selectattr('type', 'equalto', 'proxy') | list }}"
-
-- name: Show __nxs_crnt_conan_hstd__
-  ansible.builtin.debug:
-    var: __nxs_crnt_conan_hstd__
-
-- name: Show __nxs_crnt_conan_prxy__
-  ansible.builtin.debug:
-    var: __nxs_crnt_conan_prxy__
 
 - name: Determine conan repositories to create
   ansible.builtin.set_fact:
@@ -3638,14 +3502,6 @@
   ansible.builtin.set_fact:
     __nxs_crnt_go_prxy__: "{{ __nxs_all_repos__.json | selectattr('format', 'equalto', 'go') | selectattr('type', 'equalto', 'proxy') | list }}"
     __nxs_crnt_go_grp__: "{{ __nxs_all_repos__.json | selectattr('format', 'equalto', 'go') | selectattr('type', 'equalto', 'group') | list }}"
-
-- name: Show __nxs_crnt_go_prxy__
-  ansible.builtin.debug:
-    var: __nxs_crnt_go_prxy__
-
-- name: Show __nxs_crnt_go_grp__
-  ansible.builtin.debug:
-    var: __nxs_crnt_go_grp__
 
 - name: Determine go repositories to create
   ansible.builtin.set_fact:
@@ -3831,18 +3687,6 @@
     __nxs_crnt_cargo_hstd__: "{{ __nxs_all_repos__.json | selectattr('format', 'equalto', 'cargo') | selectattr('type', 'equalto', 'hosted') | list }}"
     __nxs_crnt_cargo_prxy__: "{{ __nxs_all_repos__.json | selectattr('format', 'equalto', 'cargo') | selectattr('type', 'equalto', 'proxy') | list }}"
     __nxs_crnt_cargo_grp__: "{{ __nxs_all_repos__.json | selectattr('format', 'equalto', 'cargo') | selectattr('type', 'equalto', 'group') | list }}"
-
-- name: Show __nxs_crnt_cargo_hstd__
-  ansible.builtin.debug:
-    var: __nxs_crnt_cargo_hstd__
-
-- name: Show __nxs_crnt_cargo_prxy__
-  ansible.builtin.debug:
-    var: __nxs_crnt_cargo_prxy__
-
-- name: Show __nxs_crnt_cargo_grp__
-  ansible.builtin.debug:
-    var: __nxs_crnt_cargo_grp__
 
 - name: Determine cargo repositories to create
   ansible.builtin.set_fact:
@@ -4091,18 +3935,6 @@
     __nxs_crnt_rubygems_prxy__: "{{ __nxs_all_repos__.json | selectattr('format', 'equalto', 'rubygems') | selectattr('type', 'equalto', 'proxy') | list }}"
     __nxs_crnt_rubygems_grp__: "{{ __nxs_all_repos__.json | selectattr('format', 'equalto', 'rubygems') | selectattr('type', 'equalto', 'group') | list }}"
 
-- name: Show __nxs_crnt_rubygems_hstd__
-  ansible.builtin.debug:
-    var: __nxs_crnt_rubygems_hstd__
-
-- name: Show __nxs_crnt_rubygems_prxy__
-  ansible.builtin.debug:
-    var: __nxs_crnt_rubygems_prxy__
-
-- name: Show __nxs_crnt_rubygems_grp__
-  ansible.builtin.debug:
-    var: __nxs_crnt_rubygems_grp__
-
 - name: Determine rubygems repositories to create
   ansible.builtin.set_fact:
     nxs_create_rubygems_hosted_repos: "{{ nxs_desired_rubygems_hosted_repos | rejectattr('name', 'in', __nxs_crnt_rubygems_hstd__ | map(attribute='name') | list) | list }}"
@@ -4306,4 +4138,3 @@
     - "{{ nxs_delete_rubygems_group_repos | default([]) }}"
   when: nxs_delete_rubygems_group_repos | length > 0
 ############ End Rubygems Repositories ############
-
