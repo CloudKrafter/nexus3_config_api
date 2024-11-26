@@ -154,16 +154,13 @@ nexus_ssl_truststore:
 
 nexus_security_realms:
   - NexusAuthenticatingRealm
-  - User-Token-Realm
   - NuGetApiKey
   - ConanToken
-  - Crowd
   - DefaultRole
   - DockerToken
   - LdapRealm
   - NpmToken
   - rutauth-realm
-  - SamlRealm
 
 nexus_blobstores:
   - name: default
@@ -273,42 +270,6 @@ nexus_blobstores:
       advancedBucketConnection:
         endpoint: "{{ nexus_s3_endpoint }}"
         forcePathStyle: true
-  - name: s3-grp
-    type: Group
-    softQuota:
-      type: spaceUsedQuota
-      limit: 104857600
-    members:
-      - s3-blob-1
-      - s3-blob-2
-    fillPolicy: roundRobin
-  - name: s3-grp-2
-    type: Group
-    softQuota:
-      type: spaceRemainingQuota
-      limit: 104857600
-    members:
-      - s3-blob-3
-      - s3-blob-4
-    fillPolicy: writeToFirst
-  - name: mixed-grp-1
-    type: Group
-    softQuota:
-      type: spaceUsedQuota
-      limit: 104857600
-    members:
-      - s3-blob-5
-      - file-quota-100-used
-    fillPolicy: roundRobin
-  - name: file-grp-1
-    type: Group
-    softQuota:
-      type: spaceUsedQuota
-      limit: 104857600
-    members:
-      - file-quota-200-used
-      - file-quota-100-remaining
-    fillPolicy: roundRobin
 
 nexus_roles:
   - id: "nx-admin"
@@ -642,82 +603,6 @@ nexus_repos_rubygems_group:
         - rubygems-proxy-3
         - rubygems-proxy-2
         - rubygems-proxy-1
-
-nexus_repos_cargo_hosted:
-  - name: cargo-hosted-1
-    online: true
-    storage:
-      blobStoreName: default
-      strictContentTypeValidation: true
-    cleanup:
-      policyNames: []
-  - name: cargo-hosted-2
-    online: true
-    storage:
-      blobStoreName: default
-      strictContentTypeValidation: false
-    cleanup:
-      policyNames: []
-  - name: cargo-hosted-offline
-    online: false
-    storage:
-      blobStoreName: default
-      strictContentTypeValidation: false
-    cleanup:
-      policyNames:
-        - cargo_cleanup
-
-nexus_repos_cargo_proxy:
-  - name: cargo-proxy-1
-    proxy:
-      remoteUrl: https://maven-central.storage.googleapis.com
-      contentMaxAge: 1440
-      metadataMaxAge: 1440
-    negativeCache:
-      enabled: true
-      timeToLive: 1440
-    httpClient:
-      blocked: false
-      autoBlock: true
-      connection:
-        useTrustStore: true
-  - name: cargo-proxy-2
-    proxy:
-      remoteUrl: https://maven-central.storage.googleapis.com
-      contentMaxAge: 1440
-      metadataMaxAge: 1440
-    routingRule: routing-rule-allow-all
-  - name: cargo-proxy-3
-    proxy:
-      remoteUrl: https://maven-central.storage.googleapis.com
-      contentMaxAge: 1440
-      metadataMaxAge: 1440
-    negativeCache:
-      enabled: true
-      timeToLive: 1440
-
-nexus_repos_cargo_group:
-  - name: cargo-group
-    online: true
-    storage:
-      blobStoreName: default
-      strictContentTypeValidation: true
-    group:
-      memberNames:
-        - cargo-proxy-1
-        - cargo-proxy-2
-        - cargo-proxy-3
-    routingRule: routing-rule-allow-all
-  - name: cargo-group-reverse-group-order
-    online: false
-    storage:
-      blobStoreName: default
-      strictContentTypeValidation: false
-    group:
-      memberNames:
-        - cargo-proxy-3
-        - cargo-proxy-2
-        - cargo-proxy-1
 
 nexus_repos_go_proxy:
   - name: go-proxy-1
@@ -1503,32 +1388,6 @@ nexus_repos_npm_proxy:
       enabled: true
       timeToLive: 1440
 
-nexus_repos_npm_group:
-  - name: npm-group
-    online: true
-    storage:
-      blobStoreName: default
-      strictContentTypeValidation: true
-    group:
-      memberNames:
-        - npm-proxy-1
-        - npm-proxy-2
-        - npm-proxy-3
-        - npm-hosted-1
-      writableMember: npm-hosted-1
-  - name: npm-group-reverse-group-order
-    online: false
-    storage:
-      blobStoreName: default
-      strictContentTypeValidation: false
-    group:
-      memberNames:
-        - npm-proxy-3
-        - npm-proxy-2
-        - npm-proxy-1
-        - npm-hosted-1
-      writableMember: npm-hosted-1
-
 nexus_repos_gitlfs_hosted:
   - name: gitlfs-hosted-1
     online: true
@@ -1615,42 +1474,6 @@ nexus_repos_docker_proxy:
     negativeCache:
       enabled: true
       timeToLive: 1440
-
-nexus_repos_docker_group:
-  - name: docker-group
-    online: true
-    storage:
-      blobStoreName: default
-      strictContentTypeValidation: true
-    group:
-      memberNames:
-        - docker-hosted-1
-        - docker-proxy-1
-        - docker-proxy-2
-        - docker-proxy-3
-      writableMember: docker-hosted-1
-    docker:
-      v1Enabled: false
-      forceBasicAuth: false
-      httpPort: 10300
-      httpsPort: 10301
-  - name: docker-group-reverse-group-order
-    online: false
-    storage:
-      blobStoreName: default
-      strictContentTypeValidation: false
-    group:
-      memberNames:
-        - docker-proxy-3
-        - docker-proxy-2
-        - docker-proxy-1
-        - docker-hosted-1
-      writableMember: docker-hosted-1
-    docker:
-      v1Enabled: false
-      forceBasicAuth: false
-      httpPort: 10400
-      httpsPort: 10401
 
 nexus_repos_maven_hosted:
   - name: repo-1
