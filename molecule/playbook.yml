@@ -2,5 +2,8 @@
 - name: Converge
   hosts: localhost
   gather_facts: true
+  collections:
+    - cloudkrafter.nexus
+
   roles:
-    - role: nexus3_config_api
+    - role: cloudkrafter.nexus.config_api
