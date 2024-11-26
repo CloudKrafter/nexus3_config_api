@@ -8,7 +8,7 @@ namespace: cloudkrafter
 name: nexus
 
 # The version of the collection. Must be compatible with semantic versioning
-version: 1.9.0
+version: 1.9.1
 
 # The path to the Markdown (.md) readme file. This path is relative to the root of the collection
 readme: README.md
@@ -16,8 +16,7 @@ readme: README.md
 # A list of the collection's content authors. Can be just the name or in the format 'Full Name <email> (url)
 # @nicks:irc/im.site#channel'
 authors:
-- Brian Veltman
-
+  - Brian Veltman
 
 ### OPTIONAL but strongly recommended
 # A short summary description of the collection
@@ -25,7 +24,7 @@ description: Collection to configure and manage Nexus3 with Config as Code throu
 
 # The path to the license file for the collection. This path is relative to the root of the collection. This key is
 # mutually exclusive with 'license'
-license_file: 'LICENSE.md'
+license_file: "LICENSE.md"
 
 # A list of tags you want to associate with the collection for indexing/searching. A tag name has the same character
 # requirements as 'namespace' and 'name'
@@ -65,7 +64,6 @@ issues: https://github.com/CloudKrafter/nexus-ansible-collection/issues
 # uses 'fnmatch' to match the files or directories. Some directories and files like 'galaxy.yml', '*.pyc', '*.retry',
 # and '.git' are always filtered. Mutually exclusive with 'manifest'
 build_ignore: []
-
 # A dict controlling use of manifest directives used in building the collection artifact. The key 'directives' is a
 # list of MANIFEST.in style
 # L(directives,https://packaging.python.org/en/latest/guides/using-manifest-in/#manifest-in-commands). The key

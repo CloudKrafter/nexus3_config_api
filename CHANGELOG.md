@@ -1,6 +1,6 @@
 # Changelog
 
-## [1.10.0] - 2024-11-25
+## [1.9.1] - 2024-11-25
 ### Added
 - Molecule Nexus Pro scenario
 
