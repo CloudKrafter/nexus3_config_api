@@ -24,6 +24,7 @@
     dest: "nexus.lic"
     mode: "0644"
   register: __license_status__
+  # TODO: Need a fact to detmerine if we're already on pro version or not
   when: nexus_enable_pro and (__nexus_license_info__.json.effectiveDate is not defined) and (lookup('env', 'NEXUS_LICENSE_B64') or nexus_license_b64)
   tags: license
 
@@ -41,6 +42,7 @@
     src: "nexus.lic"
     status_code: 200
   register: __uploaded_license__
+  # TODO: Need a fact to detmerine if we're already on pro version or not
   when: nexus_enable_pro and (__nexus_license_info__.json.effectiveDate is not defined) and (lookup('env', 'NEXUS_LICENSE_B64') or nexus_license_b64)
   tags: license
 
@@ -60,6 +62,7 @@
     password: "{{ nexus_admin_password }}"
     force_basic_auth: true
     status_code: 204
+  # TODO: Need a fact to detmerine if we're already on pro version or not
   when: not nexus_enable_pro and __nexus_license_info__.json.effectiveDate is defined
   changed_when: true
   tags: license

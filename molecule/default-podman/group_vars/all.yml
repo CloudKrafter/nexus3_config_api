@@ -4,6 +4,7 @@ nexus_protocol: http
 nexus_port: 8081
 nexus_admin_username: admin
 nexus_admin_password: changeme
+# TODO: Need a fact to detmerine if we're already on pro version or not
 nexus_enable_pro: false
 
 nexus_blobstores:

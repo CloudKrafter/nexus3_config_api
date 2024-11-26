@@ -18,7 +18,7 @@ To make this role work out-of-the-box you have to provide the following values f
 - `nexus_admin_password:`
 
 If you want to enable the Pro features, please note that you have to provide your own license.
-If your Nexus instance is already running on the Pro version, you can leave the `nexus_enable_pro` set to false.
+If your Nexus instance is already running on the Pro version, you still need the `nexus_enable_pro` set to true, to execute the tasks that are compatible with Nexus Pro.
 
 Role Variables
 --------------

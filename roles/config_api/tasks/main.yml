@@ -10,6 +10,7 @@
 
 - name: Include user-tokens-api
   ansible.builtin.include_tasks: user-tokens-api.yml
+  # TODO: Need a fact to detmerine if we're already on pro version or not
   when: nexus_enable_pro | bool
   tags: user-tokens
 
@@ -355,18 +356,21 @@
     password: "{{ nexus_admin_password }}"
     force_basic_auth: true
   register: __nxs_crnt_cln_plcy__
+  # TODO: Need a fact to detmerine if we're already on pro version or not
   when: nexus_enable_pro | bool
   tags: cleanup-policies
 
 - name: Determine cleanup policies to create
   ansible.builtin.set_fact:
     nxs_create_cleanuppolicies: "{{ nexus_repos_cleanup_policies | rejectattr('name', 'in', __nxs_crnt_cln_plcy__.json | map(attribute='name') | list) | list }}"
+  # TODO: Need a fact to detmerine if we're already on pro version or not
   when: nexus_enable_pro | bool
   tags: cleanup-policies
 
 - name: Determine cleanup policies to delete
   ansible.builtin.set_fact:
     nxs_delete_cleanuppolicies: "{{ __nxs_crnt_cln_plcy__.json | rejectattr('name', 'in', nexus_repos_cleanup_policies | map(attribute='name') | list) | list }}"
+  # TODO: Need a fact to detmerine if we're already on pro version or not
   when: nexus_enable_pro | bool
   tags: cleanup-policies
 
@@ -374,6 +378,7 @@
   ansible.builtin.set_fact:
     nxs_update_cleanuppolicies: "{{ nxs_update_cleanuppolicies + [item] }}"
   loop: "{{ nexus_repos_cleanup_policies | list }}"
+  # TODO: Need a fact to detmerine if we're already on pro version or not
   when: >
     nexus_enable_pro | bool and (
     ( __nxs_crnt_cln_plcy__.json | selectattr('name', 'equalto', item.name) | first) is not defined or
@@ -388,18 +393,21 @@
 - name: Show nxs_create_cleanuppolicies
   ansible.builtin.debug:
     var: nxs_create_cleanuppolicies | length
+  # TODO: Need a fact to detmerine if we're already on pro version or not
   when: nexus_enable_pro | bool
   tags: cleanup-policies
 
 - name: Show nxs_update_cleanuppolicies
   ansible.builtin.debug:
     var: nxs_update_cleanuppolicies | length
+  # TODO: Need a fact to detmerine if we're already on pro version or not
   when: nexus_enable_pro | bool
   tags: cleanup-policies
 
 - name: Show nxs_delete_cleanuppolicies
   ansible.builtin.debug:
     var: nxs_delete_cleanuppolicies | length
+  # TODO: Need a fact to detmerine if we're already on pro version or not
   when: nexus_enable_pro | bool
   tags: cleanup-policies
 
