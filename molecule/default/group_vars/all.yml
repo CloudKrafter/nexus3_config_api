@@ -1,12 +1,12 @@
 # defaults file for nexus3-config-as-code
 nexus_protocol: http
-nexus_hostname: host.docker.internal
-nexus_s3_endpoint: "http://{{ nexus_hostname }}:9000"
+nexus_hostname: nexus3-oss
+nexus_s3_endpoint: "http://s3-storeage:9000"
 nexus_port: 8081
 nexus_admin_username: admin
 nexus_admin_password: changeme
 # TODO: Need a fact to detmerine if we're already on pro version or not
-nexus_enable_pro: true
+nexus_enable_pro: false
 
 ldap_connections:
   - name: Mock ldap server STATIC # Required
