@@ -1,0 +1,34 @@
+---
+- name: Create Cleanup Policies
+  ansible.builtin.uri:
+    url: "{{ nexus_api_scheme }}://{{ nexus_api_hostname }}:{{ nexus_api_port }}{{ nexus_api_context_path }}service/rest/v1/cleanup-policies"
+    user: admin
+    password: "{{ current_nexus_admin_password }}"
+    method: POST
+    force_basic_auth: true
+    validate_certs: "{{ nexus_api_validate_certs }}"
+    body_format: json
+    body: "{{ cleanup_policy }}"
+    status_code: 201
+    timeout: "{{ nexus_api_timeout | int }}"
+  loop: "{{ api_payload }}"
+  loop_control:
+    loop_var: cleanup_policy
+  when: cleanup_policy.name not in __nexus_existing_cleanup_policies__.json | map(attribute='name') | list
+
+- name: Update cleanup policy when policy exists
+  ansible.builtin.uri:
+    url: "{{ nexus_api_scheme }}://{{ nexus_api_hostname }}:{{ nexus_api_port }}{{ nexus_api_context_path }}service/rest/v1/cleanup-policies/{{ cleanup_policy.name }}"
+    user: admin
+    password: "{{ current_nexus_admin_password }}"
+    method: PUT
+    force_basic_auth: true
+    validate_certs: "{{ nexus_api_validate_certs }}"
+    body_format: json
+    body: "{{ cleanup_policy }}"
+    status_code: 204
+    timeout: "{{ nexus_api_timeout | int }}"
+  loop: "{{ api_payload }}"
+  loop_control:
+    loop_var: cleanup_policy
+  when: cleanup_policy.name in __nexus_existing_cleanup_policies__.json | map(attribute='name') | list

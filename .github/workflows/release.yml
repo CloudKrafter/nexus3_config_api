@@ -5,6 +5,8 @@ on:
   push:
     branches:
       - main
+    paths:
+      - galaxy.yml
   workflow_dispatch:
 
 jobs:

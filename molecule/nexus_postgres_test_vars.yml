@@ -1,0 +1,29 @@
+nexus_purge: false
+nexus_run_provisionning: true
+nexus_use_api_for_provisioning: true
+
+nexus_db_migrator_version: 3.68.0-04
+nexus_db_migrator_download_url: https://download.sonatype.com/nexus/nxrm3-migrator
+
+# Enable Pro features
+nexus_enable_pro_version: true
+
+# Postgres migration settings
+nexus_migrate_database: true
+nexus_migration_type: postgres
+nexus_db_migrator_initial_memory: 4G
+nexus_db_migrator_maximum_memory: 4G
+nexus_migrate_tmp_dir: /tmp
+nexus_migrate_content_migration: true
+nexus_migrate_force: true
+
+# Using Postgres as the initial database? Set nexus_use_postgres to true
+nexus_use_postgres: false
+
+nexus_postgres_db_host: postgresql-server
+nexus_postgres_db_name: nexus
+nexus_postgres_db_port: 5432
+nexus_postgres_db_username: nexus
+nexus_postgres_db_password: nexus
+nexus_postgres_max_lifetime: 840000
+nexus_postgres_max_pool_size: 85

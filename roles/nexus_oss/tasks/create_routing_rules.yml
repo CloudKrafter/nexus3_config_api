@@ -1,0 +1,33 @@
+- name: Create routing rules
+  ansible.builtin.uri:
+    url: "{{ nexus_api_scheme }}://{{ nexus_api_hostname }}:{{ nexus_api_port }}{{ nexus_api_context_path }}service/rest/v1/routing-rules"
+    user: admin
+    password: "{{ current_nexus_admin_password }}"
+    method: POST
+    force_basic_auth: true
+    validate_certs: "{{ nexus_api_validate_certs }}"
+    body_format: json
+    body: "{{ routing_rule }}"
+    status_code: 204
+    timeout: "{{ nexus_api_timeout | int }}"
+  loop: "{{ api_payload }}"
+  loop_control:
+    loop_var: routing_rule
+  when: routing_rule.name not in __nexus_existing_routing_rules__.json | map(attribute='name') | list
+
+- name: Update routing rule when rule exists
+  ansible.builtin.uri:
+    url: "{{ nexus_api_scheme }}://{{ nexus_api_hostname }}:{{ nexus_api_port }}{{ nexus_api_context_path }}service/rest/v1/routing-rules/{{ routing_rule.name }}"
+    user: admin
+    password: "{{ current_nexus_admin_password }}"
+    method: PUT
+    force_basic_auth: true
+    validate_certs: "{{ nexus_api_validate_certs }}"
+    body_format: json
+    body: "{{ routing_rule }}"
+    status_code: 204
+    timeout: "{{ nexus_api_timeout | int }}"
+  loop: "{{ api_payload }}"
+  loop_control:
+    loop_var: routing_rule
+  when: routing_rule.name in __nexus_existing_routing_rules__.json | map(attribute='name') | list

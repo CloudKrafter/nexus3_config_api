@@ -1,5 +1,11 @@
 # Changelog
 
+
+## [1.10.0] - 2024-11-27
+### Added
+- Former nexus3-pro role (based on the ThoTeam/nexus-oss role) has been added to this collection.
+Note that this is only temporarily until their features are covered in new roles.
+
 ## [1.9.1] - 2024-11-25
 ### Added
 - Molecule Nexus Pro scenario
@@ -26,7 +32,8 @@ Example how to add it to your playboks:
     - cloudkrafter.nexus
 
   roles:
-    - role: cloudkrafter.nexus.config_api
+    - role: cloudkrafter.nexus.nexus_oss # (fork of thoteam/nexus3-oss)
+    - role: cloudkrafter.nexus.config_api # Only use this role if you know what you're doing.
 ```
 
 ## [v1.8.0] - 2024-11-21
