@@ -62,6 +62,11 @@
       # TODO: Need a fact to detmerine if we're already on pro version or not
       when: (lookup('env', 'NEXUS_LICENSE_B64') is defined or nexus_license_b64 is defined) and nexus_enable_pro
 
+    - name: Stop nexus3-pro-2 container
+      community.docker.docker_container:
+        name: nexus3-pro-2
+        state: stopped
+
     # - name: Gather facts about the nexus3-pro container
     #   community.docker.docker_container_info:
     #     name: nexus3-pro
@@ -73,7 +78,7 @@
 
     - name: Wait for Nexus writable API endpoint to be available
       ansible.builtin.uri:
-        url: "http://nexus3-pro:4081/service/rest/v1/status/writable"
+        url: "http://nexus3-pro:8081/service/rest/v1/status/writable"
         method: GET
         validate_certs: false
         status_code: 200
@@ -82,7 +87,7 @@
       retries: 30
       delay: 10
 
-    - name: Fetch the admin.password from the nexus3-oss container
+    - name: Fetch the admin.password from the nexus3-pro container
       community.docker.docker_container_exec:
         container: nexus3-pro
         command: "cat /nexus-data/admin.password"
@@ -94,7 +99,7 @@
 
     - name: Update password of admin user
       ansible.builtin.uri:
-        url: "http://nexus3-pro:4081/service/rest/v1/security/users/admin/change-password"
+        url: "http://nexus3-pro:8081/service/rest/v1/security/users/admin/change-password"
         user: admin
         password: "{{ __nexus_initial_admin_password__.stdout }}"
         method: PUT
@@ -109,7 +114,7 @@
 
     - name: Disable Anonmous access
       ansible.builtin.uri:
-        url: "http://nexus3-pro:4081/service/rest/v1/security/anonymous"
+        url: "http://nexus3-pro:8081/service/rest/v1/security/anonymous"
         user: admin
         password: changeme
         method: PUT
@@ -126,8 +131,50 @@
 
     - name: Remove license from file system
       ansible.builtin.file:
-        path: "nexus.lic"
+        path: "{{ item }}"
         state: absent
+      with_items:
+        - "nexus.lic"
+        - "nexus.properties"
+
+    # - name: Restart Nexus to activate cluster
+    #   community.docker.docker_container_exec:
+    #     container: nexus3-pro
+    #     command: "/opt/sonatype/nexus/bin/nexus restart"
+    #   register: __nexus_restart_cluster__
+
+    - name: ReStart nexus3-pro container
+      community.docker.docker_container:
+        name: nexus3-pro
+        state: started
+        restart: true
+        ports:
+          - 8081:8081
+        volumes:
+          - /sys/fs/cgroup:/sys/fs/cgroup:rw
+          - nexus-data-1:/nexus-data
+
+    - name: Wait for Nexus writable API endpoint to be available
+      ansible.builtin.uri:
+        url: "http://nexus3-pro:8081/service/rest/v1/status/writable"
+        method: GET
+        validate_certs: false
+        status_code: 200
+      register: __nexus_writable__
+      until: __nexus_writable__.status == 200
+      retries: 30
+      delay: 10
+
+    - name: ReStart nexus3-pro container
+      community.docker.docker_container:
+        name: nexus3-pro-2
+        state: started
+        restart: true
+        ports:
+          - 8071:8081
+        volumes:
+          - /sys/fs/cgroup:/sys/fs/cgroup:rw
+          - nexus-data-2:/nexus-data
 
     # - name: Gather facts about the s3-storage-pro container
     #   community.docker.docker_container_info:

@@ -71,9 +71,10 @@ platforms:
     env:
       INSTALL4J_ADD_VM_PARAMS: "-Dnexus.datastore.nexus.advanced=maximumPoolSize=10 -Dnexus.licenseFile=/nexus-data/nexus.lic -Dnexus.datastore.enabled=true -Dnexus.datastore.nexus.jdbcUrl=jdbc:postgresql://postgresql-server:5432/nexus -Dnexus.datastore.nexus.username=nexus -Dnexus.datastore.nexus.password=nexus"
     published_ports:
-      - 4081:8081
+      - 8081:8081
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:rw
+      - nexus-data-1:/nexus-data
     cgroupns_mode: host
     groups:
       - nexus
@@ -88,9 +89,10 @@ platforms:
     env:
       INSTALL4J_ADD_VM_PARAMS: "-Dnexus.datastore.nexus.advanced=maximumPoolSize=10 -Dnexus.licenseFile=/nexus-data/nexus.lic -Dnexus.datastore.enabled=true -Dnexus.datastore.nexus.jdbcUrl=jdbc:postgresql://postgresql-server:5432/nexus -Dnexus.datastore.nexus.username=nexus -Dnexus.datastore.nexus.password=nexus"
     published_ports:
-      - 4071:8081
+      - 8071:8081
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:rw
+      - nexus-data-2:/nexus-data
     cgroupns_mode: host
     groups:
       - nexus

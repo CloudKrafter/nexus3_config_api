@@ -16,16 +16,17 @@ A: Make sure you have removed the blobstore from the all blobstore groups first
 The order of the group_vars is important since the dictionaries will be passed through as-is to the Nexus API.
 
 ## Missing support on API
-- setting content disposition on maven groups
-- setting layout policy on maven groups
-- setting version policy on maven groups
-- create cleanup policy for format 'all'
-- allow anonymous docker pull
-- useTrustStoreForIndexAccess docker proxy
+- setting content disposition on maven groups not supported through API
+- setting layout policy on maven groups not supported through API
+- setting version policy on maven groups not supported through API
+- create cleanup policy for format 'all' not supported through API
+- allowing anonymous docker pull not supported through API
+- enabling useTrustStoreForIndexAccess for docker proxies not supported through API
 - yumsigning cant be fetched through the API
 - raw.contentdisposition cant be fetched through api
 - aptSigning cant be fetched through api
 - conanProxy.conanVersion cant be fetched through API
+- scheduled task details cant be fetched through API
 
 
 # TODO:

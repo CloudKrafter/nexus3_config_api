@@ -53,6 +53,16 @@
 		}
 	},
 	"portsAttributes": {
+		"4071": {
+			"label": "Nexus Pro (node 1)",
+			"protocol": "http",
+			"onAutoForward": "notify"
+		},
+		"4081": {
+			"label": "Nexus Pro (node 2)",
+			"protocol": "http",
+			"onAutoForward": "notify"
+		},
 		"8081": {
 			"label": "Nexus OSS",
 			"protocol": "http",
